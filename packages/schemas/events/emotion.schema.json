@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:vtuber:events:emotion",
+  "title": "EmotionEvent",
+  "type": "object",
+  "required": ["type", "data"],
+  "properties": {
+    "type": { "const": "emotion" },
+    "data": {
+      "type": "object",
+      "required": ["label"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "enum": ["neutral", "happy", "angry", "sad", "thinking", "surprised"]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

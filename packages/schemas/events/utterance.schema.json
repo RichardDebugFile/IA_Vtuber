@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:vtuber:events:utterance",
+  "title": "UtteranceEvent",
+  "type": "object",
+  "required": ["type", "data"],
+  "properties": {
+    "type": { "const": "utterance" },
+    "data": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

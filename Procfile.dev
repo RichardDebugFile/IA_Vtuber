@@ -1,0 +1,3 @@
+gateway:     python -m uvicorn main:app --host 127.0.0.1 --port 8765 --reload --app-dir services/gateway/src
+conversation: python -m uvicorn server:app --host 127.0.0.1 --port 8801 --reload --app-dir services/conversation/src
+desktop:      python apps/desktop-pet-qt/run_gui.py

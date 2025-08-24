@@ -1,0 +1,41 @@
+name: "Default Image Avatar"
+scale: 1.0                   # se usa SOLO si no defines "size"
+anchor: "bottom-right"       # bottom-right | bottom-left | bottom-center | center | top-left | top-right | top-center
+offset: { x: -40, y: -20 }
+
+size:                         # <— NUEVO: si lo pones, manda sobre "scale"
+  width: 420                  # píxeles destino
+  height: 420
+  mode: fit                   # fit=encajar (contain) | fill=rellenar (cover+corte) | stretch=estirar (sin AR)
+
+emotions:
+  neutral: "emotions/neutral.png"
+  happy: "emotions/happy.png"
+  angry: "emotions/angry.png"
+  sad: "emotions/sad.png"
+  thinking: "emotions/thinking.png"
+  surprised: "emotions/surprised.png"
+  sleeping: "emotions/sleeping.png"
+  upset: "emotions/upset.png"
+  fear: "emotions/fear.png"
+  asco: "emotions/asco.png"
+  love: "emotions/love.png"
+  bored: "emotions/bored.png"
+  excited: "emotions/excited.png"
+  confused: "emotions/confused.png"
+
+
+
+bubble:
+  enabled: true
+  shape: rect            # rect | (futuro: bubble)
+  position: overlay-bottom        # right | left | above | below | window-top-right
+  max_width: 360
+  margin: { x: 12, y: 12 }     # margen desde el avatar o desde la ventana (según position)
+  offset: { x: 0, y: 0 } # se suma al cálculo (opcional, fino)
+  font: "fonts/Inter-Regular.ttf"
+  font_size: 16
+  color: "#CDB4FF"       # violeta claro
+  text_color: "#1e1e1e"  # negro suave
+  opacity: 0.92
+

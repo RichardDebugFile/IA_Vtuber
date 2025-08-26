@@ -2,3 +2,13 @@ comandosDePrueba.txt
 .logs
 .pids
 venv/
+services/desktopctl/src/__pycache__
+services/affect/src/__pycache__
+services/asr/src/__pycache__
+services/conversation/src/__pycache__
+services/gateway/src/__pycache__
+apps/desktopctl/src/__pycache__
+apps/desktop-pet-qt/src/__pycache__/
+apps/desktop-pet-qt/src/avatar/__pycache__/
+apps/desktop-pet-qt/src/ipc/__pycache__/
+apps/desktop-pet-qt/src/ui/__pycache__/

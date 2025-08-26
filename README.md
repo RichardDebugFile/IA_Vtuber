@@ -27,6 +27,12 @@ Proyecto modular orientado a crear un asistente virtual con capacidad de convers
    pip install -r requirements.txt
    ```
 
+4. Activa/instala Ollama con el modelo de lenguaje deseado
+   ```bash
+   ollama run "modelo_deseado"
+   ```
+   Nota: en este repositorio se usó gemma3
+
 ## Uso
 
 ### Iniciar microservicios

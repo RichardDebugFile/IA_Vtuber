@@ -1,0 +1,3 @@
+fish:     powershell -ExecutionPolicy Bypass -File scripts\fish_start.ps1
+wokada: python services/voice/src/vc/rvc_server.py --host 127.0.0.1 --port 18888
+voice:    python -m uvicorn services.voice.src.server:app --host 127.0.0.1 --port 8810

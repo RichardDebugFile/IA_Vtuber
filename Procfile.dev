@@ -1,3 +1,11 @@
-gateway:     python -m uvicorn main:app --host 127.0.0.1 --port 8765 --reload --app-dir services/gateway/src
-conversation: python -m uvicorn server:app --host 127.0.0.1 --port 8801 --reload --app-dir services/conversation/src
+
+gateway:      python -m uvicorn main:app        --host 127.0.0.1 --port 8765 --reload --app-dir services/gateway/src
+conversation: python -m uvicorn server:app      --host 127.0.0.1 --port 8801 --reload --app-dir services/conversation/src
+# asr:          python -m uvicorn server:app      --host 127.0.0.1 --port 8802 --reload --app-dir services/asr/src
+# tts:          python -m uvicorn server:app      --host 127.0.0.1 --port 8803 --reload --app-dir services/tts/src
+# affect:       python -m uvicorn server:app      --host 127.0.0.1 --port 8804 --reload --app-dir services/affect/src
+# screenwatch:  python -m uvicorn server:app      --host 127.0.0.1 --port 8805 --reload --app-dir services/screenwatch/src
+# desktopctl:   python -m uvicorn server:app      --host 127.0.0.1 --port 8806 --reload --app-dir services/desktopctl/src
+
+# GUI Qt
 desktop:      python apps/desktop-pet-qt/run_gui.py

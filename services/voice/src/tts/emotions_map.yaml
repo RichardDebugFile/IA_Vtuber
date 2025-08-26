@@ -1,0 +1,10 @@
+# Mapea tus etiquetas al “control tag” de OpenAudio (Fish)
+neutral: ""
+happy: "(happy)"
+sad: "(sad)"
+angry: "(angry)"
+surprised: "(surprised)"
+thinking: "(thinking)"
+calm: "(calm)"
+shouting: "(shouting)"
+whispering: "(whispering)"

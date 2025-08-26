@@ -42,12 +42,13 @@ async def publish(body: PublishIn):
         except Exception:
             dead.add(ws)
 
+    total = len(SUBS[topic])  # contar antes de limpiar para saber cuántos reciben
     # limpiar sockets muertos
     for ws in dead:
         for t in SUBS.values():
             t.discard(ws)
 
-    return {"delivered": len(SUBS[topic]) - len(dead)}
+    return {"delivered": total - len(dead)}
 
 @app.websocket("/ws")
 async def ws_endpoint(ws: WebSocket):

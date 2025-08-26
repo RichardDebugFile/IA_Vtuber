@@ -26,8 +26,15 @@ Proyecto modular orientado a crear un asistente virtual con capacidad de convers
    ```bash
    pip install -r requirements.txt
    ```
+4. Descarga el modelo de voz de [Fish Audio](https://huggingface.co/fishaudio) dentro de `services/tts/models`.
+   Ejemplo:
+   ```bash
+   mkdir -p services/tts/models
+   git clone https://huggingface.co/fishaudio/fish-speech-1.4 services/tts/models/fish-speech
+   ```
+   Este repositorio no incluye el modelo por su tamaño. El servicio `tts` buscará el modelo en la ruta anterior.
 
-4. Activa/instala Ollama con el modelo de lenguaje deseado
+5. Activa/instala Ollama con el modelo de lenguaje deseado
    ```bash
    ollama run "modelo_deseado"
    ```
@@ -80,10 +87,13 @@ cd services/screenwatch
 python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src
 ```
 
-#### tts (por implementar)
+#### tts (puerto 8802)
+Genera audio a partir del texto respondiendo con el servicio de conversación.
+Es necesario haber descargado previamente el modelo de Fish Audio en `services/tts/models`.
+
 ```bash
 cd services/tts
-python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src
+python -m uvicorn src.server:app --host 127.0.0.1 --port 8802 --app-dir src
 ```
 
 ### Probar desde PowerShell
@@ -99,6 +109,8 @@ Los servicios leen un archivo `.env` para configurar parámetros. El microservic
 * `GATEWAY_HTTP`: URL del gateway para publicar eventos (por defecto `http://127.0.0.1:8765`).
 * `OLLAMA_HOST`: dirección del servidor Ollama que genera las respuestas (por defecto `http://127.0.0.1:11434`).
 * `OLLAMA_MODEL`: nombre del modelo usado por Ollama (por defecto `gemma3`).
+* `CONVERSATION_HTTP`: (servicio `tts`) URL del microservicio de conversación (por defecto `http://127.0.0.1:8801`).
+* `FISH_TTS_MODEL_DIR`: (servicio `tts`) ruta local del modelo Fish Audio.
 
 Exporta estas variables antes de iniciar los servicios si necesitas valores distintos.
 

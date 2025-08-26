@@ -9,7 +9,7 @@ def _strip_accents(s: str) -> str:
     nfkd = unicodedata.normalize("NFKD", s)
     return "".join(ch for ch in nfkd if not unicodedata.combining(ch))
 
-# Patrones por emoción (strings sin tildes). Se evaluarán en este orden.
+# Los patrones están diseñados para texto sin tildes, pero incluyen variantes acentuadas para mayor robustez. Se evaluarán en este orden.
 # Ajusta/añade términos a gusto según tu dominio.
 _PATTERNS = [
     # --- fuerte/inequivoco primero ---

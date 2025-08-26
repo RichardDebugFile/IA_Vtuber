@@ -38,6 +38,12 @@ Proyecto modular orientado a crear un asistente virtual con capacidad de convers
 ### Iniciar microservicios
 Cada servicio se ejecuta con [Uvicorn](https://www.uvicorn.org/) desde su carpeta:
 
+#### Interfaz gráfica (modelo Vtuber)
+```bash
+cd apps/desktop-pet-qt/src
+python  main.py  
+```
+
 #### gateway (puerto 8765)
 ```bash
 cd services/gateway

@@ -11,18 +11,21 @@ Proyecto modular orientado a crear un asistente virtual con capacidad de convers
 ## Instalación
 
 1. Clona este repositorio.
-2. Instala las dependencias principales:
-
-```bash
-pip install -r requirements.txt
-```
-
-## Activar el entorno
-
-```bash
-python -m venv venv
-source venv/bin/activate
-```
+2. Crea y activa un entorno virtual:
+   - En PowerShell:
+     ```powershell
+     py -3.10 -m venv venv
+     .\venv\Scripts\Activate.ps1
+     ```
+   - En Bash:
+     ```bash
+     python3.10 -m venv venv
+     source venv/bin/activate
+     ```
+3. Instala las dependencias principales:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ## Uso
 

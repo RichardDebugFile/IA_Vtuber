@@ -44,31 +44,31 @@ cd services/conversation
 python -m uvicorn src.server:app --host 127.0.0.1 --port 8801 --app-dir src
 ```
 
-#### affect
+#### affect (por implementar)
 ```bash
 cd services/affect
 python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src
 ```
 
-#### asr
+#### asr (por implementar)
 ```bash
 cd services/asr
 python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src
 ```
 
-#### desktopctl
+#### desktopctl (por implementar)
 ```bash
 cd services/desktopctl
 python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src
 ```
 
-#### screenwatch
+#### screenwatch (por implementar)
 ```bash
 cd services/screenwatch
 python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src
 ```
 
-#### tts
+#### tts (por implementar)
 ```bash
 cd services/tts
 python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src

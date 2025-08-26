@@ -27,10 +27,22 @@ Proyecto modular orientado a crear un asistente virtual con capacidad de convers
    pip install -r requirements.txt
    ```
 
+4. Activa/instala Ollama con el modelo de lenguaje deseado
+   ```bash
+   ollama run "modelo_deseado"
+   ```
+   Nota: en este repositorio se usó gemma3
+
 ## Uso
 
 ### Iniciar microservicios
 Cada servicio se ejecuta con [Uvicorn](https://www.uvicorn.org/) desde su carpeta:
+
+#### Interfaz gráfica (modelo Vtuber)
+```bash
+cd apps/desktop-pet-qt/src
+python  main.py  
+```
 
 #### gateway (puerto 8765)
 ```bash
@@ -44,31 +56,31 @@ cd services/conversation
 python -m uvicorn src.server:app --host 127.0.0.1 --port 8801 --app-dir src
 ```
 
-#### affect
+#### affect (por implementar)
 ```bash
 cd services/affect
 python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src
 ```
 
-#### asr
+#### asr (por implementar)
 ```bash
 cd services/asr
 python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src
 ```
 
-#### desktopctl
+#### desktopctl (por implementar)
 ```bash
 cd services/desktopctl
 python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src
 ```
 
-#### screenwatch
+#### screenwatch (por implementar)
 ```bash
 cd services/screenwatch
 python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src
 ```
 
-#### tts
+#### tts (por implementar)
 ```bash
 cd services/tts
 python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src

@@ -13,3 +13,6 @@ apps/desktop-pet-qt/src/avatar/__pycache__/
 apps/desktop-pet-qt/src/ipc/__pycache__/
 apps/desktop-pet-qt/src/ui/__pycache__/
 services/tts/models/
+services/tts/src/__pycache__/
+services/tts/src/vtuber_tts.egg-info/
+services/tts/.run/

@@ -1,15 +1,15 @@
-# Mapping from conversation emotion labels to Fish Speech style markers
+# services/tts/src/voices/presets.yaml
 neutral: neutral
-happy: cheerful
+happy: joyful
 angry: angry
 sad: sad
-thinking: thinking
 surprised: surprised
-sleeping: sleep
-upset: angry
-fear: fear
-asco: disgust
-love: loving
-bored: bored
 excited: excited
 confused: confused
+upset: upset
+fear: scared
+asco: disgusted        # “asco” -> disgusted
+love: empathetic       # no hay "loving" documentado
+bored: indifferent     # aproximación razonable
+sleeping: relaxed      # no hay "sleep", “relaxed” funciona
+thinking: serious      # aproximación; también puedes "hesitating"

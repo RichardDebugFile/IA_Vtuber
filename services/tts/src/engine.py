@@ -13,13 +13,13 @@ from typing import Dict, Optional
 import os
 import yaml
 
-# Load emotion to speaker preset mapping from YAML
+# Load emotion to text marker mapping from YAML
 _PRESETS_PATH = Path(__file__).parent / "voices" / "presets.yaml"
 if _PRESETS_PATH.exists():
     with open(_PRESETS_PATH, "r", encoding="utf-8") as f:
-        EMOTION_PRESET_MAP: Dict[str, str] = yaml.safe_load(f) or {}
+        EMOTION_MARKER_MAP: Dict[str, str] = yaml.safe_load(f) or {}
 else:
-    EMOTION_PRESET_MAP = {}
+    EMOTION_MARKER_MAP = {}
 
 class TTSEngine:
     """Wrapper around the Fish Audio pipeline."""
@@ -50,12 +50,13 @@ class TTSEngine:
         a placeholder byte string is produced so tests can run without the
         heavy model dependencies.
         """
-        preset = EMOTION_PRESET_MAP.get(emotion, EMOTION_PRESET_MAP.get("neutral", "neutral"))
+        marker = EMOTION_MARKER_MAP.get(emotion, EMOTION_MARKER_MAP.get("neutral", "neutral"))
+        text_with_marker = f"({marker}) {text}"
         if self._pipeline is None:
             # Fallback stub representation
-            return f"[{preset}] {text}".encode("utf-8")
+            return text_with_marker.encode("utf-8")
 
-        result = self._pipeline(text, speaker=preset)
+        result = self._pipeline(text_with_marker)
         audio = result.get("audio")
         if isinstance(audio, bytes):
             return audio

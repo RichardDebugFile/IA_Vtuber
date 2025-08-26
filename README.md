@@ -87,20 +87,33 @@ cd services/screenwatch
 python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src
 ```
 
-#### tts (puerto 8802)
+#### tts (puerto 8080)
 Genera audio a partir del texto respondiendo con el servicio de conversación.
-Es necesario haber descargado previamente el modelo de Fish Audio en `services/tts/models`.
+Es necesario haber descargado previamente el modelo de Fish Audio en cualquier parte del dispostivo y ejecutarlo para que exponga su puerto y luego en `services/tts/models` guardar el openaudio-s1-mini (para más información, leer el README.md del microservicio de "tts").
 
 ```bash
 cd services/tts
-python -m uvicorn src.server:app --host 127.0.0.1 --port 8802 --app-dir src
+python -m src.fish_server --start
 ```
 
-### Probar desde PowerShell
-Ejemplo de petición al servicio de conversación:
+Luego para detener de ser necesario:
+
+```bash
+python -m src.fish_server --stop
+```
+
+### Probar desde PowerShell - Microservicio de Conversación
+Ejemplo de petición al servicio de conversación 
 
 ```powershell
 Invoke-RestMethod -Uri http://localhost:8801/chat -Method Post -Body (@{text = 'Hola'} | ConvertTo-Json) -ContentType 'application/json'
+```
+
+### Probar desde PowerShell - Microservicio de TTS
+Ejemplo de petición al servicio de tts:
+
+```powershell
+python -m src.cli "hola" --emotion happy --backend http
 ```
 
 ### Variables de entorno
@@ -110,7 +123,6 @@ Los servicios leen un archivo `.env` para configurar parámetros. El microservic
 * `OLLAMA_HOST`: dirección del servidor Ollama que genera las respuestas (por defecto `http://127.0.0.1:11434`).
 * `OLLAMA_MODEL`: nombre del modelo usado por Ollama (por defecto `gemma3`).
 * `CONVERSATION_HTTP`: (servicio `tts`) URL del microservicio de conversación (por defecto `http://127.0.0.1:8801`).
-* `FISH_TTS_MODEL_DIR`: (servicio `tts`) ruta local del modelo Fish Audio.
 
 Exporta estas variables antes de iniciar los servicios si necesitas valores distintos.
 

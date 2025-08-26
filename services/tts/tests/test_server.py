@@ -24,4 +24,4 @@ def test_speak_endpoint():
     assert data["reply"] == "hola"
     assert data["emotion"] == "happy"
     audio = base64.b64decode(data["audio_b64"])  # should start with our placeholder
-    assert audio.startswith(b"[cheerful]")
+    assert audio.startswith(b"(cheerful) ")

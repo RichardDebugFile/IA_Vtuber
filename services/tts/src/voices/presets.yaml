@@ -1,3 +1,4 @@
+# Mapping from conversation emotion labels to Fish Speech style markers
 neutral: neutral
 happy: cheerful
 angry: angry
@@ -5,7 +6,7 @@ sad: sad
 thinking: thinking
 surprised: surprised
 sleeping: sleep
-upset: upset
+upset: angry
 fear: fear
 asco: disgust
 love: loving

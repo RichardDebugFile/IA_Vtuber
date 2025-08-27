@@ -6,7 +6,7 @@ from typing import Optional
 if __name__ == "__main__" and __package__ is None:
     sys.path.append(os.path.dirname(__file__))
 
-# ---- Cargar .env tanto en services/tts/.env como en la raíz ----
+# ---- Cargar .env (services/tts/.env y/o raíz) ----
 from pathlib import Path
 try:
     from dotenv import load_dotenv, find_dotenv
@@ -44,7 +44,7 @@ except Exception:
 def save_wav(path: str, audio_bytes: bytes) -> None:
     with open(path, "wb") as f:
         f.write(audio_bytes)
-    print(f"Audio written to {path}")
+    print(f"[ok] Audio → {path}")
 
 
 def play_audio(audio_bytes: bytes) -> None:
@@ -71,7 +71,7 @@ def autostart_fish_if_needed(url: str, verbose: bool = True, timeout_s: int = 18
     if HTTPFishEngine is None or FishServerManager is None:
         return  # no tenemos dependencias para HTTP o manager
 
-    http = HTTPFishEngine(url)
+    http = HTTPFishEngine(base_url=url)
     try:
         if http.health():
             return
@@ -89,13 +89,20 @@ def autostart_fish_if_needed(url: str, verbose: bool = True, timeout_s: int = 18
     if verbose:
         print("[info] Fish TTS no responde; intentando arrancar el servidor…")
 
+    # Puerto del URL (http://127.0.0.1:8080/...)
+    try:
+        port = int(url.split(":")[-1].split("/")[0])
+    except Exception:
+        port = int(os.getenv("FISH_PORT", "8080"))
+
     cfg = FishServerConfig(
         repo_dir=repo,
         venv_python=vpy,
         ckpt_dir=ckpt,
-        host="127.0.0.1",
-        port=int(url.split(":")[-1].split("/")[0]),  # extrae 8080 de http://127.0.0.1:8080/...
-        log_path=str(Path(__file__).resolve().parents[1] / ".logs" / "fish_api.log"),
+        host=os.getenv("FISH_HOST", "127.0.0.1"),
+        port=port,
+        log_path=(str(Path(__file__).resolve().parents[1] / ".logs" / "fish_api.log")
+                  if os.getenv("FISH_LOG_DISABLE", "0") != "1" else None),
     )
     mgr = FishServerManager(cfg)
     try:
@@ -105,23 +112,37 @@ def autostart_fish_if_needed(url: str, verbose: bool = True, timeout_s: int = 18
             print(f"[warn] No se pudo autoiniciar el server Fish: {e}")
         return
 
-    # Pequeña espera extra (el manager ya hace health polling)
+    # Espera breve extra (el manager ya hace health polling)
     time.sleep(0.5)
     if verbose:
         print("[info] Servidor Fish iniciado.")
 
 
-def build_engine(backend: str, url: Optional[str], autostart: bool) -> object:
+def build_engine(
+    backend: str,
+    url: Optional[str],
+    autostart: bool,
+    ref_wav: Optional[str],
+    ref_text: Optional[str],
+    ref_id: Optional[str],
+    mem_cache: Optional[str],
+) -> object:
     """Devuelve un engine con .synthesize(text, emotion)->bytes"""
     backend = backend.lower()
     if backend in ("http", "auto") and HTTPFishEngine is not None:
         if autostart:
             autostart_fish_if_needed(url or "")
 
-        http = HTTPFishEngine(url)
+        http = HTTPFishEngine(
+            base_url=url,
+            ref_wav=ref_wav,
+            ref_text=ref_text,
+            ref_id=ref_id,
+            use_memory_cache=mem_cache,  # 'on'/'off'
+        )
         if backend == "http":
             return http
-        # auto: si HTTP está sano, úsalo; sino, cae a local
+        # auto: si HTTP está sano, úsalo; si no, cae a local
         try:
             if http.health():
                 return http
@@ -133,27 +154,39 @@ def build_engine(backend: str, url: Optional[str], autostart: bool) -> object:
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description="TTS console utility")
-    p.add_argument("text", help="Text to synthesize")
-    p.add_argument("--emotion", default="neutral", help="Emotion preset")
-    p.add_argument("--voice", default=None, help="Voice ID/name (if supported)")
-    p.add_argument("--rate", type=float, default=None, help="Speech rate (e.g., 1.0=normal)")
-    p.add_argument("--sr", type=int, default=None, help="Sample rate override (e.g., 24000)")
-    p.add_argument("--out", default=None, help="Output wav path (if not set, try playback)")
-    p.add_argument("--no-play", action="store_true", help="Do not playback; only save")
+    p = argparse.ArgumentParser(description="TTS console utility (Fish HTTP + voz fija por referencia)")
+    p.add_argument("text", help="Texto a sintetizar")
+    p.add_argument("--emotion", default="neutral", help="Emoción/preset")
+    p.add_argument("--voice", default=None, help="(Reservado) Voice ID/name si el local lo soporta")
+    p.add_argument("--rate", type=float, default=None, help="(Reservado) Rate 1.0=normal")
+    p.add_argument("--sr", type=int, default=None, help="(Reservado) Sample rate override")
+    p.add_argument("--out", default=None, help="Ruta WAV de salida (si no, intenta reproducir)")
+    p.add_argument("--no-play", action="store_true", help="No reproducir; solo guardar")
     p.add_argument("--backend", default="auto", choices=["auto", "http", "local"], help="Engine backend")
     p.add_argument("--url", default=os.getenv("FISH_TTS_HTTP", "http://127.0.0.1:8080/v1/tts"),
                    help="HTTP TTS endpoint (cuando backend=http/auto)")
+
+    # Referencia de voz (flags o .env)
+    p.add_argument("--ref-wav", default=os.getenv("FISH_REF_WAV"),
+                   help="Ruta WAV de referencia (voz fija)")
+    p.add_argument("--ref-text", default=os.getenv("FISH_REF_TXT", ""),
+                   help="Transcripción del WAV de referencia")
+    p.add_argument("--ref-id", default=os.getenv("FISH_REF_ID", "fixed-voice"),
+                   help="ID estable para caché de memoria")
+    p.add_argument("--mem-cache", choices=["on", "off"], default=os.getenv("FISH_USE_MEMORY_CACHE", "on"),
+                   help="Usar caché en memoria para la referencia (on/off)")
+
+    # Autostart del server fish
     p.add_argument("--autostart", dest="autostart", action="store_true", default=True,
                    help="Intentar arrancar Fish server automáticamente (default: on)")
     p.add_argument("--no-autostart", dest="autostart", action="store_false",
                    help="No arrancar server automáticamente")
     args = p.parse_args()
 
-    # kwargs reservados por si algún día el TTSEngine local los soporta
-    _ = args.voice, args.rate, args.sr
-
-    engine = build_engine(args.backend, args.url, args.autostart)
+    engine = build_engine(
+        args.backend, args.url, args.autostart,
+        args.ref_wav, args.ref_text, args.ref_id, args.mem_cache
+    )
     audio = engine.synthesize(args.text, args.emotion)
 
     if args.out:

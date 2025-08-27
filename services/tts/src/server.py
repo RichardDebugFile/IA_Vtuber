@@ -20,6 +20,13 @@ class SpeakOut(BaseModel):
     emotion: str
     audio_b64: str
 
+class SynthesizeIn(BaseModel):
+    text: str
+    emotion: str = "neutral"
+
+class SynthesizeOut(BaseModel):
+    audio_b64: str
+
 @app.get("/health")
 async def health() -> dict:
     return {"ok": True}
@@ -34,6 +41,12 @@ async def speak(body: SpeakIn) -> SpeakOut:
     audio_bytes = engine.synthesize(reply, emotion)
     audio_b64 = base64.b64encode(audio_bytes).decode("ascii")
     return SpeakOut(reply=reply, emotion=emotion, audio_b64=audio_b64)
+
+@app.post("/synthesize", response_model=SynthesizeOut)
+async def synthesize(body: SynthesizeIn) -> SynthesizeOut:
+    audio_bytes = engine.synthesize(body.text, body.emotion)
+    audio_b64 = base64.b64encode(audio_bytes).decode("ascii")
+    return SynthesizeOut(audio_b64=audio_b64)
 
 if __name__ == "__main__":  # pragma: no cover
     import uvicorn

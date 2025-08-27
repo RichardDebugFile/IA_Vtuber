@@ -1,4 +1,3 @@
-# services/tts/src/fish_server.py
 from __future__ import annotations
 
 import os
@@ -27,7 +26,6 @@ class MissingCheckpointError(FishServerError): ...
 class ServerStartError(FishServerError): ...
 class HealthCheckError(FishServerError): ...
 
-# pidfile por defecto dentro del proyecto
 _DEFAULT_PIDFILE = str((Path(__file__).resolve().parents[1] / ".run" / "fish_api.pid"))
 
 @dataclass
@@ -50,7 +48,7 @@ class FishServerManager:
     def __init__(self, cfg: FishServerConfig) -> None:
         self.cfg = cfg
         self._proc: Optional[subprocess.Popen] = None
-        self._log_fp: Optional[IO[bytes]] = None  # mantenemos abierto el archivo de log
+        self._log_fp: Optional[IO[bytes]] = None
 
     # ---------- utilidades ----------
     def _ckpt_ok(self) -> None:
@@ -94,20 +92,46 @@ class FishServerManager:
 
     # ---------- health ----------
     def is_alive(self) -> bool:
-        url_candidates = [f"{self.cfg.base_url}/v1/health", f"{self.cfg.base_url}/health"]
+        base = self.cfg.base_url
+        # 1) POST /v1/health (común en builds actuales)
+        try:
+            with httpx.Client(timeout=2.5) as c:
+                r = c.post(f"{base}/v1/health", json={})
+                if r.status_code == 200:
+                    try:
+                        data = r.json()
+                    except json.JSONDecodeError:
+                        data = {}
+                    if data.get("status") == "ok" or data.get("ok") is True:
+                        return True
+        except Exception:
+            pass
+        # 2) GET /v1/health
         try:
             with httpx.Client(timeout=2.0) as c:
-                for u in url_candidates:
-                    r = c.get(u)
-                    if r.status_code == 200:
-                        try:
-                            data = r.json()
-                        except json.JSONDecodeError:
-                            data = {}
-                        if data.get("status") == "ok" or data.get("ok") is True:
-                            return True
+                r = c.get(f"{base}/v1/health")
+                if r.status_code == 200:
+                    try:
+                        data = r.json()
+                    except json.JSONDecodeError:
+                        data = {}
+                    if data.get("status") == "ok" or data.get("ok") is True:
+                        return True
         except Exception:
-            return False
+            pass
+        # 3) GET /health
+        try:
+            with httpx.Client(timeout=2.0) as c:
+                r = c.get(f"{base}/health")
+                if r.status_code == 200:
+                    try:
+                        data = r.json()
+                    except json.JSONDecodeError:
+                        data = {}
+                    if data.get("status") == "ok" or data.get("ok") is True:
+                        return True
+        except Exception:
+            pass
         return False
 
     def wait_ready(self, timeout_s: Optional[int] = None) -> None:
@@ -132,9 +156,22 @@ class FishServerManager:
             "--llama-checkpoint-path", self.cfg.ckpt_dir,
             "--decoder-checkpoint-path", os.path.join(self.cfg.ckpt_dir, "codec.pth"),
             "--decoder-config-name", self.cfg.decoder_config,
+            "--half",
         ]
 
         log_fp = self._open_log()
+
+        # --- Preparar ENV para el subproceso
+        env = os.environ.copy()
+
+        # 1) Inyección del guard de VRAM via sitecustomize
+        inject_dir = str(Path(__file__).parent / "pyinject")
+        env["PYTHONPATH"] = inject_dir + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
+
+        # 2) Normaliza PYTORCH_CUDA_ALLOC_CONF si viene con '=' y ';'
+        alloc = env.get("PYTORCH_CUDA_ALLOC_CONF", "")
+        if "max_split_size_mb=" in alloc or ";" in alloc:
+            env["PYTORCH_CUDA_ALLOC_CONF"] = alloc.replace("=", ":").replace(";", ",")
 
         try:
             creationflags = subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
@@ -144,26 +181,25 @@ class FishServerManager:
                 stdout=log_fp if log_fp is not None else None,
                 stderr=log_fp if log_fp is not None else None,
                 creationflags=creationflags,
+                env=env,  # <--- usa env modificado
             )
         except FileNotFoundError as e:
             raise ServerStartError("No pude lanzar python del venv (.fs). Verifica cfg.venv_python") from e
         except Exception as e:
             raise ServerStartError(f"Fallo al lanzar api_server: {e}") from e
 
-        # Guardamos PID y esperamos health
         self._write_pidfile(self._proc.pid)
-        self.wait_ready()
+        self.wait_ready(timeout_s=self.cfg.start_timeout_s)
         return self._proc.pid
 
     def _kill_pid(self, pid: int) -> None:
         if os.name == "nt":
-            # mata árbol de procesos
-            subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         else:
             os.kill(pid, 15)
 
     def stop(self) -> None:
-        # Si lo lanzamos en este proceso, cerramos por handle:
         if self._proc is not None:
             try:
                 self._proc.terminate()
@@ -174,7 +210,6 @@ class FishServerManager:
             finally:
                 self._proc = None
 
-        # Extra: si existe pidfile, lo usamos para matar aunque no tengamos handle
         pid = self._read_pidfile()
         if pid:
             try:
@@ -194,15 +229,17 @@ def _parse_args(argv: list[str]) -> dict:
     import argparse
     p = argparse.ArgumentParser(description="Gestor local de fish-speech api_server")
 
-    # Ahora NO son obligatorios: toman de .env si faltan
     p.add_argument("--repo", default=os.getenv("FISH_REPO", ""), help="Ruta al repo fish-speech")
     p.add_argument("--venv-python", default=os.getenv("FISH_VENV_PY", ""), help="Ruta a python.exe del venv .fs")
     p.add_argument("--ckpt", default=os.getenv("FISH_CKPT", ""), help="Ruta al checkpoint openaudio-s1-mini")
 
-    p.add_argument("--host", default="127.0.0.1")
-    p.add_argument("--port", type=int, default=8080)
-    p.add_argument("--log", default=str(Path(__file__).resolve().parents[1] / ".logs" / "fish_api.log"))
-    p.add_argument("--pidfile", default=_DEFAULT_PIDFILE)
+    p.add_argument("--host", default=os.getenv("FISH_HOST", "127.0.0.1"))
+    p.add_argument("--port", type=int, default=int(os.getenv("FISH_PORT", "8080")))
+    p.add_argument("--timeout", type=int, default=int(os.getenv("FISH_START_TIMEOUT", "180")),
+                   help="Segundos de espera para health")
+    p.add_argument("--log", default=str(Path(__file__).resolve().parents[1] / ".logs" / "fish_api.log"),
+                   help='Ruta de log; usa "" para imprimir en consola')
+    p.add_argument("--pidfile", default=os.getenv("FISH_PIDFILE", _DEFAULT_PIDFILE))
 
     p.add_argument("--start", action="store_true", help="Arranca el server")
     p.add_argument("--stop", action="store_true", help="Detiene el server (usa pidfile si existe)")
@@ -219,6 +256,7 @@ def main(argv: Optional[list[str]] = None) -> None:
         port=args["port"],
         log_path=args["log"],
         pidfile=args["pidfile"],
+        start_timeout_s=args["timeout"],
     )
     mgr = FishServerManager(cfg)
 
@@ -226,7 +264,6 @@ def main(argv: Optional[list[str]] = None) -> None:
         print("alive" if mgr.is_alive() else "down")
 
     if args["start"]:
-        # Validación mínima para start
         if not (cfg.repo_dir and cfg.venv_python and cfg.ckpt_dir):
             print("[ERROR] Faltan rutas (--repo/--venv-python/--ckpt o variables FISH_REPO/FISH_VENV_PY/FISH_CKPT).", file=sys.stderr)
             sys.exit(2)

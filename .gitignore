@@ -16,3 +16,5 @@ services/tts/models/
 services/tts/src/__pycache__/
 services/tts/src/vtuber_tts.egg-info/
 services/tts/.run/
+services/tts/src/pyinject/__pycache__/
+services/tts/reference/casiopy/

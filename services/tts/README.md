@@ -229,6 +229,14 @@ Hemos añadido `src/fish_server.py` (gestor local) con **pidfile** y **logs**:
   ```powershell
   python -m src.fish_server --start
   ```
+  O usar el comando con logs:
+  ```powershell
+  python -m src.fish_server --start --timeout 360 --log ""
+  ``` 
+  - **Comando para probar manualmente el microservicio**:
+  ```powershell
+  python -m src.cli "Hola, probando mi VOZ FIJA" --emotion happy --backend http --out test_ref.wav
+  ``` 
 
 - **Detener siempre** (aunque se haya iniciado desde el CLI): 
   ```powershell
@@ -243,7 +251,7 @@ Hemos añadido `src/fish_server.py` (gestor local) con **pidfile** y **logs**:
 
 # Recomendaciones
 
-- **GPU**: con RTX 3080 10 GB va bien. Cierra apps que usen VRAM antes de generar.
+- **GPU**: con RTX 3080 10 GB va bien. Cierra apps que usen VRAM antes de generar. (Se estima que este microservicio usa de 5 a 6 GB de VRAM)
 - **Evita mezclar** dependencias: mantén `.fs` (fish) y `venv` (microservicio) por separado.
 - Si ves `HTTP 422` al llamar `/v1/tts`, recuerda que el server espera **MessagePack** (`Content-Type: application/msgpack`). Usa `ormsgpack` como en los ejemplos.
 - Si ves `ConnectError 10061`, el server no está arriba. El CLI con `--backend http` lo **auto‑enciende** si tu `.env` tiene `FISH_REPO`, `FISH_VENV_PY`, `FISH_CKPT`.

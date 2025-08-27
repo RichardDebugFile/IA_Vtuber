@@ -18,4 +18,4 @@ services/tts/src/vtuber_tts.egg-info/
 services/tts/.run/
 services/tts/src/pyinject/__pycache__/
 services/tts/reference/casiopy/
-services/tts/test_ref.wav
+services/tts/_out/emotions/

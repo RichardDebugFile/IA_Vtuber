@@ -10,6 +10,7 @@ load_dotenv()  # lee .env (del cwd o padres)
 
 from llm_ollama import chat, list_models
 from emotion import classify
+from tts_client import synthesize as tts_synthesize
 
 GATEWAY_HTTP = os.getenv("GATEWAY_HTTP", "http://127.0.0.1:8765")
 OLLAMA_HOST  = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")
@@ -25,6 +26,7 @@ class ChatOut(BaseModel):
     reply: str
     emotion: str
     model: str
+    audio_b64: str | None = None
 
 async def publish(topic: str, data: Dict[str, Any]) -> None:
     """Publica un evento al gateway (utterance/emotion)."""
@@ -67,6 +69,12 @@ async def chat_endpoint(body: ChatIn):
     emo = classify(reply)
 
     # Publicar a la app (si el gateway no está, seguimos devolviendo la respuesta)
+    audio_b64 = ""
+    try:
+        audio_b64 = await tts_synthesize(reply, emo)
+    except Exception:
+        pass
+
     try:
         await asyncio.gather(
             publish("utterance", {"text": reply}),
@@ -75,7 +83,7 @@ async def chat_endpoint(body: ChatIn):
     except Exception:
         pass
 
-    return ChatOut(reply=reply, emotion=emo, model=OLLAMA_MODEL)
+    return ChatOut(reply=reply, emotion=emo, model=OLLAMA_MODEL, audio_b64=audio_b64)
 
 def main():
     import uvicorn

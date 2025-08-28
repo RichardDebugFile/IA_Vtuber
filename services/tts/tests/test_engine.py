@@ -2,7 +2,10 @@ import os
 import sys
 import pytest
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+import sys as _sys
+_sys.modules.pop("src.engine", None)
+_sys.modules.pop("src", None)
 from src.engine import TTSEngine, EMOTION_MARKER_MAP
 
 engine = TTSEngine()

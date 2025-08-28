@@ -1,39 +1,86 @@
+# services/tts/src/server.py
 from __future__ import annotations
 
 import base64
+import os
+from typing import Optional
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from .engine import TTSEngine
-from .conversation_client import ConversationClient
 
-app = FastAPI(title="vtuber-tts", version="0.1.0")
-engine = TTSEngine()
-conv_client = ConversationClient()
+try:
+    from .engine_http import HTTPFishEngine, HTTPFishEngineError, HTTPFishBadResponse, HTTPFishServerUnavailable
+except Exception:
+    HTTPFishEngine = None  # type: ignore
+    class HTTPFishEngineError(Exception): ...
+    class HTTPFishBadResponse(Exception): ...
+    class HTTPFishServerUnavailable(Exception): ...
 
-class SpeakIn(BaseModel):
+app = FastAPI(title="vtuber-tts", version="0.2.0")
+
+# Backends disponibles
+engine_local = TTSEngine()
+engine_http: Optional[HTTPFishEngine] = None
+if HTTPFishEngine is not None:
+    # Si no pasas base_url, engine_http leerá FISH_TTS_HTTP del .env
+    try:
+        engine_http = HTTPFishEngine(os.getenv("FISH_TTS_HTTP"))
+    except Exception:
+        engine_http = None
+
+class SynthesizeIn(BaseModel):
     text: str
-    user: str = "local"
+    emotion: str = "neutral"
+    backend: str = "auto"   # "auto" | "http" | "local"
 
-class SpeakOut(BaseModel):
-    reply: str
-    emotion: str
+class SynthesizeOut(BaseModel):
     audio_b64: str
+    mime: str = "audio/wav"  # si no es WAV, devolveremos otro mime
+
+def _is_wav(b: bytes) -> bool:
+    return len(b) >= 12 and b[:4] == b"RIFF" and b[8:12] == b"WAVE"
 
 @app.get("/health")
 async def health() -> dict:
-    return {"ok": True}
+    http_alive = None
+    if engine_http is not None:
+        try:
+            http_alive = engine_http.health()
+        except Exception:
+            http_alive = False
+    return {"ok": True, "http_backend_alive": http_alive}
 
-@app.post("/speak", response_model=SpeakOut)
-async def speak(body: SpeakIn) -> SpeakOut:
-    try:
-        reply, emotion = await conv_client.ask(body.text, body.user)
-    except Exception as e:  # pragma: no cover - simple passthrough
-        raise HTTPException(status_code=502, detail=f"Conversation service error: {e}")
+@app.post("/synthesize", response_model=SynthesizeOut)
+async def synthesize(body: SynthesizeIn) -> SynthesizeOut:
+    txt, emo = body.text, body.emotion
+    audio: bytes
 
-    audio_bytes = engine.synthesize(reply, emotion)
-    audio_b64 = base64.b64encode(audio_bytes).decode("ascii")
-    return SpeakOut(reply=reply, emotion=emotion, audio_b64=audio_b64)
+    # 1) Intentar Fish HTTP si procede
+    if body.backend in ("auto", "http") and engine_http is not None:
+        try:
+            if body.backend == "http" or engine_http.health():
+                audio = engine_http.synthesize(txt, emo)
+            else:
+                raise HTTPFishServerUnavailable("Fish HTTP no responde")
+        except (HTTPFishEngineError, HTTPFishBadResponse, HTTPFishServerUnavailable) as e:
+            if body.backend == "http":
+                raise HTTPException(status_code=502, detail=f"TTS HTTP no disponible: {e}")
+            # auto → caemos a local
+            audio = engine_local.synthesize(txt, emo)
+    else:
+        # 2) Forzar local
+        audio = engine_local.synthesize(txt, emo)
+
+    mime = "audio/wav" if _is_wav(audio) else "application/octet-stream"
+    if mime != "audio/wav":
+        # Señal explícita: el stub local no generó WAV real
+        # (Tu GUI/assistant puede decidir cómo manejarlo)
+        pass
+
+    audio_b64 = base64.b64encode(audio).decode("ascii")
+    return SynthesizeOut(audio_b64=audio_b64, mime=mime)
 
 if __name__ == "__main__":  # pragma: no cover
     import uvicorn

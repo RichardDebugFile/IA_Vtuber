@@ -13,6 +13,7 @@ SUBS: Dict[str, Set[WebSocket]] = {
     "utterance": set(),
     "emotion": set(),
     "avatar-action": set(),
+    "audio": set(),   # audio binario en base64
 }
 
 class PublishIn(BaseModel):

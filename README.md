@@ -38,7 +38,7 @@ Proyecto modular orientado a crear un asistente virtual con capacidad de convers
    ```bash
    ollama run "modelo_deseado"
    ```
-   Nota: en este repositorio se usó gemma3
+   Nota: en este repositorio se usó gemma3 (comando de ejemplo para ello: ollama run gemma3)
 
 ## Uso
 
@@ -87,13 +87,20 @@ cd services/screenwatch
 python -m uvicorn src.server:app --host 127.0.0.1 --port <PUERTO> --app-dir src
 ```
 
-#### tts (puerto 8080)
+#### assistant (puerto 8810)
+```bash
+cd services/assistant
+python -m uvicorn src.server:app --host 127.0.0.1 --port 8810 --app-dir src
+```
+
+#### tts (puerto 8080 y 8802)
 Genera audio a partir del texto respondiendo con el servicio de conversación.
 Es necesario haber descargado previamente el modelo de Fish Audio en cualquier parte del dispostivo y ejecutarlo para que exponga su puerto y luego en `services/tts/models` guardar el openaudio-s1-mini (para más información, leer el README.md del microservicio de "tts").
 
 ```bash
 cd services/tts
 python -m src.fish_server --start
+python -m uvicorn src.server:app --host 127.0.0.1 --port 8802 --app-dir src
 ```
 
 Luego para detener de ser necesario:
@@ -101,6 +108,8 @@ Luego para detener de ser necesario:
 ```bash
 python -m src.fish_server --stop
 ```
+
+#### Comandos para probar los microservicios
 
 ### Probar desde PowerShell - Microservicio de Conversación
 Ejemplo de petición al servicio de conversación 
@@ -115,6 +124,17 @@ Ejemplo de petición al servicio de tts:
 ```powershell
 python -m src.cli "hola" --emotion happy --backend http
 ```
+
+### Probar desde PowerShell - Microservicio de Assistant
+Ejemplo de petición al servicio de IA y tts:
+
+```powershell
+curl.exe -X POST "http://127.0.0.1:8810/api/assistant/aggregate" -H "Content-Type: application/json" --data '{"text":"Hola", "out":"url"}'
+# -> {"audio_url":"/media/<id>.wav", ...}
+```
+
+
+
 
 ### Variables de entorno
 Los servicios leen un archivo `.env` para configurar parámetros. El microservicio de conversación reconoce las siguientes variables:

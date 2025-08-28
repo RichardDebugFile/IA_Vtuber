@@ -19,3 +19,5 @@ services/tts/.run/
 services/tts/src/pyinject/__pycache__/
 services/tts/reference/casiopy/
 services/tts/_out/emotions/
+services/assistant/src/__pycache__/
+services/assistant/_out/audio/

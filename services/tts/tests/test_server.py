@@ -3,7 +3,8 @@ import os
 import sys
 from fastapi.testclient import TestClient
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.modules.pop("src", None)
 from src.server import app
 
 class DummyConv:
@@ -24,4 +25,12 @@ def test_speak_endpoint():
     assert data["reply"] == "hola"
     assert data["emotion"] == "happy"
     audio = base64.b64decode(data["audio_b64"])  # should start with our placeholder
-    assert audio.startswith(b"(cheerful) ")
+    assert audio.startswith(b"(joyful) ")
+
+
+def test_synthesize_endpoint():
+    resp = client.post("/synthesize", json={"text": "hola", "emotion": "happy"})
+    assert resp.status_code == 200
+    data = resp.json()
+    audio = base64.b64decode(data["audio_b64"])
+    assert audio.startswith(b"(joyful) ")

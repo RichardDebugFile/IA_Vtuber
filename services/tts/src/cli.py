@@ -7,13 +7,14 @@ if __name__ == "__main__" and __package__ is None:
     sys.path.append(os.path.dirname(__file__))
 
 # ---- Cargar .env (services/tts/.env y/o raíz) ----
+# IMPORTANTE: override=True para que el .env tenga prioridad sobre variables del sistema
 from pathlib import Path
 try:
     from dotenv import load_dotenv, find_dotenv
-    load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env", override=False)
+    load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env", override=True)
     found = find_dotenv(filename=".env", usecwd=True)
     if found:
-        load_dotenv(found, override=False)
+        load_dotenv(found, override=True)
 except Exception:
     pass
 
@@ -44,7 +45,11 @@ except Exception:
 def save_wav(path: str, audio_bytes: bytes) -> None:
     with open(path, "wb") as f:
         f.write(audio_bytes)
-    print(f"[ok] Audio → {path}")
+    # Fix encoding para Windows - usar ASCII safe
+    try:
+        print(f"[ok] Audio -> {path}")
+    except UnicodeEncodeError:
+        print(f"[ok] Audio guardado en: {path}")
 
 
 def play_audio(audio_bytes: bytes) -> None:

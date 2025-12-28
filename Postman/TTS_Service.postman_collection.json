@@ -1,0 +1,924 @@
+{
+	"info": {
+		"_postman_id": "tts-service-v0.4.0",
+		"name": "TTS Service - IA Vtuber",
+		"description": "Colección completa de endpoints para el servicio TTS v0.4.0\n\nIncluye:\n- Endpoints de producción (/synthesize, /health, /metrics)\n- Endpoints de prueba (/test/*)\n\nServidor: http://127.0.0.1:8802",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "tts-service"
+	},
+	"item": [
+		{
+			"name": "Producción",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/health",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"health"
+							]
+						},
+						"description": "Verificación básica de que el servicio está vivo.\n\nRespuesta:\n```json\n{\n  \"ok\": true,\n  \"status\": \"alive\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Synthesize - Neutral",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Hola, soy Casiopy. Este es un mensaje con emoción neutral.\",\n  \"emotion\": \"neutral\",\n  \"backend\": \"http\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8802/synthesize",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"synthesize"
+							]
+						},
+						"description": "Síntesis de voz con emoción neutral.\n\nParámetros:\n- `text`: Texto a sintetizar (máx 5000 caracteres)\n- `emotion`: Emoción (14 opciones disponibles)\n- `backend`: \"http\" (Fish Audio) o \"local\" (deprecated)\n\nRespuesta:\n```json\n{\n  \"audio_b64\": \"UklGRi...\",\n  \"ok\": true\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Synthesize - Happy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"¡Qué alegría verte! ¡Estoy muy feliz!\",\n  \"emotion\": \"happy\",\n  \"backend\": \"http\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8802/synthesize",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"synthesize"
+							]
+						},
+						"description": "Síntesis con emoción feliz (happy -> joyful en Fish Audio)"
+					},
+					"response": []
+				},
+				{
+					"name": "Synthesize - Sad",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Me siento muy triste y decepcionada...\",\n  \"emotion\": \"sad\",\n  \"backend\": \"http\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8802/synthesize",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"synthesize"
+							]
+						},
+						"description": "Síntesis con emoción triste"
+					},
+					"response": []
+				},
+				{
+					"name": "Synthesize - Angry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"¡Esto me molesta mucho! ¡No puedo creerlo!\",\n  \"emotion\": \"angry\",\n  \"backend\": \"http\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8802/synthesize",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"synthesize"
+							]
+						},
+						"description": "Síntesis con emoción enojada"
+					},
+					"response": []
+				},
+				{
+					"name": "Synthesize - Excited",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"¡Esto es increíble! ¡Estoy súper emocionada!\",\n  \"emotion\": \"excited\",\n  \"backend\": \"http\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8802/synthesize",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"synthesize"
+							]
+						},
+						"description": "Síntesis con emoción emocionada/excitada"
+					},
+					"response": []
+				},
+				{
+					"name": "Metrics (Prometheus)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/metrics",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"metrics"
+							]
+						},
+						"description": "Métricas de Prometheus para monitoreo.\n\nIncluye:\n- tts_requests_total: Total de requests\n- tts_request_duration_seconds: Duración de requests\n- tts_text_length_chars: Longitud de textos\n- tts_audio_generation_duration_seconds: Tiempo de generación\n- tts_backend_requests_total: Requests por backend\n- Y más..."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de producción para síntesis de voz y monitoreo"
+		},
+		{
+			"name": "Testing y Utilidades",
+			"item": [
+				{
+					"name": "List Emotions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotions",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotions"
+							]
+						},
+						"description": "Lista todas las 14 emociones soportadas con sus marcadores Fish Audio.\n\nRespuesta:\n```json\n{\n  \"ok\": true,\n  \"emotions\": [\"neutral\", \"happy\", \"angry\", ...],\n  \"count\": 14,\n  \"markers\": {\n    \"neutral\": \"neutral\",\n    \"happy\": \"joyful\",\n    \"angry\": \"angry\",\n    ...\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Quick Test - Neutral",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/quick?emotion=neutral",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"quick"
+							],
+							"query": [
+								{
+									"key": "emotion",
+									"value": "neutral"
+								}
+							]
+						},
+						"description": "Prueba rápida de síntesis con texto predeterminado.\n\nTexto usado: \"Esta es una prueba rápida del sistema de síntesis de voz.\"\n\nParámetros:\n- emotion (query, opcional): Emoción a usar (default: neutral)"
+					},
+					"response": []
+				},
+				{
+					"name": "Quick Test - Happy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/quick?emotion=happy",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"quick"
+							],
+							"query": [
+								{
+									"key": "emotion",
+									"value": "happy"
+								}
+							]
+						},
+						"description": "Prueba rápida con emoción feliz"
+					},
+					"response": []
+				},
+				{
+					"name": "System Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/status",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"status"
+							]
+						},
+						"description": "Estado completo del sistema TTS incluyendo Fish Audio backend.\n\nRespuesta:\n```json\n{\n  \"ok\": true,\n  \"service\": {\n    \"name\": \"vtuber-tts\",\n    \"version\": \"0.4.0\",\n    \"status\": \"running\"\n  },\n  \"backends\": {\n    \"http\": {\n      \"configured\": true,\n      \"healthy\": true,\n      \"url\": \"http://127.0.0.1:8080/v1/tts\",\n      \"error\": null\n    },\n    \"local\": {\n      \"configured\": true,\n      \"status\": \"deprecated_stub\"\n    }\n  },\n  \"features\": {\n    \"emotions_count\": 14,\n    \"max_text_length\": 5000,\n    \"metrics_enabled\": true,\n    \"voice_reference\": true\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Test Emotion - Happy (Default Text)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/happy",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"happy"
+							]
+						},
+						"description": "Prueba emoción con texto predeterminado.\n\nTexto usado para happy: \"¡Qué alegría! ¡Estoy muy feliz de verte!\""
+					},
+					"response": []
+				},
+				{
+					"name": "Test Emotion - Sad (Default Text)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/sad",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"sad"
+							]
+						},
+						"description": "Texto usado para sad: \"Me siento un poco triste hoy...\""
+					},
+					"response": []
+				},
+				{
+					"name": "Test Emotion - Angry (Default Text)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/angry",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"angry"
+							]
+						},
+						"description": "Texto usado para angry: \"¡Esto es inaceptable! ¡Estoy muy molesta!\""
+					},
+					"response": []
+				},
+				{
+					"name": "Test Emotion - Surprised (Default Text)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/surprised",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"surprised"
+							]
+						},
+						"description": "Texto usado para surprised: \"¡Oh! ¡No me lo esperaba! ¡Qué sorpresa!\""
+					},
+					"response": []
+				},
+				{
+					"name": "Test Emotion - Excited (Default Text)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/excited",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"excited"
+							]
+						},
+						"description": "Texto usado para excited: \"¡Esto es increíble! ¡Estoy tan emocionada!\""
+					},
+					"response": []
+				},
+				{
+					"name": "Test Emotion - Fear (Default Text)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/fear",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"fear"
+							]
+						},
+						"description": "Texto usado para fear: \"¡Ten cuidado! ¡Esto me da miedo!\""
+					},
+					"response": []
+				},
+				{
+					"name": "Test Emotion - Love (Default Text)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/love",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"love"
+							]
+						},
+						"description": "Texto usado para love: \"Te quiero mucho, eres muy especial para mí.\""
+					},
+					"response": []
+				},
+				{
+					"name": "Test Emotion - Custom Text",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Este es mi texto personalizado para probar la emoción.\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/happy",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"happy"
+							]
+						},
+						"description": "Prueba emoción con texto personalizado.\n\nParámetros:\n- emotion (path): Emoción a usar\n- text (body, opcional): Texto personalizado"
+					},
+					"response": []
+				},
+				{
+					"name": "Voice Reference Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/voices",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"voices"
+							]
+						},
+						"description": "Información sobre la configuración de voz de referencia.\n\nRespuesta:\n```json\n{\n  \"ok\": true,\n  \"reference\": {\n    \"wav_file\": \"F:\\\\...\\\\CasiopyVoz-muestraWAV.wav\",\n    \"text\": \"Oh, con que te quedó dudas sobre Mochi...\",\n    \"id\": \"casiopy-full-30s\",\n    \"memory_cache\": true\n  }\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de prueba y utilidades para testing e integración"
+		},
+		{
+			"name": "Todas las Emociones",
+			"item": [
+				{
+					"name": "1. Neutral",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/neutral",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"neutral"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Happy (Joyful)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/happy",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"happy"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Angry",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/angry",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"angry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. Sad",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/sad",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"sad"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5. Surprised",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/surprised",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"surprised"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6. Excited",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/excited",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"excited"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7. Confused",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/confused",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"confused"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "8. Upset",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/upset",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"upset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9. Fear (Scared)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/fear",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"fear"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "10. Asco (Disgusted)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/asco",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"asco"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "11. Love (Empathetic)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/love",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"love"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "12. Bored (Indifferent)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/bored",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"bored"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "13. Sleeping (Relaxed)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/sleeping",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"sleeping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "14. Thinking (Serious)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8802/test/emotion/thinking",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8802",
+							"path": [
+								"test",
+								"emotion",
+								"thinking"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Carpeta con las 14 emociones soportadas para pruebas rápidas"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8802",
+			"type": "string"
+		},
+		{
+			"key": "fish_url",
+			"value": "http://127.0.0.1:8080",
+			"type": "string"
+		}
+	]
+}

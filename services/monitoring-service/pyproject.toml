@@ -1,0 +1,18 @@
+[project]
+name = "monitoring-service"
+version = "2.0.0"
+description = "Sistema de monitoreo y control completo para todos los microservicios del proyecto IA VTuber"
+requires-python = ">=3.10"
+
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "httpx>=0.25.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+]

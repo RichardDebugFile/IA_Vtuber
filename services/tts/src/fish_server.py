@@ -10,12 +10,13 @@ from typing import Optional, IO
 from pathlib import Path
 
 # Carga .env (services/tts/.env o raíz del repo)
+# IMPORTANTE: override=True para que el .env tenga prioridad sobre variables del sistema
 try:
     from dotenv import load_dotenv, find_dotenv
-    load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env", override=False)
+    load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env", override=True)
     found = find_dotenv(filename=".env", usecwd=True)
     if found:
-        load_dotenv(found, override=False)
+        load_dotenv(found, override=True)
 except Exception:
     pass
 
@@ -28,6 +29,16 @@ class HealthCheckError(FishServerError): ...
 
 _DEFAULT_PIDFILE = str((Path(__file__).resolve().parents[1] / ".run" / "fish_api.pid"))
 
+# Encontrar la raíz del proyecto (donde está el .git o .env)
+def _find_project_root() -> Path:
+    """Encuentra la raíz del proyecto buscando .git o .env"""
+    current = Path(__file__).resolve()
+    for parent in [current] + list(current.parents):
+        if (parent / ".git").exists() or (parent / ".env").exists():
+            return parent
+    # Si no encuentra, usar 3 niveles arriba de este archivo (services/tts/src)
+    return Path(__file__).resolve().parents[3]
+
 @dataclass
 class FishServerConfig:
     repo_dir: str
@@ -39,6 +50,20 @@ class FishServerConfig:
     start_timeout_s: int = 180
     log_path: Optional[str] = None
     pidfile: str = _DEFAULT_PIDFILE
+
+    def __post_init__(self):
+        """Convierte rutas relativas a absolutas basándose en la raíz del proyecto"""
+        project_root = _find_project_root()
+
+        # Convertir rutas relativas a absolutas
+        if self.repo_dir and not Path(self.repo_dir).is_absolute():
+            self.repo_dir = str((project_root / self.repo_dir).resolve())
+
+        if self.venv_python and not Path(self.venv_python).is_absolute():
+            self.venv_python = str((project_root / self.venv_python).resolve())
+
+        if self.ckpt_dir and not Path(self.ckpt_dir).is_absolute():
+            self.ckpt_dir = str((project_root / self.ckpt_dir).resolve())
 
     @property
     def base_url(self) -> str:
@@ -159,6 +184,12 @@ class FishServerManager:
             "--half",
         ]
 
+        # Enable torch.compile for 10x speedup (requires PyTorch 2.0+)
+        # First run takes 1-3min to compile, subsequent runs use cache
+        # Set FISH_ENABLE_COMPILE=1 in .env to enable
+        if os.environ.get("FISH_ENABLE_COMPILE", "").lower() in ("1", "true", "yes"):
+            args.append("--compile")
+
         log_fp = self._open_log()
 
         # --- Preparar ENV para el subproceso
@@ -172,6 +203,17 @@ class FishServerManager:
         alloc = env.get("PYTORCH_CUDA_ALLOC_CONF", "")
         if "max_split_size_mb=" in alloc or ";" in alloc:
             env["PYTORCH_CUDA_ALLOC_CONF"] = alloc.replace("=", ":").replace(";", ",")
+
+        # 3) Add FFmpeg DLLs to PATH for torchcodec (Windows)
+        if os.name == "nt":
+            ffmpeg_dll_paths = [
+                r"C:\Users\PC RYZEN  7\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg.Shared_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-7.1.1-full_build-shared\bin",
+                r"C:\ProgramData\chocolatey\bin"
+            ]
+            for ffmpeg_path in ffmpeg_dll_paths:
+                if os.path.exists(ffmpeg_path):
+                    env["PATH"] = ffmpeg_path + os.pathsep + env.get("PATH", "")
+                    break
 
         try:
             creationflags = subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0

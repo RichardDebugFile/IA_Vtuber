@@ -12,9 +12,9 @@
 ## Rutas de ejemplo usadas a lo largo de la guía
 Ajusta a las tuyas si difieren:
 ```
-FISH_REPO = G:\Documentos G\Ing. Sotware\ExperimentosPy\Fish-audio\fish-speech
-FISH_VENV_PY = G:\Documentos G\Ing. Sotware\ExperimentosPy\Fish-audio\fish-speech\.fs\Scripts\python.exe
-FISH_CKPT = G:\Documentos G\Ing. Sotware\ExperimentosPy\IA_VtuberMain\IA_Vtuber\services\tts\models\openaudio-s1-mini
+FISH_REPO = F:\Documentos F\GitHub\IA_Vtuber\services\tts\vendor\fish-speech
+FISH_VENV_PY = F:\Documentos F\GitHub\IA_Vtuber\services\tts\vendor\fish-speech\.fs\Scripts\python.exe
+FISH_CKPT = F:\Documentos F\GitHub\IA_Vtuber\services\tts\models\openaudio-s1-mini
 FISH_TTS_HTTP = http://127.0.0.1:8080/v1/tts
 ```
 
@@ -29,7 +29,7 @@ FISH_TTS_HTTP = http://127.0.0.1:8080/v1/tts
 ```powershell
 # (opcional) borrar venv anterior
 deactivate 2>$null
-cd "G:\Documentos G\Ing. Sotware\ExperimentosPy\Fish-audio\fish-speech"
+cd "F:\Documentos F\GitHub\IA_Vtuber\services\tts\vendor\fish-speech"
 If (Test-Path .\.fs) { Remove-Item -Recurse -Force .\.fs }
 
 # crear venv y activar
@@ -116,7 +116,7 @@ python - << 'PY'
 from huggingface_hub import snapshot_download
 import shutil, os
 repo_id = "<REPO_ID>"  # EJEMPLO: "fishaudio/openaudio-s1-mini"
-dst = r"G:\Documentos G\Ing. Sotware\ExperimentosPy\IA_VtuberMain\IA_Vtuber\services\tts\models\openaudio-s1-mini"
+dst = r"F:\Documentos F\GitHub\IA_Vtuber\services\tts\models\openaudio-s1-mini"
 os.makedirs(dst, exist_ok=True)
 local = snapshot_download(repo_id=repo_id, allow_patterns=["*config*.json","*codec*.pth","*.json","*.pth"])
 for f in os.listdir(local):
@@ -128,14 +128,14 @@ PY
 
 Opción 2 — ya tienes los archivos: simplemente colócalos en:
 ```
-G:\Documentos G\Ing. Sotware\ExperimentosPy\IA_VtuberMain\IA_Vtuber\services\tts\models\openaudio-s1-mini\
+F:\Documentos F\GitHub\IA_Vtuber\services\tts\models\openaudio-s1-mini\
   ├─ config.json
   └─ codec.pth
 ```
 
 ### 5) Arrancar el servidor HTTP de fish
 ```powershell
-$CKPT="G:\Documentos G\Ing. Sotware\ExperimentosPy\IA_VtuberMain\IA_Vtuber\services\tts\models\openaudio-s1-mini"
+$CKPT="F:\Documentos F\GitHub\IA_Vtuber\services\tts\models\openaudio-s1-mini"
 python -m tools.api_server --listen 0.0.0.0:8080 --llama-checkpoint-path "$CKPT" --decoder-checkpoint-path "$CKPT\codec.pth" --decoder-config-name modded_dac_vq
 ```
 > Dejar esta ventana abierta (o usar el auto‑start del microservicio, ver sección C).
@@ -153,7 +153,7 @@ start .\fish_test.wav
 
 ### 1) Instalar dependencias del proyecto principal
 ```powershell
-cd "G:\Documentos G\Ing. Sotware\ExperimentosPy\IA_VtuberMain\IA_Vtuber"
+cd "F:\Documentos F\GitHub\IA_Vtuber"
 py -3.10 -m venv venv
 .\venv\Scripts\Activate.ps1
 python -m pip install -U pip setuptools wheel
@@ -165,9 +165,9 @@ pip install python-dotenv ormsgpack simpleaudio
 ### 2) Crear `.env`
 Puedes ubicarlo en **`services/tts/.env`** o en la **raíz del repo**. El código detecta ambos.
 ```
-FISH_REPO=G:\Documentos G\Ing. Sotware\ExperimentosPy\Fish-audio\fish-speech
-FISH_VENV_PY=G:\Documentos G\Ing. Sotware\ExperimentosPy\Fish-audio\fish-speech\.fs\Scripts\python.exe
-FISH_CKPT=G:\Documentos G\Ing. Sotware\ExperimentosPy\IA_VtuberMain\IA_Vtuber\services\tts\models\openaudio-s1-mini
+FISH_REPO=F:\Documentos F\GitHub\IA_Vtuber\services\tts\vendor\fish-speech
+FISH_VENV_PY=F:\Documentos F\GitHub\IA_Vtuber\services\tts\vendor\fish-speech\.fs\Scripts\python.exe
+FISH_CKPT=F:\Documentos F\GitHub\IA_Vtuber\services\tts\models\openaudio-s1-mini
 FISH_TTS_HTTP=http://127.0.0.1:8080/v1/tts
 ```
 

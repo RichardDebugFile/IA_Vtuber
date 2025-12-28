@@ -18,6 +18,64 @@ services/tts/src/vtuber_tts.egg-info/
 services/tts/.run/
 services/tts/src/pyinject/__pycache__/
 services/tts/reference/casiopy/
-services/tts/_out/emotions/
+services/tts/tests/outputs/
+services/tts/_out/
+
+# Fish Speech vendor (excluir archivos pesados y generados)
+services/tts/vendor/fish-speech/.fs/
+services/tts/vendor/fish-speech/__pycache__/
+services/tts/vendor/fish-speech/**/__pycache__/
+services/tts/vendor/fish-speech/*.log
+services/tts/vendor/fish-speech/.git/
+services/tts/vendor/fish-speech/**/*.pyc
+services/tts/vendor/fish-speech/logs/
+services/tts/vendor/fish-speech/.pytest_cache/
+services/tts/vendor/fish-speech/results/
+services/tts/vendor/fish-speech/checkpoints/
 services/assistant/src/__pycache__/
 services/assistant/_out/audio/
+services/assistant/_out/bests/
+.claude
+
+# TTS archivos temporales de pruebas
+services/tts/nul
+services/tts/test_*.wav
+services/tts/Test*-optimized/
+
+# TTS Docker logs
+services/tts/docker-ngc/logs/
+services/tts/docker-ngc/nul
+services/tts/docker-ngc/*.log
+
+# TTS tools outputs
+services/tts/tools/benchmark_results_*.json
+services/tts/tools/probe_output_*.wav
+services/tts/tools/diag_report_*.txt
+services/tts/tools/_out/
+
+# Monitoring service outputs
+services/monitoring-service/outputs/
+services/monitoring-service/src/__pycache__/
+services/monitoring-service/logs/
+services/monitoring-service/test_*.html
+services/monitoring-service/src/static/*_old.html
+
+# Extras
+ia_docs/
+docs/
+nul
+services/tts/docker-ngc
+
+# Optimization archives
+optimization-archives/
+temp_test.json
+.github/workflows/tests.yml
+services/face-service-2D-simple/src/__pycache__
+services/face-service-2D-simple/src/assets/avatars/default/bubble/queVaAqui.txt
+services/face-service-2D-simple/src/avatar/__pycache__/
+services/face-service-2D-simple/src/ipc/__pycache__/
+services/face-service-2D-simple/src/native/win/__pycache__/
+services/face-service-2D-simple/src/ui/__pycache__/
+services/tts/src/voices/__pycache__/
+services/tts/tests/__pycache__/
+.coveragerc

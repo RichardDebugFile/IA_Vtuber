@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs & Auditoría - Test Service</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: #f0f0f0;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .metric-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .main-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .log-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .log-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .log-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .event-type {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .event-type.tts {
+            background: #FF9800;
+            color: white;
+        }
+
+        .event-type.service {
+            background: #00BCD4;
+            color: white;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-badge.error {
+            background: #f44336;
+            color: white;
+        }
+
+        .duration {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .tts-metrics-table {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .tts-metrics-table td {
+            padding: 8px 0;
+        }
+
+        .tts-metrics-table .label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .tts-metrics-table .value {
+            color: #333;
+            text-align: right;
+        }
+
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .auto-refresh input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .auto-refresh label {
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Logs & Auditoría</h1>
+            <div class="nav-links">
+                <a href="/">Dashboard</a>
+                <a href="/tts.html">TTS Testing</a>
+                <a href="/logs.html">Logs</a>
+            </div>
+        </header>
+
+        <div class="metrics-grid" id="metricsGrid">
+            <div class="metric-card">
+                <h3>Total de Eventos</h3>
+                <div class="metric-value" id="totalEvents">-</div>
+                <div class="metric-label">últimos 100 eventos</div>
+            </div>
+            <div class="metric-card">
+                <h3>Eventos Exitosos</h3>
+                <div class="metric-value" id="successCount" style="color: #4CAF50;">-</div>
+                <div class="metric-label">tasa de éxito</div>
+            </div>
+            <div class="metric-card">
+                <h3>Errores</h3>
+                <div class="metric-value" id="errorCount" style="color: #f44336;">-</div>
+                <div class="metric-label">eventos fallidos</div>
+            </div>
+            <div class="metric-card">
+                <h3>Generaciones TTS</h3>
+                <div class="metric-value" id="ttsCount">-</div>
+                <div class="metric-label">audios generados</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="controls">
+                <button class="btn btn-primary" onclick="loadLogs()">🔄 Actualizar</button>
+                <select id="filterType" onchange="loadLogs()">
+                    <option value="all">Todos los eventos</option>
+                    <option value="TTS_SYNTHESIS">Solo TTS</option>
+                    <option value="SERVICE_ACTION">Solo Servicios</option>
+                </select>
+                <select id="limitSelect" onchange="loadLogs()">
+                    <option value="20">20 eventos</option>
+                    <option value="50" selected>50 eventos</option>
+                    <option value="100">100 eventos</option>
+                </select>
+                <div class="auto-refresh">
+                    <input type="checkbox" id="autoRefresh" onchange="toggleAutoRefresh()">
+                    <label for="autoRefresh">Auto-refresh (5s)</label>
+                </div>
+                <button class="btn btn-secondary" onclick="showTTSMetrics()">📈 Métricas TTS</button>
+            </div>
+
+            <div id="logsContainer">
+                <div class="loading">Cargando logs...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let autoRefreshInterval = null;
+
+        async function loadLogs() {
+            const limit = document.getElementById('limitSelect').value;
+            const filterType = document.getElementById('filterType').value;
+
+            try {
+                const response = await fetch(`/api/logs/recent?limit=${limit}`);
+                const data = await response.json();
+
+                if (data.ok) {
+                    let logs = data.logs;
+
+                    // Filter by type if needed
+                    if (filterType !== 'all') {
+                        logs = logs.filter(log => log.event_type === filterType);
+                    }
+
+                    displayLogs(logs);
+                }
+            } catch (error) {
+                console.error('Error loading logs:', error);
+                document.getElementById('logsContainer').innerHTML =
+                    '<div class="empty-state">Error al cargar los logs</div>';
+            }
+        }
+
+        async function loadSummary() {
+            try {
+                const response = await fetch('/api/logs/summary');
+                const data = await response.json();
+
+                if (data.ok) {
+                    document.getElementById('totalEvents').textContent = data.total_events;
+                    document.getElementById('successCount').textContent = data.success_count;
+                    document.getElementById('errorCount').textContent = data.error_count;
+
+                    const ttsCount = data.event_types.TTS_SYNTHESIS || 0;
+                    document.getElementById('ttsCount').textContent = ttsCount;
+                }
+            } catch (error) {
+                console.error('Error loading summary:', error);
+            }
+        }
+
+        function displayLogs(logs) {
+            const container = document.getElementById('logsContainer');
+
+            if (logs.length === 0) {
+                container.innerHTML = '<div class="empty-state">No hay logs disponibles</div>';
+                return;
+            }
+
+            let html = '<table class="log-table"><thead><tr>';
+            html += '<th>Timestamp</th>';
+            html += '<th>Tipo</th>';
+            html += '<th>Acción</th>';
+            html += '<th>Detalles</th>';
+            html += '<th>Duración</th>';
+            html += '<th>Estado</th>';
+            html += '</tr></thead><tbody>';
+
+            logs.forEach(log => {
+                const timestamp = new Date(log.timestamp).toLocaleString('es-ES');
+                const eventClass = log.event_type === 'TTS_SYNTHESIS' ? 'tts' : 'service';
+                const statusClass = log.success ? 'success' : 'error';
+                const duration = log.duration_ms ? `${log.duration_ms.toFixed(2)} ms` : '-';
+
+                let details = '';
+                if (log.event_type === 'TTS_SYNTHESIS') {
+                    details = `Emoción: ${log.details.emotion}, Texto: ${log.details.text_length} chars, Audio: ${log.details.audio_size_kb} KB`;
+                } else if (log.event_type === 'SERVICE_ACTION') {
+                    details = `Servicio: ${log.details.service_id || 'N/A'}, Puerto: ${log.details.port || 'N/A'}`;
+                }
+
+                html += '<tr>';
+                html += `<td>${timestamp}</td>`;
+                html += `<td><span class="event-type ${eventClass}">${log.event_type}</span></td>`;
+                html += `<td>${log.action}</td>`;
+                html += `<td>${details}</td>`;
+                html += `<td class="duration">${duration}</td>`;
+                html += `<td><span class="status-badge ${statusClass}">${log.success ? 'SUCCESS' : 'ERROR'}</span></td>`;
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        async function showTTSMetrics() {
+            try {
+                const response = await fetch('/api/logs/tts-metrics');
+                const data = await response.json();
+
+                if (data.ok && data.metrics) {
+                    const m = data.metrics;
+                    let html = '<h2>Métricas de TTS</h2>';
+                    html += '<table class="tts-metrics-table">';
+                    html += `<tr><td class="label">Total de síntesis:</td><td class="value">${m.total_synthesis}</td></tr>`;
+                    html += `<tr><td class="label">Síntesis exitosas:</td><td class="value">${m.successful_synthesis}</td></tr>`;
+                    html += `<tr><td class="label">Síntesis fallidas:</td><td class="value">${m.failed_synthesis}</td></tr>`;
+                    html += `<tr><td class="label">Tasa de éxito:</td><td class="value">${m.success_rate}%</td></tr>`;
+                    html += `<tr><td class="label">Tiempo promedio:</td><td class="value">${m.avg_duration_ms.toFixed(2)} ms</td></tr>`;
+                    html += `<tr><td class="label">Tiempo total:</td><td class="value">${m.total_duration_ms.toFixed(2)} ms</td></tr>`;
+                    html += `<tr><td class="label">Audio total generado:</td><td class="value">${m.total_audio_kb.toFixed(2)} KB</td></tr>`;
+                    html += `<tr><td class="label">Caracteres/segundo promedio:</td><td class="value">${m.avg_chars_per_second.toFixed(2)}</td></tr>`;
+                    html += '</table>';
+
+                    if (m.emotions_used && Object.keys(m.emotions_used).length > 0) {
+                        html += '<h3 style="margin-top: 20px;">Emociones más usadas:</h3>';
+                        html += '<table class="tts-metrics-table">';
+                        Object.entries(m.emotions_used)
+                            .sort((a, b) => b[1] - a[1])
+                            .slice(0, 10)
+                            .forEach(([emotion, count]) => {
+                                html += `<tr><td class="label">${emotion}:</td><td class="value">${count} veces</td></tr>`;
+                            });
+                        html += '</table>';
+                    }
+
+                    document.getElementById('logsContainer').innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error loading TTS metrics:', error);
+            }
+        }
+
+        function toggleAutoRefresh() {
+            const checkbox = document.getElementById('autoRefresh');
+
+            if (checkbox.checked) {
+                autoRefreshInterval = setInterval(() => {
+                    loadLogs();
+                    loadSummary();
+                }, 5000);
+            } else {
+                if (autoRefreshInterval) {
+                    clearInterval(autoRefreshInterval);
+                    autoRefreshInterval = null;
+                }
+            }
+        }
+
+        // Load initial data
+        loadLogs();
+        loadSummary();
+        setInterval(loadSummary, 10000); // Update summary every 10 seconds
+    </script>
+</body>
+</html>

@@ -1,10 +1,12 @@
-"""Fish Audio based Text-to-Speech engine.
+"""DEPRECATED: Local TTS Engine (Stub for Testing Only).
 
-This module loads a Fish Audio model from a local directory and exposes a
-simple interface to synthesize speech. If the Fish Audio dependencies are not
-installed, the engine will fall back to a dummy implementation that returns
-placeholder bytes. This allows unit tests to run quickly without the heavy
-model files.
+WARNING: This module is DEPRECATED and does NOT work with Fish Audio models.
+The transformers pipeline approach is incompatible with Fish Audio's architecture.
+
+ONLY USE FOR TESTING: This stub returns text encoded as bytes for unit tests.
+For production, use engine_http.HTTPFishEngine with a running Fish Audio server.
+
+This module is kept only for backward compatibility with existing tests.
 """
 from __future__ import annotations
 
@@ -12,6 +14,7 @@ from pathlib import Path
 from typing import Dict, Optional
 import os
 import yaml
+import warnings
 
 # Load emotion to text marker mapping from YAML
 _PRESETS_PATH = Path(__file__).parent / "voices" / "presets.yaml"
@@ -21,47 +24,43 @@ if _PRESETS_PATH.exists():
 else:
     EMOTION_MARKER_MAP = {}
 
+
 class TTSEngine:
-    """Wrapper around the Fish Audio pipeline."""
+    """DEPRECATED: Stub TTS engine for testing only.
+
+    WARNING: This class does NOT produce real audio. It only returns text
+    encoded as UTF-8 bytes for use in unit tests.
+
+    For real TTS synthesis, use HTTPFishEngine with a running Fish Audio server.
+    """
 
     def __init__(self, model_dir: Optional[str] = None) -> None:
-        self.model_dir = model_dir or os.getenv("FISH_TTS_MODEL_DIR", "models/fish-speech")
-        self._pipeline = self._load_pipeline()
+        """Initialize stub engine.
 
-    def _load_pipeline(self):
-        """Attempt to load the transformers pipeline.
-
-        Returns ``None`` if transformers/torch are not installed.
+        Args:
+            model_dir: Ignored. Kept for backward compatibility.
         """
-        try:
-            from transformers import pipeline  # type: ignore
-            return pipeline(
-                "text-to-speech",
-                model=str(self.model_dir),
-                trust_remote_code=True,
-            )
-        except Exception:
-            return None
+        warnings.warn(
+            "TTSEngine is DEPRECATED and does not produce real audio. "
+            "Use HTTPFishEngine for production TTS synthesis.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        self.model_dir = model_dir or os.getenv("FISH_TTS_MODEL_DIR", "models/fish-speech")
 
     def synthesize(self, text: str, emotion: str) -> bytes:
-        """Generate audio for ``text`` with the given ``emotion``.
+        """Return text encoded as bytes (STUB for testing).
 
-        If the real model is available, raw audio bytes are returned. Otherwise
-        a placeholder byte string is produced so tests can run without the
-        heavy model dependencies.
+        WARNING: This does NOT generate real audio. Returns UTF-8 encoded text.
+
+        Args:
+            text: Input text
+            emotion: Emotion label (used to add marker prefix)
+
+        Returns:
+            UTF-8 encoded text with emotion marker (NOT real audio)
         """
         marker = EMOTION_MARKER_MAP.get(emotion, EMOTION_MARKER_MAP.get("neutral", "neutral"))
         text_with_marker = f"({marker}) {text}"
-        if self._pipeline is None:
-            # Fallback stub representation
-            return text_with_marker.encode("utf-8")
-
-        result = self._pipeline(text_with_marker)
-        audio = result.get("audio")
-        if isinstance(audio, bytes):
-            return audio
-        # Many pipelines return numpy arrays; convert to bytes if possible
-        try:
-            return audio.tobytes()
-        except Exception:
-            return bytes(audio)
+        # Return text as bytes (stub for testing)
+        return text_with_marker.encode("utf-8")

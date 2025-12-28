@@ -3,7 +3,12 @@ import os
 
 def _log(msg: str) -> None:
     if os.environ.get("FISH_CUDA_VERBOSE"):
-        print(f"[cuda-guard] {msg}", flush=True)
+        # Usar encoding UTF-8 en Windows para evitar errores con caracteres especiales
+        try:
+            print(f"[cuda-guard] {msg}", flush=True)
+        except UnicodeEncodeError:
+            # Fallback: convertir a ASCII ignorando caracteres especiales
+            print(f"[cuda-guard] {msg.encode('ascii', 'replace').decode('ascii')}", flush=True)
 
 def _normalize_alloc_conf(env: dict) -> None:
     conf = env.get("PYTORCH_CUDA_ALLOC_CONF", "")
@@ -66,9 +71,21 @@ def _set_limit() -> None:
 
     try:
         torch.cuda.set_per_process_memory_fraction(frac, device=dev)
-        _log(f"total={total/1024**3:.2f}GB  limit_frac={frac:.3f}  target≈{frac*total/1024**3:.2f}GB (device {dev})")
+        # Usar 'aprox' en lugar de símbolo ~ para evitar problemas de encoding
+        _log(f"total={total/1024**3:.2f}GB  limit_frac={frac:.3f}  target_aprox={frac*total/1024**3:.2f}GB (device {dev})")
     except Exception as e:
         _log(f"set_per_process_memory_fraction failed: {e}")
+
+    # Enable TF32 for faster inference on Ampere/Blackwell GPUs (RTX 30xx, 40xx, 50xx)
+    try:
+        if hasattr(torch.backends.cuda.matmul, 'allow_tf32'):
+            torch.backends.cuda.matmul.allow_tf32 = True
+            _log("TF32 enabled for matmul (3x speedup on Ampere/Blackwell)")
+        if hasattr(torch.backends.cudnn, 'allow_tf32'):
+            torch.backends.cudnn.allow_tf32 = True
+            _log("TF32 enabled for cuDNN")
+    except Exception as e:
+        _log(f"TF32 enable failed: {e}")
 
 # Ejecuta al importar (Python carga sitecustomize automáticamente si está en PYTHONPATH)
 _set_limit()

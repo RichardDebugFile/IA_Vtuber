@@ -1,0 +1,107 @@
+# Git
+.git/
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+**/venv/
+**/.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+**/*.log
+
+# Modelos (solo montar como volumen, no copiar al build context)
+services/tts/models/
+# NO excluir fish_speech/models/ que contiene código fuente
+!services/tts/vendor/fish-speech-test/fish_speech/models/
+**/checkpoints/
+
+# Cache
+.cache/
+*.cache
+**/.cache/
+
+# Node
+node_modules/
+**/node_modules/
+
+# Docker
+.dockerignore
+**/Dockerfile
+**/docker-compose.yml
+**/docker-experiment/
+
+# Docs (no necesarios en build)
+docs/
+ia_docs/
+**/docs/
+**/ia_docs/
+*.md
+LICENSE
+README.md
+
+# Tests (no necesarios en runtime)
+tests/
+**/tests/
+pytest.ini
+.coveragerc
+
+# Benchmarks y resultados (no necesarios en build)
+benchmark_*.py
+profile_*.py
+diagnose_*.py
+analyze_*.py
+**/*benchmark*.py
+**/*profile*.py
+# Solo excluir JSON/TXT de resultados, NO de fish-speech
+/benchmark_*.json
+/benchmark_*.txt
+ia_docs/**/*.json
+ia_docs/**/*.txt
+
+# Audio outputs
+*.wav
+*.mp3
+_out/
+**/_out/
+
+# Vendor backups
+**/fish-speech-backup/
+**/fish-speech-v1.5.1/
+
+# Docker folders obsoletos
+# services/tts/docker-ngc/  # Necesario para patch_soundfile.py
+services/tts/docker-experiment/
+services/tts/Test3-optimized/
+
+# Postman
+Postman/
+
+# Github
+.github/

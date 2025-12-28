@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Monitoring - IA VTuber</title>
+    <link rel="stylesheet" href="/static/css/monitoring.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>System Monitoring Dashboard</h1>
+                    <p style="color: #666;">Real-time monitoring of all IA VTuber services</p>
+                </div>
+                <div style="text-align: right; display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
+                    <div>
+                        <span id="wsStatus" class="connection-status disconnected">Disconnected</span>
+                        <span class="refresh-indicator" id="refreshIndicator" style="display: none;"></span>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <a href="/tts" id="ttsTestLink"
+                           style="display: none; padding: 8px 16px; background: #FF9800; color: white; text-decoration: none; border-radius: 5px; font-size: 14px; transition: opacity 0.3s;">
+                            🎤 TTS Testing
+                        </a>
+                        <a href="/blips-test" id="blipsTestLink"
+                           style="display: none; padding: 8px 16px; background: #E91E63; color: white; text-decoration: none; border-radius: 5px; font-size: 14px; transition: opacity 0.3s;">
+                            🎵 Blips Testing
+                        </a>
+                        <a href="/conversation-test" id="conversationTestLink"
+                           style="display: none; padding: 8px 16px; background: #2196F3; color: white; text-decoration: none; border-radius: 5px; font-size: 14px; transition: opacity 0.3s;">
+                            💬 Conversation + Blips
+                        </a>
+                        <a href="/vtuber-chat" id="vtuberChatLink"
+                           style="display: none; padding: 8px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: 600; transition: all 0.3s;">
+                            🎭 Chat con VTuber (Completo)
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-box">
+                    <div>
+                        <div class="stat-label">System Health</div>
+                        <div class="stat-value healthy" id="systemHealth">-</div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div>
+                        <div class="stat-label">Services Online</div>
+                        <div class="stat-value" id="servicesOnline">-/-</div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div>
+                        <div class="stat-label">Overall Uptime</div>
+                        <div class="stat-value" id="overallUptime">-</div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div>
+                        <div class="stat-label">Active Alerts</div>
+                        <div class="stat-value" id="activeAlerts">-</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- Services Status -->
+            <div class="card">
+                <h2>Services Status</h2>
+                <div id="servicesList">
+                    <div class="no-data">Loading services...</div>
+                </div>
+            </div>
+
+            <!-- Active Services & Logs -->
+            <div class="card">
+                <h2>Active Services</h2>
+                <p style="color: #666; font-size: 14px; margin-bottom: 10px;">Haz clic en un servicio para ver sus logs</p>
+                <div id="activeServicesList">
+                    <div class="no-data">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Docker & GPU Stats -->
+            <div class="card">
+                <h2>Docker & GPU Stats</h2>
+                <div class="docker-stats">
+                    <div class="stat-card">
+                        <h3>Container Status</h3>
+                        <div class="value" id="dockerStatus">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>CPU Usage</h3>
+                        <div class="value" id="dockerCPU">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>GPU Utilization</h3>
+                        <div class="value" id="gpuUtil">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>VRAM Usage</h3>
+                        <div class="value" id="vramUsage">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>GPU Temperature</h3>
+                        <div class="value" id="gpuTemp">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Memory Usage</h3>
+                        <div class="value" id="dockerMem">-</div>
+                    </div>
+                </div>
+
+                <!-- Docker Control Buttons -->
+                <div class="control-buttons" style="margin-top: 15px;">
+                    <button class="btn btn-start" onclick="controlDocker('start')" id="dockerStartBtn">
+                        <span>▶</span> Start Docker
+                    </button>
+                    <button class="btn btn-stop" onclick="controlDocker('stop')" id="dockerStopBtn">
+                        <span>⏹</span> Stop Docker
+                    </button>
+                    <button class="btn btn-restart" onclick="controlDocker('restart')" id="dockerRestartBtn">
+                        <span>🔄</span> Restart Docker
+                    </button>
+                </div>
+
+                <!-- Destructive Operations (Separated for Safety) -->
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                    <p style="margin: 0 0 10px 0; color: #666; font-size: 0.9em;">
+                        ⚠️ <strong>Operaciones Destructivas:</strong>
+                    </p>
+                    <button class="btn" onclick="removeDocker()" id="dockerRemoveBtn"
+                            style="background: #d32f2f; border-color: #d32f2f;">
+                        <span>🗑️</span> Remove Container
+                    </button>
+                </div>
+            </div>
+
+            <!-- Response Time Chart -->
+            <div class="card">
+                <h2>Response Times (Last 10 Checks)</h2>
+                <div id="responseChart">
+                    <div class="no-data">No data yet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logs Modal -->
+    <div id="logsModal" class="logs-modal">
+        <div class="logs-modal-content">
+            <div class="logs-modal-header">
+                <h2 id="logsModalTitle">Service Logs</h2>
+                <button class="logs-modal-close" onclick="closeLogsModal()">✕ Cerrar</button>
+            </div>
+            <div id="logsModalContent">
+                <div class="no-data">Loading logs...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/monitoring.js"></script>
+</body>
+</html>

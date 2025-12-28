@@ -60,6 +60,7 @@ python -m uvicorn src.main:app --host 127.0.0.1 --port 8765 --app-dir src
 #### conversation (puerto 8801)
 ```bash
 cd services/conversation
+ollama run gemma3 # o el modelo deseado, nota: Cargar primero el TTS antes del Ollama
 python -m uvicorn src.server:app --host 127.0.0.1 --port 8801 --app-dir src
 ```
 

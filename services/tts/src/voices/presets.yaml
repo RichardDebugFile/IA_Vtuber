@@ -1,15 +1,29 @@
 # services/tts/src/voices/presets.yaml
+# Fish Speech / OpenAudio soporta 64+ marcadores de emoción
+# Referencia: https://docs.fish.audio/developer-platform/emotions
+
+# Emociones básicas (core set para VTuber)
 neutral: neutral
-happy: joyful
-angry: angry
-sad: sad
-surprised: surprised
-excited: excited
+happy: joyful           # También disponible: delighted, satisfied
+angry: angry            # También disponible: furious
+sad: sad                # También disponible: depressed
+surprised: surprised    # También disponible: astonished
+excited: excited        # También disponible: keen
 confused: confused
 upset: upset
-fear: scared
-asco: disgusted        # “asco” -> disgusted
-love: empathetic       # no hay "loving" documentado
-bored: indifferent     # aproximación razonable
-sleeping: relaxed      # no hay "sleep", “relaxed” funciona
-thinking: serious      # aproximación; también puedes "hesitating"
+fear: scared            # También disponible: worried, nervous, panicked
+asco: disgusted         # "asco" -> disgusted (marcador oficial)
+love: moved             # "moved" es mejor que "empathetic" para amor/cariño
+bored: indifferent      # Marcador oficial para aburrimiento
+sleeping: relaxed       # No hay "sleepy", pero "relaxed" funciona bien
+thinking: hesitating    # "hesitating" refleja mejor el proceso de pensar que "serious"
+
+# Emociones adicionales para interacciones VTuber
+embarrassed: embarrassed    # Cuando se equivoca o dice algo vergonzoso
+proud: proud                # Cuando logra algo o quiere presumir
+grateful: grateful          # Para agradecer a viewers/chat
+sarcastic: sarcastic        # Para comentarios sarcásticos o irónicos
+amused: amused              # Cuando algo le parece gracioso
+interested: interested      # Cuando está genuinamente curiosa
+comforting: comforting      # Para consolar o dar ánimo
+playful: amused             # Para interacciones juguetonas (usa "amused")

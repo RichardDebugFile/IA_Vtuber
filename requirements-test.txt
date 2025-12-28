@@ -1,0 +1,39 @@
+# Testing dependencies for IA_Vtuber project
+
+# Core testing framework
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.0
+pytest-xdist>=3.3.0  # Parallel test execution
+
+# HTTP testing
+httpx>=0.27.0
+requests>=2.31.0
+websockets>=12.0
+
+# FastAPI testing
+fastapi[all]>=0.111.0
+starlette>=0.37.0
+
+# Mocking and fixtures
+faker>=19.0.0
+freezegun>=1.2.0  # Time mocking
+responses>=0.23.0  # HTTP response mocking
+
+# Code quality
+black>=23.7.0
+isort>=5.12.0
+flake8>=6.1.0
+mypy>=1.5.0
+pylint>=2.17.0
+
+# Coverage reporting
+coverage[toml]>=7.3.0
+
+# Performance testing
+pytest-benchmark>=4.0.0
+
+# Test utilities
+pydantic>=2.8.0
+python-dotenv>=1.0.0

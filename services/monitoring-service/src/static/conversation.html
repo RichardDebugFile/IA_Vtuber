@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation AI Testing - With Live Blips</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #2196F3;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .back-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background: #5568d3;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .status-indicator {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .status-indicator.online {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-indicator.offline {
+            background: #f44336;
+            color: white;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .send-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .chat-container {
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+
+        .message.user {
+            background: #E3F2FD;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message.assistant {
+            background: #FFF3E0;
+        }
+
+        .message .label {
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .message .text {
+            font-size: 1em;
+            line-height: 1.5;
+            font-family: 'Courier New', monospace;
+        }
+
+        .message .text.typing {
+            border-right: 2px solid #333;
+            animation: blink 0.7s step-end infinite;
+        }
+
+        @keyframes blink {
+            from, to { border-color: transparent; }
+            50% { border-color: #333; }
+        }
+
+        .message .emotion {
+            font-size: 0.8em;
+            margin-top: 5px;
+            color: #999;
+        }
+
+        .blips-player {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .blips-player audio {
+            flex: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1976d2;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        .info-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .info-box.warning {
+            background: #fff3e0;
+            border-color: #ff9800;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #E91E63;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/monitoring" class="back-button">← Volver al Monitoring</a>
+            <h1>💬 Conversation AI Testing</h1>
+            <p class="subtitle">Prueba el sistema de conversación con Ollama + Blips en tiempo real</p>
+
+            <div class="status-bar">
+                <div id="conversationStatus" class="status-indicator offline">Conversation: Offline</div>
+                <div id="ollamaStatus" class="status-indicator offline">Ollama: Offline</div>
+                <div id="blipsStatus" class="status-indicator offline">Blips: Offline</div>
+            </div>
+        </header>
+
+        <div class="info-box">
+            <strong>Cómo funciona:</strong>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>Escribe un mensaje y envíalo al servicio Conversation AI</li>
+                <li>Ollama (gemma3) generará una respuesta</li>
+                <li>Si Blips está habilitado, reproducirá sonidos mientras se muestra el texto</li>
+                <li>La emoción se detecta automáticamente y se aplica a los blips</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="form-group">
+                <div class="toggle-container">
+                    <label class="toggle">
+                        <input type="checkbox" id="enableBlips" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <label for="enableBlips" style="cursor: pointer;">Habilitar Blips en tiempo real</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="toggle-container">
+                    <label class="toggle">
+                        <input type="checkbox" id="enableTypewriter" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <label for="enableTypewriter" style="cursor: pointer;">Efecto Undertale (letra por letra con blips)</label>
+                </div>
+                <small style="color: #666; display: block; margin-top: 5px; margin-left: 60px;">
+                    Velocidad: <input type="range" id="typewriterSpeed" min="20" max="100" value="50" style="width: 150px;">
+                    <span id="speedValue">50</span> ms/letra
+                </small>
+            </div>
+
+            <form id="chatForm">
+                <div class="form-group">
+                    <label for="userMessage">Tu mensaje:</label>
+                    <textarea
+                        id="userMessage"
+                        placeholder="Escribe tu mensaje aquí..."
+                        required
+                    >Hola, ¿cómo estás?</textarea>
+                </div>
+
+                <button type="submit" class="send-button">📤 Enviar Mensaje</button>
+            </form>
+
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <div class="card">
+            <h2>Conversación</h2>
+            <div class="chat-container" id="chatContainer">
+                <div style="text-align: center; color: #999; padding: 20px;">
+                    No hay mensajes aún. Envía uno para comenzar.
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Estadísticas</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Mensajes Enviados</div>
+                    <div class="stat-value" id="messagesSent">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Respuestas Recibidas</div>
+                    <div class="stat-value" id="messagesReceived">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Última Latencia</div>
+                    <div class="stat-value" id="lastLatency">--</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Blips Reproducidos</div>
+                    <div class="stat-value" id="blipsPlayed">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let messagesSent = 0;
+        let messagesReceived = 0;
+        let blipsPlayed = 0;
+
+        // Base URLs - use same hostname as current page
+        const BASE_HOST = window.location.hostname;
+        const CONVERSATION_URL = `http://${BASE_HOST}:8801`;
+        const BLIPS_URL = `http://${BASE_HOST}:8804`;
+
+        // Check service status
+        async function checkServiceStatus() {
+            try {
+                // Check Conversation service
+                const convResp = await fetch(`${CONVERSATION_URL}/health`);
+                if (convResp.ok) {
+                    document.getElementById('conversationStatus').textContent = 'Conversation: Online';
+                    document.getElementById('conversationStatus').className = 'status-indicator online';
+
+                    const convData = await convResp.json();
+                    if (convData.ollama_ready) {
+                        document.getElementById('ollamaStatus').textContent = `Ollama: Online (${convData.model})`;
+                        document.getElementById('ollamaStatus').className = 'status-indicator online';
+                    }
+                }
+            } catch (e) {
+                console.log('Conversation service offline');
+            }
+
+            try {
+                // Check Blips service
+                const blipsResp = await fetch(`${BLIPS_URL}/health`);
+                if (blipsResp.ok) {
+                    document.getElementById('blipsStatus').textContent = 'Blips: Online';
+                    document.getElementById('blipsStatus').className = 'status-indicator online';
+                }
+            } catch (e) {
+                console.log('Blips service offline');
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('active');
+            setTimeout(() => errorDiv.classList.remove('active'), 5000);
+        }
+
+        function addMessage(type, text, emotion = null) {
+            const container = document.getElementById('chatContainer');
+
+            // Remove "no messages" placeholder
+            if (container.children.length === 1 && container.children[0].style.textAlign === 'center') {
+                container.innerHTML = '';
+            }
+
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+
+            const label = document.createElement('div');
+            label.className = 'label';
+            label.textContent = type === 'user' ? 'Tú' : 'Casiopy';
+
+            const textDiv = document.createElement('div');
+            textDiv.className = 'text';
+            textDiv.textContent = text;
+
+            message.appendChild(label);
+            message.appendChild(textDiv);
+
+            if (emotion) {
+                const emotionDiv = document.createElement('div');
+                emotionDiv.className = 'emotion';
+                emotionDiv.textContent = `Emoción: ${emotion}`;
+                message.appendChild(emotionDiv);
+            }
+
+            container.appendChild(message);
+            container.scrollTop = container.scrollHeight;
+
+            return message;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function generateSingleBlip(emotion) {
+            const blipsEnabled = document.getElementById('enableBlips').checked;
+            if (!blipsEnabled) return null;
+
+            try {
+                const response = await fetch(`${BLIPS_URL}/blips/preview?char=a&emotion=${emotion || 'neutral'}`, {
+                    method: 'GET',
+                });
+
+                if (!response.ok) return null;
+
+                const data = await response.json();
+                const audioBytes = atob(data.audio_b64);
+                const audioArray = new Uint8Array(audioBytes.length);
+                for (let i = 0; i < audioBytes.length; i++) {
+                    audioArray[i] = audioBytes.charCodeAt(i);
+                }
+                const audioBlob = new Blob([audioArray], { type: 'audio/wav' });
+                return URL.createObjectURL(audioBlob);
+
+            } catch (error) {
+                console.error('Error generating blip:', error);
+                return null;
+            }
+        }
+
+        function playBlipSound(audioUrl) {
+            if (!audioUrl) return;
+
+            const audio = new Audio(audioUrl);
+            audio.volume = 0.7;
+            audio.play().catch(e => console.error('Error playing blip:', e));
+
+            blipsPlayed++;
+            document.getElementById('blipsPlayed').textContent = blipsPlayed;
+        }
+
+        async function typewriterEffect(element, text, emotion) {
+            const typewriterEnabled = document.getElementById('enableTypewriter').checked;
+            const speed = parseInt(document.getElementById('typewriterSpeed').value);
+
+            if (!typewriterEnabled) {
+                element.textContent = text;
+                return;
+            }
+
+            // Generate single blip for reuse (more efficient)
+            const blipUrl = await generateSingleBlip(emotion);
+
+            element.textContent = '';
+            element.classList.add('typing');
+
+            for (let i = 0; i < text.length; i++) {
+                element.textContent += text[i];
+
+                // Play blip for non-space characters
+                if (!text[i].match(/\s/)) {
+                    playBlipSound(blipUrl);
+                }
+
+                // Pause longer at punctuation
+                const delay = text[i].match(/[.,;:!?¡¿]/) ? speed * 3 : speed;
+                await sleep(delay);
+            }
+
+            element.classList.remove('typing');
+
+            // Clean up blob URL
+            if (blipUrl) {
+                URL.revokeObjectURL(blipUrl);
+            }
+        }
+
+        async function playBlips(text, emotion) {
+            const blipsEnabled = document.getElementById('enableBlips').checked;
+            if (!blipsEnabled) return;
+
+            try {
+                const response = await fetch(`${BLIPS_URL}/blips/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: text,
+                        emotion: emotion || 'neutral',
+                        speed: 20.0,
+                        volume: 0.7,
+                    }),
+                });
+
+                if (!response.ok) return;
+
+                const data = await response.json();
+                const audioBytes = atob(data.audio_b64);
+                const audioArray = new Uint8Array(audioBytes.length);
+                for (let i = 0; i < audioBytes.length; i++) {
+                    audioArray[i] = audioBytes.charCodeAt(i);
+                }
+                const audioBlob = new Blob([audioArray], { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+
+                const audio = new Audio(audioUrl);
+                audio.play();
+
+                blipsPlayed++;
+                document.getElementById('blipsPlayed').textContent = blipsPlayed;
+
+            } catch (error) {
+                console.error('Error playing blips:', error);
+            }
+        }
+
+        async function sendMessage(event) {
+            event.preventDefault();
+
+            const userMessage = document.getElementById('userMessage').value.trim();
+            if (!userMessage) return;
+
+            const button = document.querySelector('.send-button');
+            button.disabled = true;
+            button.textContent = 'Enviando...';
+
+            // Add user message to chat
+            addMessage('user', userMessage);
+            messagesSent++;
+            document.getElementById('messagesSent').textContent = messagesSent;
+
+            const startTime = Date.now();
+
+            try {
+                const response = await fetch(`${CONVERSATION_URL}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user: 'local',
+                        text: userMessage,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                const latency = Date.now() - startTime;
+
+                // Create assistant message container
+                const container = document.getElementById('chatContainer');
+
+                // Remove "no messages" placeholder if present
+                if (container.children.length === 1 && container.children[0].style.textAlign === 'center') {
+                    container.innerHTML = '';
+                }
+
+                const message = document.createElement('div');
+                message.className = 'message assistant';
+
+                const label = document.createElement('div');
+                label.className = 'label';
+                label.textContent = 'Casiopy';
+
+                const textDiv = document.createElement('div');
+                textDiv.className = 'text';
+
+                const emotionDiv = document.createElement('div');
+                emotionDiv.className = 'emotion';
+                emotionDiv.textContent = `Emoción: ${data.emotion}`;
+
+                message.appendChild(label);
+                message.appendChild(textDiv);
+                message.appendChild(emotionDiv);
+                container.appendChild(message);
+                container.scrollTop = container.scrollHeight;
+
+                messagesReceived++;
+                document.getElementById('messagesReceived').textContent = messagesReceived;
+                document.getElementById('lastLatency').textContent = `${latency}ms`;
+
+                // Use typewriter effect to display text with blips
+                await typewriterEffect(textDiv, data.reply, data.emotion);
+
+                // Clear input
+                document.getElementById('userMessage').value = '';
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showError('Error al enviar mensaje: ' + error.message + '\\n\\n¿Está el servicio conversation corriendo?');
+            } finally {
+                button.disabled = false;
+                button.textContent = '📤 Enviar Mensaje';
+            }
+        }
+
+        // Update speed slider value display
+        document.getElementById('typewriterSpeed').addEventListener('input', (e) => {
+            document.getElementById('speedValue').textContent = e.target.value;
+        });
+
+        // Initialize
+        document.getElementById('chatForm').addEventListener('submit', sendMessage);
+        checkServiceStatus();
+        setInterval(checkServiceStatus, 5000); // Re-check every 5 seconds
+    </script>
+</body>
+</html>

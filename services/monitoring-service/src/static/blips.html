@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTS Blips Testing - Dialogue Blips Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #E91E63;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .back-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background: #5568d3;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #E91E63;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+            cursor: pointer;
+        }
+
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #E91E63;
+        }
+
+        .generate-button {
+            background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .generate-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .generate-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .audio-player {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .audio-player.active {
+            display: block;
+        }
+
+        .audio-player audio {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .download-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .download-button:hover {
+            background: #45a049;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1976d2;
+        }
+
+        .info-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .info-box h3 {
+            color: #f57c00;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+        }
+
+        .info-box li {
+            margin-bottom: 5px;
+        }
+
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .range-container input[type="range"] {
+            flex: 1;
+        }
+
+        .range-value {
+            min-width: 60px;
+            text-align: center;
+            font-weight: bold;
+            color: #E91E63;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/monitoring" class="back-button">← Volver al Monitoring</a>
+            <h1>🎵 TTS Blips Testing</h1>
+            <p class="subtitle">Generador de Dialogue Blips con voz femenina</p>
+        </header>
+
+        <div class="info-box">
+            <h3>¿Qué son los Dialogue Blips?</h3>
+            <ul>
+                <li>Sonidos sintéticos cortos que se reproducen por cada letra mientras se muestra texto</li>
+                <li>Similar a Undertale, Animal Crossing o Celeste</li>
+                <li>Voz femenina optimizada para Casiopy (pitch: 220 Hz, formantes femeninos)</li>
+                <li>16 emociones diferentes con modulación de pitch y duración</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <form id="blipsForm">
+                <div class="form-group">
+                    <label for="text">Texto a Generar Blips:</label>
+                    <textarea
+                        id="text"
+                        placeholder="Escribe aquí el texto para generar blips..."
+                        required
+                    >¡Hola! Soy Casiopy y este es un test de blips.</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="emotion">Emoción:</label>
+                    <select id="emotion">
+                        <option value="neutral">Neutral (220 Hz)</option>
+                        <option value="happy">Happy (260 Hz - más agudo)</option>
+                        <option value="excited">Excited (280 Hz - muy agudo)</option>
+                        <option value="love">Love (240 Hz)</option>
+                        <option value="sad">Sad (180 Hz - más grave)</option>
+                        <option value="angry">Angry (240 Hz - tenso)</option>
+                        <option value="fear">Fear (250 Hz)</option>
+                        <option value="thinking">Thinking (210 Hz - pausado)</option>
+                        <option value="confused">Confused (230 Hz)</option>
+                        <option value="bored">Bored (190 Hz - monótono)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="speed">Velocidad (blips por segundo):</label>
+                    <div class="range-container">
+                        <input type="range" id="speed" min="5" max="40" value="20" step="1">
+                        <span class="range-value" id="speedValue">20</span>
+                    </div>
+                    <small style="color: #666;">10 = lento/pausado | 20 = normal | 30+ = rápido/emocionado</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="volume">Volumen:</label>
+                    <div class="range-container">
+                        <input type="range" id="volume" min="0" max="1" value="0.7" step="0.1">
+                        <span class="range-value" id="volumeValue">0.7</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="generate-button">🎵 Generar Blips</button>
+            </form>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="audio-player" id="audioPlayer">
+                <h3>Blips Generados:</h3>
+                <audio id="audioElement" controls></audio>
+                <button class="download-button" id="downloadButton">📥 Descargar WAV</button>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Tiempo de Generación</div>
+                        <div class="stat-value" id="generationTime">--</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Número de Blips</div>
+                        <div class="stat-value" id="numBlips">--</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Duración del Audio</div>
+                        <div class="stat-value" id="audioDuration">--</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Tamaño</div>
+                        <div class="stat-value" id="audioSize">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAudioBlob = null;
+
+        // Update range value displays
+        document.getElementById('speed').addEventListener('input', (e) => {
+            document.getElementById('speedValue').textContent = e.target.value;
+        });
+
+        document.getElementById('volume').addEventListener('input', (e) => {
+            document.getElementById('volumeValue').textContent = e.target.value;
+        });
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('active');
+            setTimeout(() => errorDiv.classList.remove('active'), 5000);
+        }
+
+        async function generateBlips(event) {
+            event.preventDefault();
+
+            const text = document.getElementById('text').value.trim();
+            const emotion = document.getElementById('emotion').value;
+            const speed = parseFloat(document.getElementById('speed').value);
+            const volume = parseFloat(document.getElementById('volume').value);
+            const button = document.querySelector('.generate-button');
+            const audioPlayer = document.getElementById('audioPlayer');
+
+            if (!text) {
+                showError('Por favor ingresa un texto');
+                return;
+            }
+
+            // Disable button and show loading
+            button.disabled = true;
+            button.textContent = 'Generando blips...';
+            audioPlayer.classList.remove('active');
+
+            const startTime = Date.now();
+
+            try {
+                const response = await fetch('http://localhost:8804/blips/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        emotion: emotion,
+                        speed: speed,
+                        volume: volume,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                }
+
+                const data = await response.json();
+                const generationTime = Date.now() - startTime;
+
+                // Decode base64 to blob
+                const audioBytes = atob(data.audio_b64);
+                const audioArray = new Uint8Array(audioBytes.length);
+                for (let i = 0; i < audioBytes.length; i++) {
+                    audioArray[i] = audioBytes.charCodeAt(i);
+                }
+                currentAudioBlob = new Blob([audioArray], { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(currentAudioBlob);
+
+                // Update player
+                const audioElement = document.getElementById('audioElement');
+                audioElement.src = audioUrl;
+                audioElement.play();
+
+                // Update stats
+                document.getElementById('generationTime').textContent = `${generationTime}ms`;
+                document.getElementById('numBlips').textContent = data.num_blips;
+                document.getElementById('audioDuration').textContent = `${data.duration_ms}ms`;
+                document.getElementById('audioSize').textContent = `${(currentAudioBlob.size / 1024).toFixed(1)} KB`;
+
+                // Show player
+                audioPlayer.classList.add('active');
+
+            } catch (error) {
+                console.error('Error generating blips:', error);
+                showError('Error al generar blips: ' + error.message + '\n\n¿Está el servicio tts-blips corriendo en el puerto 8804?');
+            } finally {
+                button.disabled = false;
+                button.textContent = '🎵 Generar Blips';
+            }
+        }
+
+        function downloadAudio() {
+            if (!currentAudioBlob) return;
+
+            const url = URL.createObjectURL(currentAudioBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            const emotion = document.getElementById('emotion').value;
+            a.download = `blips_${emotion}_${Date.now()}.wav`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize
+        document.getElementById('blipsForm').addEventListener('submit', generateBlips);
+        document.getElementById('downloadButton').addEventListener('click', downloadAudio);
+    </script>
+</body>
+</html>

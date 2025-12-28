@@ -7,14 +7,24 @@ from typing import Optional, Dict, Union
 import httpx
 import ormsgpack
 import yaml
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_exponential,
+    retry_if_exception_type,
+    before_sleep_log,
+    after_log
+)
+from logging_config import logger
 
 # Cargar .env tanto en services/tts/.env como en la raíz del repo
+# IMPORTANTE: override=True para que el .env tenga prioridad sobre variables del sistema
 try:
     from dotenv import load_dotenv, find_dotenv
-    load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env", override=False)
+    load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env", override=True)
     found = find_dotenv(filename=".env", usecwd=True)
     if found:
-        load_dotenv(found, override=False)
+        load_dotenv(found, override=True)
 except Exception:
     pass
 
@@ -74,7 +84,7 @@ class HTTPFishEngine:
     def __init__(
         self,
         base_url: Optional[str] = None,
-        timeout_s: float = 600.0,
+        timeout_s: float = 60.0,
         *,
         ref_wav: Optional[str] = None,
         ref_text: Optional[str] = None,
@@ -141,6 +151,7 @@ class HTTPFishEngine:
         return ref_payload
 
     def health(self) -> bool:
+        """Check if Fish Audio server is healthy."""
         try:
             with httpx.Client(timeout=2.0) as c:
                 for u in _health_urls(self.url):
@@ -152,17 +163,76 @@ class HTTPFishEngine:
                             j = {}
                         if j.get("status") == "ok" or j.get("ok") is True:
                             return True
-        except Exception:
+        except Exception as e:
+            logger.debug(f"Health check failed: {e}")
             return False
         return False
 
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        retry=retry_if_exception_type((httpx.RequestError, httpx.TimeoutException)),
+        before_sleep=before_sleep_log(logger, "WARNING"),
+        after=after_log(logger, "INFO")
+    )
     def synthesize(self, text: str, emotion: str = "neutral") -> bytes:
-        # Prefijo de emoción
-        marker = EMOTION_MARKER_MAP.get(emotion, EMOTION_MARKER_MAP.get("neutral", "neutral"))
-        prefixed = text if text.lstrip().startswith("(") else f"({marker}) {text}"
+        """Synthesize speech using Fish Audio API with automatic retries.
+
+        Args:
+            text: Text to synthesize
+            emotion: Emotion marker (default: neutral) - DEPRECATED with voice cloning
+
+        Returns:
+            WAV audio bytes
+
+        Raises:
+            HTTPFishServerUnavailable: If server is unreachable (after retries)
+            HTTPFishBadResponse: If server returns error or invalid data
+        """
+        # IMPORTANTE: Fish Speech 1.5 con clonación de voz NO usa tags de emoción textual
+        # El control emocional se hace mediante la referencia de audio
+        # Añadir tags como "(joyful)" hace que el modelo los lea literalmente
+        # Por lo tanto, usamos el texto sin modificar
+        final_text = text
+
+        logger.debug(
+            "Synthesizing audio",
+            text_length=len(text),
+            emotion=emotion,
+            using_emotion_tags=False,  # Deshabilitado para clonación de voz
+            url=self.url
+        )
+
+        # Calcular word count para optimización de parámetros
+        word_count = len(text.split())
+
+        # Optimización de parámetros según longitud de texto
+        # Para textos cortos (modo streamer): parámetros optimizados para velocidad
+        # Para textos largos (modo youtuber): parámetros balanceados
+        # Basado en análisis de Fish Speech upstream y benchmarks de rendimiento
+        if word_count <= 20:
+            # Modo streamer: optimizado para baja latencia (<4s para 10 palabras)
+            chunk_length = 150          # Óptimo para textos cortos
+            max_new_tokens = 512        # Reducido de 1024 para evitar generación excesiva
+            temperature = 0.65          # Reducido de 0.7 para mayor consistencia y velocidad
+            top_p = 0.7                 # Mantener exploración controlada
+        else:
+            # Modo youtuber: balanceado calidad/velocidad
+            chunk_length = 200          # Chunks más grandes para mejor contexto
+            max_new_tokens = 768        # Reducido de 1024 para mejor rendimiento
+            temperature = 0.7           # Reducido de 0.8 para menor variabilidad
+            top_p = 0.7                 # Unificado con modo streamer
 
         # Tu server espera 'text' (no 'input')
-        payload = {"text": prefixed, "format": "wav"}
+        payload = {
+            "text": final_text,  # Sin tags de emoción - Fish 1.5 usa clonación de voz
+            "format": "wav",
+            "chunk_length": chunk_length,
+            "max_new_tokens": max_new_tokens,
+            "temperature": temperature,
+            "top_p": top_p,
+            "repetition_penalty": 1.25,  # Incrementado de 1.1 para reducir bucles de generación
+        }
         # Añadir referencia/caché si hay
         payload.update(self._build_reference())
 
@@ -171,16 +241,30 @@ class HTTPFishEngine:
         try:
             r = httpx.post(self.url, content=ormsgpack.packb(payload), headers=headers, timeout=self.timeout)
         except httpx.RequestError as e:
+            logger.error(f"Fish Audio request error: {e}", url=self.url)
             raise HTTPFishServerUnavailable(f"No pude contactar el server {self.url}: {e}") from e
+        except httpx.TimeoutException as e:
+            logger.error(f"Fish Audio timeout: {e}", url=self.url, timeout=self.timeout)
+            raise HTTPFishServerUnavailable(f"Timeout al contactar {self.url} ({self.timeout}s): {e}") from e
 
         if r.status_code != 200:
             detail = ""
             try:
                 detail = r.json()
             except Exception:
-                detail = r.text
+                detail = r.text[:200]  # Limit detail length
+
+            logger.error(
+                "Fish Audio HTTP error",
+                status_code=r.status_code,
+                detail=detail,
+                url=self.url
+            )
             raise HTTPFishBadResponse(f"HTTP {r.status_code} en {self.url}. Detalle: {detail}")
 
         if not r.content:
+            logger.error("Fish Audio returned empty response", url=self.url)
             raise HTTPFishBadResponse("Respuesta vacía del server TTS")
+
+        logger.debug(f"Synthesis successful", audio_size=len(r.content))
         return r.content

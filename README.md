@@ -109,6 +109,18 @@ curl -X POST http://127.0.0.1:8810/synthesize \
 El backend Casiopy usa un modelo fine-tuneado de MeloTTS con la voz de la VTuber.
 El entrenamiento y los scripts de dataset están en [`finetune-melotts/`](finetune-melotts/) y [`dataset/`](dataset/).
 
+### Muestras de audio
+
+Ejemplos reales generados por cada backend (click → reproductor de GitHub):
+
+| Backend | Muestra |
+|---------|---------|
+| Casiopy ★ fine-tune (DEFAULT) | [🔊 casiopy.wav](samples/casiopy.wav) |
+| OpenVoice V2 | [🔊 openvoice.wav](samples/openvoice.wav) |
+| CosyVoice3 | [🔊 cosyvoice.wav](samples/cosyvoice.wav) |
+| Qwen3-TTS | [🔊 qwen3.wav](samples/qwen3.wav) |
+| Fish Speech | [🔊 fish.wav](samples/fish.wav) |
+
 ---
 
 ## Variables de entorno

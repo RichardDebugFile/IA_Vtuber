@@ -8,6 +8,8 @@ venv/
 **/*.pyc
 **/*.pyo
 **/*.pyd
+.pytest_cache/
+**/.pytest_cache/
 
 services/tts/models/
 services/tts/src/vtuber_tts.egg-info/

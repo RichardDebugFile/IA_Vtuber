@@ -285,15 +285,17 @@ class InteractionManager:
         UPDATE interactions
         SET
             quality_score = :quality_score,
-            is_training_ready = CASE
-                WHEN :quality_score >= 0.6 THEN true
-                ELSE false
-            END
+            is_training_ready = :is_ready
         WHERE id = :interaction_id
         """)
 
         await self.db.execute(
-            query, {"interaction_id": interaction_id, "quality_score": quality_score}
+            query,
+            {
+                "interaction_id": interaction_id,
+                "quality_score": quality_score,
+                "is_ready": quality_score >= 0.6,
+            },
         )
 
         logger.debug(

@@ -36,7 +36,7 @@ logger.add(
 app = FastAPI(
     title="Casiopy Memory Service",
     description="Sistema de memoria persistente y evolutiva para Casiopy VTuber AI",
-    version="1.0.0",
+    version="1.0.1",
 )
 
 # CORS

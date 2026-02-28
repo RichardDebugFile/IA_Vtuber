@@ -1,0 +1,4 @@
+# Tests de integración del memory-service
+# Instalar sobre el venv existente (que ya tiene httpx y demás)
+-r requirements-api.txt
+pytest>=8.0.0

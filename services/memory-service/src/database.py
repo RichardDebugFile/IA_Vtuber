@@ -4,6 +4,7 @@ Database connection and session management for Casiopy Memory Service
 
 import os
 from typing import AsyncGenerator
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base
 from dotenv import load_dotenv
@@ -16,7 +17,7 @@ load_dotenv()
 POSTGRES_USER = os.getenv("POSTGRES_USER", "memory_user")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "casiopy_memory_2024")
 POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5433")
+POSTGRES_PORT = os.getenv("POSTGRES_PORT", "8821")
 POSTGRES_DB = os.getenv("POSTGRES_DB", "casiopy_memory")
 
 # URL de conexión PostgreSQL (asyncpg para async support)
@@ -73,9 +74,9 @@ async def init_db():
         async with engine.begin() as conn:
             # Verificar que pgvector está instalado
             result = await conn.execute(
-                "SELECT COUNT(*) FROM pg_extension WHERE extname = 'vector'"
+                text("SELECT COUNT(*) FROM pg_extension WHERE extname = 'vector'")
             )
-            vector_installed = (await result.fetchone())[0] > 0
+            vector_installed = result.fetchone()[0] > 0
 
             if not vector_installed:
                 logger.warning("⚠️  Extensión pgvector no encontrada")
@@ -83,8 +84,8 @@ async def init_db():
                 logger.info("✅ Extensión pgvector detectada")
 
             # Verificar conexión
-            result = await conn.execute("SELECT version()")
-            pg_version = (await result.fetchone())[0]
+            result = await conn.execute(text("SELECT version()"))
+            pg_version = result.fetchone()[0]
             logger.info(f"✅ Conectado a PostgreSQL: {pg_version}")
 
         logger.info("✅ Base de datos inicializada correctamente")

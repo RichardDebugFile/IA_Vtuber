@@ -5,7 +5,7 @@ Gestión de la memoria inmutable de Casiopy (identidad, gustos, personalidad)
 
 from typing import List, Dict, Optional, Any
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, insert, and_
+from sqlalchemy import select, update, insert, and_, text
 from loguru import logger
 import json
 
@@ -32,11 +32,11 @@ class CoreMemoryManager:
         Returns:
             Lista de entradas de memoria
         """
-        query = """
+        query = text("""
         SELECT id, category, key, value, metadata, is_mutable, created_at, updated_at
         FROM core_memory
         ORDER BY category, key
-        """
+        """)
         result = await self.db.execute(query)
         rows = result.fetchall()
 
@@ -64,12 +64,12 @@ class CoreMemoryManager:
         Returns:
             Lista de entradas de esa categoría
         """
-        query = """
+        query = text("""
         SELECT id, category, key, value, metadata, is_mutable, created_at, updated_at
         FROM core_memory
         WHERE category = :category
         ORDER BY key
-        """
+        """)
         result = await self.db.execute(query, {"category": category})
         rows = result.fetchall()
 
@@ -98,11 +98,11 @@ class CoreMemoryManager:
         Returns:
             Entrada de memoria o None si no existe
         """
-        query = """
+        query = text("""
         SELECT id, category, key, value, metadata, is_mutable, created_at, updated_at
         FROM core_memory
         WHERE category = :category AND key = :key
-        """
+        """)
         result = await self.db.execute(query, {"category": category, "key": key})
         row = result.fetchone()
 
@@ -143,11 +143,11 @@ class CoreMemoryManager:
         """
         metadata = metadata or {}
 
-        query = """
+        query = text("""
         INSERT INTO core_memory (category, key, value, is_mutable, metadata)
         VALUES (:category, :key, :value, :is_mutable, :metadata)
         RETURNING id, category, key, value, metadata, is_mutable, created_at, updated_at
-        """
+        """)
 
         try:
             result = await self.db.execute(
@@ -205,12 +205,12 @@ class CoreMemoryManager:
             )
             return None
 
-        query = """
+        query = text("""
         UPDATE core_memory
         SET value = :new_value, updated_at = NOW()
         WHERE category = :category AND key = :key
         RETURNING id, category, key, value, metadata, is_mutable, created_at, updated_at
-        """
+        """)
 
         result = await self.db.execute(
             query, {"category": category, "key": key, "new_value": new_value}
@@ -255,10 +255,10 @@ class CoreMemoryManager:
             )
             return False
 
-        query = """
+        query = text("""
         DELETE FROM core_memory
         WHERE category = :category AND key = :key
-        """
+        """)
 
         await self.db.execute(query, {"category": category, "key": key})
         logger.info(f"✅ Core memory eliminada: {category}.{key}")
@@ -508,24 +508,24 @@ class CoreMemoryManager:
         Returns:
             Diccionario con estadísticas
         """
-        query = """
+        query = text("""
         SELECT
             COUNT(*) as total_entries,
             COUNT(DISTINCT category) as total_categories,
             COUNT(CASE WHEN is_mutable THEN 1 END) as mutable_entries,
             COUNT(CASE WHEN NOT is_mutable THEN 1 END) as immutable_entries
         FROM core_memory
-        """
+        """)
         result = await self.db.execute(query)
         row = result.fetchone()
 
         # Contar por categoría
-        category_query = """
+        category_query = text("""
         SELECT category, COUNT(*) as count
         FROM core_memory
         GROUP BY category
         ORDER BY count DESC
-        """
+        """)
         cat_result = await self.db.execute(category_query)
         categories = {row[0]: row[1] for row in cat_result.fetchall()}
 

@@ -255,6 +255,44 @@ SERVICES = {
         "description": "Fish Speech openaudio-s1-mini – Llama + VQ-GAN. RTF ~2.2. Uso: datasets / contenido."
     },
 
+    # ── Memoria (882x) ──────────────────────────────────────────────────────────
+    "memory-postgres": {
+        "name": "Memory DB (PostgreSQL + pgvector)",
+        "port": 8821,
+        "health_url": "http://127.0.0.1:8821",  # Puerto TCP postgres — siempre offline en HTTP; verificar via memory-api
+        "start_cmd": (
+            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\memory-service" && '
+            f'docker compose up -d memory-postgres"'
+        ),
+        "stop_cmd": (
+            f'cd /D "{PROJECT_ROOT}\\services\\memory-service" && docker compose stop memory-postgres'
+        ),
+        "cwd": str(PROJECT_ROOT),
+        "color": "#336791",
+        "manageable": True,
+        "managed_by": "docker",
+        "description": "PostgreSQL 16 + pgvector en Docker. Inicia primero este servicio. Estado real: ver memory-api /health."
+    },
+    "memory-api": {
+        "name": "Memory Service API",
+        "port": 8820,
+        "health_url": "http://127.0.0.1:8820/health",
+        "start_cmd": (
+            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\memory-service\\src" && '
+            f'"{PROJECT_ROOT}\\services\\memory-service\\venv\\Scripts\\python.exe" '
+            f'-m uvicorn main:app --host 127.0.0.1 --port 8820"'
+        ),
+        "stop_cmd": (
+            'powershell -Command "Get-NetTCPConnection -LocalPort 8820 -ErrorAction SilentlyContinue'
+            ' | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"'
+        ),
+        "cwd": str(PROJECT_ROOT),
+        "color": "#4DB6AC",
+        "manageable": True,
+        "requires": ["memory-postgres"],
+        "description": "API de memoria a largo plazo (FastAPI). Gestiona sesiones, interacciones y Core Memory de Casiopy."
+    },
+
     # ── Externos ────────────────────────────────────────────────────────────────
     "ollama": {
         "name": "Ollama (LLM Server)",

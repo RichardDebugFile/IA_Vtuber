@@ -5,6 +5,7 @@ Casiopy Memory Service - FastAPI Application
 import os
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from dotenv import load_dotenv
 from loguru import logger
@@ -140,7 +141,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
     """Health check detallado con verificación de DB"""
     try:
         # Verificar conexión a DB
-        await db.execute("SELECT 1")
+        await db.execute(text("SELECT 1"))
         return {
             "status": "healthy",
             "database": "connected",
@@ -164,6 +165,22 @@ async def get_all_core_memory(db: AsyncSession = Depends(get_db)):
     """Obtener toda la core memory"""
     manager = CoreMemoryManager(db)
     return await manager.get_all()
+
+
+# IMPORTANTE: rutas fijas ANTES de las parametrizadas para evitar conflictos de matching
+@app.get("/core-memory/system-prompt/generate", tags=["Core Memory"])
+async def generate_system_prompt(db: AsyncSession = Depends(get_db)):
+    """Generar system prompt completo a partir de core memory"""
+    manager = CoreMemoryManager(db)
+    prompt = await manager.generate_system_prompt()
+    return {"system_prompt": prompt}
+
+
+@app.get("/core-memory/stats", tags=["Core Memory"])
+async def get_core_memory_stats(db: AsyncSession = Depends(get_db)):
+    """Obtener estadísticas de core memory"""
+    manager = CoreMemoryManager(db)
+    return await manager.get_stats()
 
 
 @app.get("/core-memory/{category}", tags=["Core Memory"])
@@ -231,21 +248,6 @@ async def delete_core_memory_entry(
             detail="Cannot delete: entry not found or is immutable",
         )
     return {"status": "deleted", "category": category, "key": key}
-
-
-@app.get("/core-memory/system-prompt/generate", tags=["Core Memory"])
-async def generate_system_prompt(db: AsyncSession = Depends(get_db)):
-    """Generar system prompt completo a partir de core memory"""
-    manager = CoreMemoryManager(db)
-    prompt = await manager.generate_system_prompt()
-    return {"system_prompt": prompt}
-
-
-@app.get("/core-memory/stats", tags=["Core Memory"])
-async def get_core_memory_stats(db: AsyncSession = Depends(get_db)):
-    """Obtener estadísticas de core memory"""
-    manager = CoreMemoryManager(db)
-    return await manager.get_stats()
 
 
 # ============================================================

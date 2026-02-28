@@ -4,6 +4,7 @@ Interaction Manager - Gestión de interacciones y conversaciones
 
 from typing import List, Dict, Optional, Any
 from datetime import datetime, timedelta
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from loguru import logger
 import uuid
@@ -32,11 +33,11 @@ class InteractionManager:
         """
         session_id = str(uuid.uuid4())
 
-        query = """
+        query = text("""
         INSERT INTO sessions (id, user_id, started_at, opt_out_training)
         VALUES (:session_id, :user_id, NOW(), :opt_out_training)
         RETURNING id
-        """
+        """)
 
         result = await self.db.execute(
             query,
@@ -61,14 +62,14 @@ class InteractionManager:
             True si se finalizó correctamente
         """
         # Calcular estadísticas de la sesión
-        stats_query = """
+        stats_query = text("""
         UPDATE sessions
         SET
             ended_at = NOW(),
             total_turns = (SELECT COUNT(*) FROM interactions WHERE session_id = :session_id),
             avg_quality_score = (SELECT AVG(quality_score) FROM interactions WHERE session_id = :session_id)
         WHERE id = :session_id
-        """
+        """)
 
         await self.db.execute(stats_query, {"session_id": session_id})
         logger.info(f"✅ Sesión finalizada: {session_id}")
@@ -124,7 +125,7 @@ class InteractionManager:
         if output_embedding:
             output_emb_str = "[" + ",".join(map(str, output_embedding)) + "]"
 
-        query = """
+        query = text("""
         INSERT INTO interactions (
             id, session_id, user_id, timestamp,
             input_text, input_method, input_emotion,
@@ -141,7 +142,7 @@ class InteractionManager:
             :input_embedding, :output_embedding
         )
         RETURNING id
-        """
+        """)
 
         try:
             await self.db.execute(
@@ -185,7 +186,7 @@ class InteractionManager:
         Returns:
             Lista de interacciones
         """
-        query = """
+        query = text("""
         SELECT
             id, session_id, user_id, timestamp,
             input_text, input_emotion, input_method,
@@ -196,7 +197,7 @@ class InteractionManager:
         WHERE session_id = :session_id
         ORDER BY timestamp ASC
         LIMIT :limit
-        """
+        """)
 
         result = await self.db.execute(query, {"session_id": session_id, "limit": limit})
         rows = result.fetchall()
@@ -236,17 +237,17 @@ class InteractionManager:
         Returns:
             Lista de interacciones
         """
-        query = """
+        query = text("""
         SELECT
             id, session_id, user_id, timestamp,
             input_text, input_emotion,
             output_text, output_emotion,
             quality_score, is_training_ready
         FROM interactions
-        WHERE timestamp >= NOW() - INTERVAL ':days days'
+        WHERE timestamp >= NOW() - (:days * INTERVAL '1 day')
         ORDER BY timestamp DESC
         LIMIT :limit
-        """
+        """)
 
         result = await self.db.execute(query, {"days": days, "limit": limit})
         rows = result.fetchall()
@@ -280,7 +281,7 @@ class InteractionManager:
         Returns:
             True si se marcó correctamente
         """
-        query = """
+        query = text("""
         UPDATE interactions
         SET
             quality_score = :quality_score,
@@ -289,7 +290,7 @@ class InteractionManager:
                 ELSE false
             END
         WHERE id = :interaction_id
-        """
+        """)
 
         await self.db.execute(
             query, {"interaction_id": interaction_id, "quality_score": quality_score}
@@ -313,7 +314,7 @@ class InteractionManager:
         Returns:
             Lista de interacciones listas para exportar
         """
-        query = """
+        query = text("""
         SELECT
             i.id, i.session_id, i.timestamp,
             i.input_text, i.input_emotion,
@@ -328,7 +329,7 @@ class InteractionManager:
           AND i.training_export_id IS NULL
         ORDER BY i.timestamp DESC
         LIMIT :limit
-        """
+        """)
 
         result = await self.db.execute(
             query, {"min_quality": min_quality, "limit": limit}
@@ -373,14 +374,14 @@ class InteractionManager:
         """
         feedback_id = str(uuid.uuid4())
 
-        query = """
+        query = text("""
         INSERT INTO feedback (
             id, interaction_id, feedback_type, user_reaction, corrected_response, timestamp
         ) VALUES (
             :feedback_id, :interaction_id, :feedback_type, :user_reaction, :corrected_response, NOW()
         )
         RETURNING id
-        """
+        """)
 
         await self.db.execute(
             query,
@@ -403,7 +404,7 @@ class InteractionManager:
         Returns:
             Diccionario con estadísticas
         """
-        query = """
+        query = text("""
         SELECT
             COUNT(*) as total_interactions,
             COUNT(DISTINCT session_id) as total_sessions,
@@ -413,17 +414,17 @@ class InteractionManager:
             MIN(timestamp) as first_interaction,
             MAX(timestamp) as last_interaction
         FROM interactions
-        """
+        """)
 
         result = await self.db.execute(query)
         row = result.fetchone()
 
         # Stats de últimos 7 días
-        recent_query = """
+        recent_query = text("""
         SELECT COUNT(*) as count_7d
         FROM interactions
         WHERE timestamp >= NOW() - INTERVAL '7 days'
-        """
+        """)
         recent_result = await self.db.execute(recent_query)
         recent_row = recent_result.fetchone()
 

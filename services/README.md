@@ -18,6 +18,7 @@ Directorio raíz de todos los microservicios del proyecto. Cada carpeta es un se
 | **8805** | TTS Blips | `tts-blips/` |
 | **8806** | TTS Service (legacy) | `tts/` |
 | **8810** | TTS Router | `tts-router/` |
+| **8815** | TTS Casiopy (fine-tune) ★ DEFAULT | `tts-casiopy/` |
 | **8811** | TTS OpenVoice V2 | `tts-openvoice/` |
 | **8812** | TTS CosyVoice3 | `tts-cosyvoice/` |
 | **8813** | TTS Qwen3-TTS | `tts-qwen3/` |
@@ -53,6 +54,7 @@ Directorio raíz de todos los microservicios del proyecto. Cada carpeta es un se
 | Carpeta | Puerto | Descripción |
 |---------|--------|-------------|
 | `tts-router/` | 8810 | **Punto de entrada único para síntesis de voz.** Gestiona el ciclo de vida de cada backend TTS y enruta las peticiones al backend activo. |
+| `tts-casiopy/` | 8815 | Backend Casiopy ★ **DEFAULT** — Fine-tune MeloTTS con la voz propia de la VTuber. RTF ~0.8. |
 | `tts-openvoice/` | 8811 | Backend OpenVoice V2 — RTF ~1.44. Recomendado para respuestas en tiempo real (streaming rápido). |
 | `tts-cosyvoice/` | 8812 | Backend CosyVoice3 — RTF ~3.76. Mayor calidad de clonación de voz (streaming ocasional). |
 | `tts-qwen3/` | 8813 | Backend Qwen3-TTS — RTF ~7.74. Para creación de contenido/datasets. Más lento. |

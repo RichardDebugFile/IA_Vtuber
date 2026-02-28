@@ -1,0 +1,3602 @@
+=== REPORTE DE FRASES DUPLICADAS EN METADATA.CSV ===
+Total de frases Ãºnicas: 1,472
+Total de frases duplicadas: 528
+Total de entradas en dataset: 2,000
+
+IMPACTO: El 26.4% del dataset contiene frases duplicadas, lo cual reduce
+significativamente la diversidad necesaria para un buen entrenamiento de voz.
+
+RECOMENDACIÃ“N: Se deben reemplazar TODAS las frases duplicadas con frases nuevas
+y Ãºnicas para maximizar la efectividad del dataset de entrenamiento.
+
+A continuaciÃ³n se listan TODAS las frases duplicadas encontradas, ordenadas
+alfabÃ©ticamente, con sus ubicaciones exactas en metadata.csv:
+
+================================================================================
+
+
+=== FRASES DUPLICADAS ENCONTRADAS: 528 ===
+
+Frase: "A veces es difícil saber qué es lo correcto, todo depende del contexto específico"
+Aparece 4 veces en:
+  - Linea 154: casiopy_0154
+  - Linea 1212: casiopy_1212
+  - Linea 1390: casiopy_1390
+  - Linea 1456: casiopy_1456
+
+Frase: "Abre la ventana un poco para que entre aire fresco y se ventile bien esta habitación"
+Aparece 4 veces en:
+  - Linea 753: casiopy_0753
+  - Linea 1399: casiopy_1399
+  - Linea 1467: casiopy_1467
+  - Linea 1586: casiopy_1586
+
+Frase: "Adelante, puedes hacerlo sin ningún problema, tienes mi completo apoyo"
+Aparece 3 veces en:
+  - Linea 824: casiopy_0824
+  - Linea 1924: casiopy_1924
+  - Linea 1988: casiopy_1988
+
+Frase: "Advierte sobre los riesgos potenciales que has identificado para que todos estemos preparados y alertas"
+Aparece 4 veces en:
+  - Linea 306: casiopy_0306
+  - Linea 450: casiopy_0450
+  - Linea 614: casiopy_0614
+  - Linea 1604: casiopy_1604
+
+Frase: "Afirmativo, recibí el mensaje y voy a actuar según las instrucciones recibidas"
+Aparece 4 veces en:
+  - Linea 302: casiopy_0302
+  - Linea 485: casiopy_0485
+  - Linea 1664: casiopy_1664
+  - Linea 1724: casiopy_1724
+
+Frase: "Agrega esta información nueva al documento que estamos preparando para la presentación de mañana temprano"
+Aparece 4 veces en:
+  - Linea 653: casiopy_0653
+  - Linea 1004: casiopy_1004
+  - Linea 1190: casiopy_1190
+  - Linea 1210: casiopy_1210
+
+Frase: "Ahora entiendo lo que quisiste decir, al principio no lo había captado bien"
+Aparece 4 veces en:
+  - Linea 163: casiopy_0163
+  - Linea 603: casiopy_0603
+  - Linea 1141: casiopy_1141
+  - Linea 1992: casiopy_1992
+
+Frase: "Ajusta los parámetros hasta encontrar la configuración óptima que nos dé los mejores resultados posibles"
+Aparece 4 veces en:
+  - Linea 1: casiopy_0001
+  - Linea 811: casiopy_0811
+  - Linea 1237: casiopy_1237
+  - Linea 1913: casiopy_1913
+
+Frase: "Alerta a todos sobre el problema que has detectado para que podamos tomar medidas correctivas inmediatamente"
+Aparece 3 veces en:
+  - Linea 500: casiopy_0500
+  - Linea 504: casiopy_0504
+  - Linea 812: casiopy_0812
+
+Frase: "Anota esto en tu cuaderno para que no se te olvide más tarde cuando lo necesites recordar"
+Aparece 4 veces en:
+  - Linea 179: casiopy_0179
+  - Linea 571: casiopy_0571
+  - Linea 1078: casiopy_1078
+  - Linea 1288: casiopy_1288
+
+Frase: "Anotado correctamente, no voy a olvidarme de hacer eso que mencionaste"
+Aparece 4 veces en:
+  - Linea 15: casiopy_0015
+  - Linea 226: casiopy_0226
+  - Linea 583: casiopy_0583
+  - Linea 1310: casiopy_1310
+
+Frase: "Apoya a tus compañeros cuando estén pasando por dificultades porque mañana podrías necesitar su ayuda tú"
+Aparece 4 veces en:
+  - Linea 408: casiopy_0408
+  - Linea 757: casiopy_0757
+  - Linea 1384: casiopy_1384
+  - Linea 1923: casiopy_1923
+
+Frase: "Apúrate un poco porque se nos está haciendo tarde y tenemos que llegar a tiempo al lugar"
+Aparece 4 veces en:
+  - Linea 247: casiopy_0247
+  - Linea 995: casiopy_0995
+  - Linea 1217: casiopy_1217
+  - Linea 1549: casiopy_1549
+
+Frase: "Arregla esto que no está funcionando correctamente antes de que cause problemas más serios en el futuro"
+Aparece 4 veces en:
+  - Linea 12: casiopy_0012
+  - Linea 1091: casiopy_1091
+  - Linea 1305: casiopy_1305
+  - Linea 1976: casiopy_1976
+
+Frase: "Asiste a todos los que requieran tu apoyo porque eso fortalece al equipo en su conjunto completo"
+Aparece 4 veces en:
+  - Linea 908: casiopy_0908
+  - Linea 1370: casiopy_1370
+  - Linea 1493: casiopy_1493
+  - Linea 1769: casiopy_1769
+
+Frase: "Avisa con tiempo suficiente si algo cambia para que todos puedan ajustar sus planes según sea necesario"
+Aparece 4 veces en:
+  - Linea 90: casiopy_0090
+  - Linea 1044: casiopy_1044
+  - Linea 1077: casiopy_1077
+  - Linea 1490: casiopy_1490
+
+Frase: "Ayuda a los demás cuando lo necesiten porque todos nos beneficiamos cuando trabajamos juntos como equipo"
+Aparece 4 veces en:
+  - Linea 800: casiopy_0800
+  - Linea 1233: casiopy_1233
+  - Linea 1842: casiopy_1842
+  - Linea 1944: casiopy_1944
+
+Frase: "Añade estos elementos a la lista de cosas por hacer para no olvidar ninguna tarea pendiente importante"
+Aparece 4 veces en:
+  - Linea 284: casiopy_0284
+  - Linea 377: casiopy_0377
+  - Linea 573: casiopy_0573
+  - Linea 1650: casiopy_1650
+
+Frase: "Baja el volumen por favor, está demasiado alto y me está molestando mucho el ruido"
+Aparece 4 veces en:
+  - Linea 712: casiopy_0712
+  - Linea 1029: casiopy_1029
+  - Linea 1114: casiopy_1114
+  - Linea 1918: casiopy_1918
+
+Frase: "Borra toda la información anterior que ya no es relevante ni necesaria para nuestros propósitos actuales"
+Aparece 3 veces en:
+  - Linea 101: casiopy_0101
+  - Linea 552: casiopy_0552
+  - Linea 1293: casiopy_1293
+
+Frase: "Buenas tardes, ¿cómo les ha ido hasta ahora en el día?"
+Aparece 4 veces en:
+  - Linea 156: casiopy_0156
+  - Linea 1018: casiopy_1018
+  - Linea 1112: casiopy_1112
+  - Linea 1214: casiopy_1214
+
+Frase: "Buenas, ¿listo? Vamos a empezar con todo lo que tenemos preparado"
+Aparece 4 veces en:
+  - Linea 84: casiopy_0084
+  - Linea 788: casiopy_0788
+  - Linea 860: casiopy_0860
+  - Linea 1759: casiopy_1759
+
+Frase: "Buenas, ¿qué me cuentas de interesante? Estoy lista para escucharte"
+Aparece 4 veces en:
+  - Linea 630: casiopy_0630
+  - Linea 707: casiopy_0707
+  - Linea 971: casiopy_0971
+  - Linea 1966: casiopy_1966
+
+Frase: "Buenos días a todos, espero que hayan descansado muy bien"
+Aparece 4 veces en:
+  - Linea 688: casiopy_0688
+  - Linea 1123: casiopy_1123
+  - Linea 1503: casiopy_1503
+  - Linea 1693: casiopy_1693
+
+Frase: "Buenos días familia, espero que todos en casa se encuentren muy bien"
+Aparece 4 veces en:
+  - Linea 334: casiopy_0334
+  - Linea 620: casiopy_0620
+  - Linea 705: casiopy_0705
+  - Linea 926: casiopy_0926
+
+Frase: "Buenos días mundo, espero que este sea un día lleno de cosas positivas"
+Aparece 4 veces en:
+  - Linea 622: casiopy_0622
+  - Linea 756: casiopy_0756
+  - Linea 1265: casiopy_1265
+  - Linea 1727: casiopy_1727
+
+Frase: "Buenos días, espero que todo esté marchando muy bien para ti"
+Aparece 4 veces en:
+  - Linea 135: casiopy_0135
+  - Linea 1404: casiopy_1404
+  - Linea 1538: casiopy_1538
+  - Linea 1605: casiopy_1605
+
+Frase: "Buenos días, ¿cómo va todo? Espero que estés teniendo un excelente comienzo"
+Aparece 3 veces en:
+  - Linea 693: casiopy_0693
+  - Linea 1488: casiopy_1488
+  - Linea 1694: casiopy_1694
+
+Frase: "Buenos días, ¿dormiste bien anoche? Espero que hayas descansado lo suficiente"
+Aparece 4 veces en:
+  - Linea 1033: casiopy_1033
+  - Linea 1191: casiopy_1191
+  - Linea 1835: casiopy_1835
+  - Linea 1883: casiopy_1883
+
+Frase: "Buenos días, ¿ya desayunaste? Es la comida más importante del día"
+Aparece 4 veces en:
+  - Linea 191: casiopy_0191
+  - Linea 521: casiopy_0521
+  - Linea 1255: casiopy_1255
+  - Linea 1950: casiopy_1950
+
+Frase: "Cambia la configuración según las nuevas especificaciones que recibimos del departamento técnico esta mañana"
+Aparece 4 veces en:
+  - Linea 181: casiopy_0181
+  - Linea 424: casiopy_0424
+  - Linea 587: casiopy_0587
+  - Linea 1208: casiopy_1208
+
+Frase: "Cierra la puerta cuando salgas para que no entre el frío del exterior a la casa"
+Aparece 3 veces en:
+  - Linea 157: casiopy_0157
+  - Linea 456: casiopy_0456
+  - Linea 1034: casiopy_1034
+
+Frase: "Claro está que eso es así, no hay ninguna forma de negarlo o cuestionarlo"
+Aparece 4 veces en:
+  - Linea 436: casiopy_0436
+  - Linea 878: casiopy_0878
+  - Linea 1594: casiopy_1594
+  - Linea 1658: casiopy_1658
+
+Frase: "Claro que no es buena idea, sería mejor buscar una solución diferente"
+Aparece 4 veces en:
+  - Linea 536: casiopy_0536
+  - Linea 854: casiopy_0854
+  - Linea 1300: casiopy_1300
+  - Linea 1957: casiopy_1957
+
+Frase: "Claro, con mucho gusto te voy a ayudar con lo que necesites en este momento"
+Aparece 4 veces en:
+  - Linea 215: casiopy_0215
+  - Linea 1259: casiopy_1259
+  - Linea 1838: casiopy_1838
+  - Linea 1919: casiopy_1919
+
+Frase: "Colabora activamente en este proyecto porque tu aporte es muy valioso e importante para todos nosotros"
+Aparece 4 veces en:
+  - Linea 619: casiopy_0619
+  - Linea 665: casiopy_0665
+  - Linea 785: casiopy_0785
+  - Linea 1619: casiopy_1619
+
+Frase: "Como quieras, a mí me da lo mismo cualquiera de las dos opciones"
+Aparece 3 veces en:
+  - Linea 857: casiopy_0857
+  - Linea 1334: casiopy_1334
+  - Linea 1962: casiopy_1962
+
+Frase: "Como tú digas, confío completamente en tu criterio y experiencia al respecto"
+Aparece 4 veces en:
+  - Linea 748: casiopy_0748
+  - Linea 1211: casiopy_1211
+  - Linea 1335: casiopy_1335
+  - Linea 1485: casiopy_1485
+
+Frase: "Comprueba eso antes de continuar para evitar errores que podrían ser costosos de corregir después"
+Aparece 4 veces en:
+  - Linea 105: casiopy_0105
+  - Linea 749: casiopy_0749
+  - Linea 1317: casiopy_1317
+  - Linea 1409: casiopy_1409
+
+Frase: "Comprueba que todo esté en orden antes de dar el siguiente paso en este proceso tan importante"
+Aparece 4 veces en:
+  - Linea 188: casiopy_0188
+  - Linea 205: casiopy_0205
+  - Linea 1238: casiopy_1238
+  - Linea 1778: casiopy_1778
+
+Frase: "Comunica claramente tus ideas para que todos puedan entender exactamente lo que quieres expresar ahora"
+Aparece 4 veces en:
+  - Linea 397: casiopy_0397
+  - Linea 683: casiopy_0683
+  - Linea 1135: casiopy_1135
+  - Linea 1188: casiopy_1188
+
+Frase: "Confirma que recibiste el mensaje para que pueda estar seguro de que la información llegó correctamente"
+Aparece 3 veces en:
+  - Linea 1100: casiopy_1100
+  - Linea 1280: casiopy_1280
+  - Linea 1717: casiopy_1717
+
+Frase: "Confirmado, puedes estar seguro de que voy a cumplir con lo que acordamos"
+Aparece 4 veces en:
+  - Linea 502: casiopy_0502
+  - Linea 717: casiopy_0717
+  - Linea 1117: casiopy_1117
+  - Linea 1189: casiopy_1189
+
+Frase: "Continúa con lo que estabas haciendo antes, no dejes de trabajar en eso todavía"
+Aparece 4 veces en:
+  - Linea 1127: casiopy_1127
+  - Linea 1155: casiopy_1155
+  - Linea 1710: casiopy_1710
+  - Linea 1715: casiopy_1715
+
+Frase: "Continúa intentando hasta que lo logres porque sé que tienes la capacidad para hacerlo bien"
+Aparece 4 veces en:
+  - Linea 396: casiopy_0396
+  - Linea 647: casiopy_0647
+  - Linea 661: casiopy_0661
+  - Linea 1289: casiopy_1289
+
+Frase: "Contrólate y no dejes que las emociones nublen tu juicio en este momento tan crítico e importante"
+Aparece 4 veces en:
+  - Linea 297: casiopy_0297
+  - Linea 315: casiopy_0315
+  - Linea 1159: casiopy_1159
+  - Linea 1632: casiopy_1632
+
+Frase: "Coopera con el equipo porque juntos podemos lograr mucho más de lo que podríamos lograr separados"
+Aparece 4 veces en:
+  - Linea 893: casiopy_0893
+  - Linea 1617: casiopy_1617
+  - Linea 1876: casiopy_1876
+  - Linea 1904: casiopy_1904
+
+Frase: "Correcto, has dado justo en el clavo con tu observación tan precisa"
+Aparece 4 veces en:
+  - Linea 1396: casiopy_1396
+  - Linea 1527: casiopy_1527
+  - Linea 1684: casiopy_1684
+  - Linea 1761: casiopy_1761
+
+Frase: "Creo que ya es tarde para hacer eso, deberíamos dejarlo para mañana cuando tengamos más tiempo"
+Aparece 4 veces en:
+  - Linea 298: casiopy_0298
+  - Linea 1174: casiopy_1174
+  - Linea 1402: casiopy_1402
+  - Linea 1510: casiopy_1510
+
+Frase: "Cuando quieras podemos empezar con esto, estoy lista para comenzar ya mismo"
+Aparece 3 veces en:
+  - Linea 590: casiopy_0590
+  - Linea 710: casiopy_0710
+  - Linea 1851: casiopy_1851
+
+Frase: "Cuenta conmigo para lo que necesites, estoy disponible cuando me requieras"
+Aparece 4 veces en:
+  - Linea 453: casiopy_0453
+  - Linea 828: casiopy_0828
+  - Linea 932: casiopy_0932
+  - Linea 1244: casiopy_1244
+
+Frase: "Cuenta la leyenda que hace mucho tiempo existía un tesoro escondido en lo profundo del bosque"
+Aparece 4 veces en:
+  - Linea 400: casiopy_0400
+  - Linea 700: casiopy_0700
+  - Linea 1438: casiopy_1438
+  - Linea 1481: casiopy_1481
+
+Frase: "Cuida bien de esto porque es muy valioso y no queremos que se dañe o se pierda por descuido"
+Aparece 4 veces en:
+  - Linea 288: casiopy_0288
+  - Linea 1226: casiopy_1226
+  - Linea 1600: casiopy_1600
+  - Linea 1830: casiopy_1830
+
+Frase: "Cuidado con eso que está muy caliente y te puedes quemar si lo tocas sin protección adecuada"
+Aparece 3 veces en:
+  - Linea 1145: casiopy_1145
+  - Linea 1461: casiopy_1461
+  - Linea 1491: casiopy_1491
+
+Frase: "Cállate un momento para que pueda escuchar bien lo que están diciendo las otras personas presentes"
+Aparece 4 veces en:
+  - Linea 357: casiopy_0357
+  - Linea 427: casiopy_0427
+  - Linea 667: casiopy_0667
+  - Linea 1401: casiopy_1401
+
+Frase: "Cálmate y trata de ver las cosas con más perspectiva para encontrar la mejor solución posible"
+Aparece 4 veces en:
+  - Linea 544: casiopy_0544
+  - Linea 1395: casiopy_1395
+  - Linea 1688: casiopy_1688
+  - Linea 1933: casiopy_1933
+
+Frase: "Dame tiempo para poder pensarlo bien y te daré una respuesta más elaborada después"
+Aparece 4 veces en:
+  - Linea 523: casiopy_0523
+  - Linea 761: casiopy_0761
+  - Linea 1081: casiopy_1081
+  - Linea 1303: casiopy_1303
+
+Frase: "Dame un segundo para terminar esto que estoy haciendo y luego te atiendo sin problema"
+Aparece 3 veces en:
+  - Linea 213: casiopy_0213
+  - Linea 864: casiopy_0864
+  - Linea 869: casiopy_0869
+
+Frase: "De acuerdo, voy a hacer exactamente lo que me acabas de pedir ahora mismo"
+Aparece 4 veces en:
+  - Linea 736: casiopy_0736
+  - Linea 1056: casiopy_1056
+  - Linea 1245: casiopy_1245
+  - Linea 1416: casiopy_1416
+
+Frase: "De ninguna manera voy a hacer eso, va completamente en contra de mis principios"
+Aparece 4 veces en:
+  - Linea 1032: casiopy_1032
+  - Linea 1065: casiopy_1065
+  - Linea 1070: casiopy_1070
+  - Linea 1291: casiopy_1291
+
+Frase: "Detente ahí mismo y no hagas nada más hasta que yo te lo indique expresamente"
+Aparece 3 veces en:
+  - Linea 301: casiopy_0301
+  - Linea 931: casiopy_0931
+  - Linea 1161: casiopy_1161
+
+Frase: "Di algo porque tu silencio me está preocupando y necesito saber qué estás pensando en este momento"
+Aparece 4 veces en:
+  - Linea 1046: casiopy_1046
+  - Linea 1274: casiopy_1274
+  - Linea 1312: casiopy_1312
+  - Linea 1737: casiopy_1737
+
+Frase: "Déjame pensar un momento para poder darte una respuesta más completa y precisa"
+Aparece 4 veces en:
+  - Linea 739: casiopy_0739
+  - Linea 912: casiopy_0912
+  - Linea 1107: casiopy_1107
+  - Linea 1434: casiopy_1434
+
+Frase: "Déjame pensarlo un poco más antes de darte una respuesta definitiva sobre eso que propones"
+Aparece 4 veces en:
+  - Linea 484: casiopy_0484
+  - Linea 778: casiopy_0778
+  - Linea 1239: casiopy_1239
+  - Linea 1618: casiopy_1618
+
+Frase: "Déjame ver eso que tienes ahí en tus manos para poder examinarlo con más detalle"
+Aparece 3 veces en:
+  - Linea 884: casiopy_0884
+  - Linea 905: casiopy_0905
+  - Linea 1236: casiopy_1236
+
+Frase: "Déjame verificar eso para asegurarme de que la información sea completamente correcta"
+Aparece 4 veces en:
+  - Linea 953: casiopy_0953
+  - Linea 1376: casiopy_1376
+  - Linea 1669: casiopy_1669
+  - Linea 1947: casiopy_1947
+
+Frase: "Efectivamente es así, no hay ninguna duda de que ese es el caso real"
+Aparece 4 veces en:
+  - Linea 34: casiopy_0034
+  - Linea 431: casiopy_0431
+  - Linea 1514: casiopy_1514
+  - Linea 1909: casiopy_1909
+
+Frase: "El alba despuntaba en el este anunciando el comienzo de un nuevo día lleno de promesas"
+Aparece 3 veces en:
+  - Linea 36: casiopy_0036
+  - Linea 1199: casiopy_1199
+  - Linea 1577: casiopy_1577
+
+Frase: "El amanecer traía nuevas posibilidades y la promesa de un día mejor que el anterior"
+Aparece 4 veces en:
+  - Linea 11: casiopy_0011
+  - Linea 497: casiopy_0497
+  - Linea 844: casiopy_0844
+  - Linea 846: casiopy_0846
+
+Frase: "El camino se extendía ante ellos largo y sinuoso perdiéndose en la distancia del horizonte"
+Aparece 4 veces en:
+  - Linea 680: casiopy_0680
+  - Linea 851: casiopy_0851
+  - Linea 1869: casiopy_1869
+  - Linea 1958: casiopy_1958
+
+Frase: "El clima está muy agradable hoy, perfecto para salir a dar un paseo por el parque"
+Aparece 4 veces en:
+  - Linea 489: casiopy_0489
+  - Linea 755: casiopy_0755
+  - Linea 805: casiopy_0805
+  - Linea 1721: casiopy_1721
+
+Frase: "El conocimiento ancestral se transmitía de generación en generación preservando la sabiduría antigua"
+Aparece 4 veces en:
+  - Linea 311: casiopy_0311
+  - Linea 621: casiopy_0621
+  - Linea 1132: casiopy_1132
+  - Linea 1496: casiopy_1496
+
+Frase: "El destino de todos estaba a punto de cambiar de formas que nadie podía predecir todavía"
+Aparece 4 veces en:
+  - Linea 465: casiopy_0465
+  - Linea 650: casiopy_0650
+  - Linea 1379: casiopy_1379
+  - Linea 1815: casiopy_1815
+
+Frase: "El eco resonaba en las paredes vacías del antiguo castillo abandonado hace siglos"
+Aparece 4 veces en:
+  - Linea 491: casiopy_0491
+  - Linea 549: casiopy_0549
+  - Linea 606: casiopy_0606
+  - Linea 1937: casiopy_1937
+
+Frase: "El fuego ardía en la chimenea proporcionando calor y confort en esa noche fría de invierno"
+Aparece 4 veces en:
+  - Linea 33: casiopy_0033
+  - Linea 1522: casiopy_1522
+  - Linea 1557: casiopy_1557
+  - Linea 1792: casiopy_1792
+
+Frase: "El futuro era incierto pero prometedor lleno de posibilidades infinitas esperando ser exploradas"
+Aparece 4 veces en:
+  - Linea 55: casiopy_0055
+  - Linea 184: casiopy_0184
+  - Linea 648: casiopy_0648
+  - Linea 1663: casiopy_1663
+
+Frase: "El horizonte se teñía de colores mientras el sol se despedía por ese día de verano"
+Aparece 4 veces en:
+  - Linea 388: casiopy_0388
+  - Linea 625: casiopy_0625
+  - Linea 745: casiopy_0745
+  - Linea 830: casiopy_0830
+
+Frase: "El mar estaba en calma reflejando perfectamente el cielo azul sin una sola nube a la vista"
+Aparece 3 veces en:
+  - Linea 152: casiopy_0152
+  - Linea 1430: casiopy_1430
+  - Linea 1558: casiopy_1558
+
+Frase: "El momento decisivo había llegado finalmente y era hora de tomar la decisión más importante"
+Aparece 3 veces en:
+  - Linea 758: casiopy_0758
+  - Linea 896: casiopy_0896
+  - Linea 1831: casiopy_1831
+
+Frase: "El pasado había quedado atrás y era momento de mirar hacia el futuro con esperanza renovada"
+Aparece 4 veces en:
+  - Linea 319: casiopy_0319
+  - Linea 543: casiopy_0543
+  - Linea 1103: casiopy_1103
+  - Linea 1314: casiopy_1314
+
+Frase: "El rocío brillaba en la hierba como pequeños diamantes bajo los primeros rayos del sol matutino"
+Aparece 4 veces en:
+  - Linea 94: casiopy_0094
+  - Linea 980: casiopy_0980
+  - Linea 1116: casiopy_1116
+  - Linea 1286: casiopy_1286
+
+Frase: "El río fluía hacia el océano siguiendo su curso ancestral a través de las montañas y valles"
+Aparece 4 veces en:
+  - Linea 684: casiopy_0684
+  - Linea 1419: casiopy_1419
+  - Linea 1535: casiopy_1535
+  - Linea 1928: casiopy_1928
+
+Frase: "El sol comenzaba a ocultarse pintando el cielo de colores naranjas y rojizos muy hermosos"
+Aparece 4 veces en:
+  - Linea 495: casiopy_0495
+  - Linea 1321: casiopy_1321
+  - Linea 1689: casiopy_1689
+  - Linea 1927: casiopy_1927
+
+Frase: "El sol se ocultaba lentamente en el horizonte mientras el día llegaba a su fin tranquilo"
+Aparece 4 veces en:
+  - Linea 1085: casiopy_1085
+  - Linea 1661: casiopy_1661
+  - Linea 1863: casiopy_1863
+  - Linea 1934: casiopy_1934
+
+Frase: "El tiempo parecía haberse detenido en ese lugar olvidado por todos hace tanto tiempo"
+Aparece 4 veces en:
+  - Linea 283: casiopy_0283
+  - Linea 1342: casiopy_1342
+  - Linea 1731: casiopy_1731
+  - Linea 1901: casiopy_1901
+
+Frase: "El tiempo vuela cuando lo estamos pasando bien, ¿verdad que parece que acaba de empezar el día?"
+Aparece 4 veces en:
+  - Linea 93: casiopy_0093
+  - Linea 126: casiopy_0126
+  - Linea 428: casiopy_0428
+  - Linea 729: casiopy_0729
+
+Frase: "El trueno retumbaba a lo lejos como el rugido de un gigante invisible en las montañas"
+Aparece 4 veces en:
+  - Linea 39: casiopy_0039
+  - Linea 547: casiopy_0547
+  - Linea 1301: casiopy_1301
+  - Linea 1767: casiopy_1767
+
+Frase: "El viaje había sido largo y difícil pero finalmente habían llegado a su destino deseado"
+Aparece 4 veces en:
+  - Linea 252: casiopy_0252
+  - Linea 341: casiopy_0341
+  - Linea 379: casiopy_0379
+  - Linea 1940: casiopy_1940
+
+Frase: "El viento silbaba entre las ramas de los árboles creando una melodía natural y hermosa"
+Aparece 3 veces en:
+  - Linea 1365: casiopy_1365
+  - Linea 1579: casiopy_1579
+  - Linea 1821: casiopy_1821
+
+Frase: "Elimina los archivos duplicados que están ocupando espacio innecesario en el sistema de almacenamiento"
+Aparece 4 veces en:
+  - Linea 469: casiopy_0469
+  - Linea 581: casiopy_0581
+  - Linea 1038: casiopy_1038
+  - Linea 1432: casiopy_1432
+
+Frase: "En aquel lugar tan lejano había una historia increíble esperando ser descubierta por alguien"
+Aparece 4 veces en:
+  - Linea 1000: casiopy_1000
+  - Linea 1057: casiopy_1057
+  - Linea 1131: casiopy_1131
+  - Linea 1936: casiopy_1936
+
+Frase: "En cualquier momento que me necesites estaré disponible para ayudarte con gusto"
+Aparece 4 veces en:
+  - Linea 166: casiopy_0166
+  - Linea 325: casiopy_0325
+  - Linea 982: casiopy_0982
+  - Linea 1231: casiopy_1231
+
+Frase: "Enfócate en lo que estás haciendo y no te distraigas con otras cosas que no son importantes ahora"
+Aparece 4 veces en:
+  - Linea 732: casiopy_0732
+  - Linea 786: casiopy_0786
+  - Linea 897: casiopy_0897
+  - Linea 1699: casiopy_1699
+
+Frase: "Entendido perfectamente, voy a proceder exactamente como me lo indicaste"
+Aparece 4 veces en:
+  - Linea 511: casiopy_0511
+  - Linea 1413: casiopy_1413
+  - Linea 1779: casiopy_1779
+  - Linea 1875: casiopy_1875
+
+Frase: "Entiendo perfectamente lo que me estás diciendo y tienes toda la razón"
+Aparece 3 veces en:
+  - Linea 292: casiopy_0292
+  - Linea 637: casiopy_0637
+  - Linea 1907: casiopy_1907
+
+Frase: "Es complicado de entender al principio, pero estoy segura de que lo voy a captar con más práctica"
+Aparece 3 veces en:
+  - Linea 32: casiopy_0032
+  - Linea 151: casiopy_0151
+  - Linea 1590: casiopy_1590
+
+Frase: "Es diferente a todo lo que había visto antes, definitivamente es una perspectiva única y original"
+Aparece 4 veces en:
+  - Linea 7: casiopy_0007
+  - Linea 108: casiopy_0108
+  - Linea 904: casiopy_0904
+  - Linea 1324: casiopy_1324
+
+Frase: "Es nuevo, acaba de salir al mercado hace muy poco tiempo, apenas unas semanas atrás"
+Aparece 4 veces en:
+  - Linea 417: casiopy_0417
+  - Linea 435: casiopy_0435
+  - Linea 934: casiopy_0934
+  - Linea 1193: casiopy_1193
+
+Frase: "Es perfecto así como está, no le cambiaría absolutamente nada porque está impecable tal cual"
+Aparece 4 veces en:
+  - Linea 66: casiopy_0066
+  - Linea 246: casiopy_0246
+  - Linea 403: casiopy_0403
+  - Linea 798: casiopy_0798
+
+Frase: "Es posible que tengas razón, pero me gustaría revisar más información antes"
+Aparece 4 veces en:
+  - Linea 1156: casiopy_1156
+  - Linea 1223: casiopy_1223
+  - Linea 1782: casiopy_1782
+  - Linea 1848: casiopy_1848
+
+Frase: "Es viejo pero funciona perfectamente bien todavía, ha resistido el paso del tiempo admirablemente"
+Aparece 3 veces en:
+  - Linea 4: casiopy_0004
+  - Linea 631: casiopy_0631
+  - Linea 1015: casiopy_1015
+
+Frase: "Escribe todo lo que te estoy diciendo porque es información importante que vas a necesitar después"
+Aparece 3 veces en:
+  - Linea 295: casiopy_0295
+  - Linea 1287: casiopy_1287
+  - Linea 1450: casiopy_1450
+
+Frase: "Escucha bien lo que te estoy diciendo porque es muy importante para tu propio beneficio futuro"
+Aparece 4 veces en:
+  - Linea 576: casiopy_0576
+  - Linea 1126: casiopy_1126
+  - Linea 1346: casiopy_1346
+  - Linea 1972: casiopy_1972
+
+Frase: "Escucha con mucha atención lo que te voy a explicar porque no lo voy a repetir de nuevo"
+Aparece 4 veces en:
+  - Linea 187: casiopy_0187
+  - Linea 321: casiopy_0321
+  - Linea 1055: casiopy_1055
+  - Linea 1609: casiopy_1609
+
+Frase: "Eso creo yo también, aunque no tengo todas las pruebas necesarias todavía"
+Aparece 4 veces en:
+  - Linea 813: casiopy_0813
+  - Linea 1330: casiopy_1330
+  - Linea 1960: casiopy_1960
+  - Linea 1993: casiopy_1993
+
+Frase: "Eso es muy cierto, estoy completamente de acuerdo con tu punto de vista"
+Aparece 4 veces en:
+  - Linea 626: casiopy_0626
+  - Linea 1060: casiopy_1060
+  - Linea 1084: casiopy_1084
+  - Linea 1873: casiopy_1873
+
+Frase: "Eso es nuevo para mí, nunca había visto algo así antes en toda mi vida hasta ahora"
+Aparece 4 veces en:
+  - Linea 1278: casiopy_1278
+  - Linea 1295: casiopy_1295
+  - Linea 1377: casiopy_1377
+  - Linea 1666: casiopy_1666
+
+Frase: "Eso explica todo perfectamente, ahora entiendo mucho mejor la situación completa"
+Aparece 4 veces en:
+  - Linea 1139: casiopy_1139
+  - Linea 1358: casiopy_1358
+  - Linea 1625: casiopy_1625
+  - Linea 1914: casiopy_1914
+
+Frase: "Espera un momento por favor, necesito verificar algo antes de que podamos continuar juntos"
+Aparece 4 veces en:
+  - Linea 582: casiopy_0582
+  - Linea 847: casiopy_0847
+  - Linea 895: casiopy_0895
+  - Linea 967: casiopy_0967
+
+Frase: "Esta comida está deliciosa, el chef realmente sabe cómo preparar estos platillos tan bien"
+Aparece 4 veces en:
+  - Linea 915: casiopy_0915
+  - Linea 1016: casiopy_1016
+  - Linea 1433: casiopy_1433
+  - Linea 1532: casiopy_1532
+
+Frase: "Esto es realmente terrible, no puedo creer que haya sucedido algo así de malo"
+Aparece 3 veces en:
+  - Linea 267: casiopy_0267
+  - Linea 821: casiopy_0821
+  - Linea 1961: casiopy_1961
+
+Frase: "Esto me disgusta mucho, no me gusta para nada la forma en que se están haciendo las cosas"
+Aparece 4 veces en:
+  - Linea 245: casiopy_0245
+  - Linea 363: casiopy_0363
+  - Linea 1222: casiopy_1222
+  - Linea 1646: casiopy_1646
+
+Frase: "Estoy abrumada por la cantidad de responsabilidades que tengo que manejar al mismo tiempo"
+Aparece 4 veces en:
+  - Linea 326: casiopy_0326
+  - Linea 418: casiopy_0418
+  - Linea 796: casiopy_0796
+  - Linea 1575: casiopy_1575
+
+Frase: "Estoy agradecida de verdad por toda la ayuda que recibí cuando más lo necesitaba realmente"
+Aparece 4 veces en:
+  - Linea 200: casiopy_0200
+  - Linea 488: casiopy_0488
+  - Linea 643: casiopy_0643
+  - Linea 1075: casiopy_1075
+
+Frase: "Estoy animada y con muchas ganas de seguir adelante con este proyecto tan emocionante"
+Aparece 4 veces en:
+  - Linea 361: casiopy_0361
+  - Linea 883: casiopy_0883
+  - Linea 1477: casiopy_1477
+  - Linea 1678: casiopy_1678
+
+Frase: "Estoy ansiosa por que llegue el momento de poder empezar con todo esto ya"
+Aparece 2 veces en:
+  - Linea 71: casiopy_0071
+  - Linea 1983: casiopy_1983
+
+Frase: "Estoy asombrada por la calidad de este trabajo, realmente es excepcional en todos los aspectos"
+Aparece 4 veces en:
+  - Linea 149: casiopy_0149
+  - Linea 413: casiopy_0413
+  - Linea 522: casiopy_0522
+  - Linea 690: casiopy_0690
+
+Frase: "Estoy aterrada por la posibilidad de que algo malo pueda suceder en cualquier momento"
+Aparece 4 veces en:
+  - Linea 96: casiopy_0096
+  - Linea 1382: casiopy_1382
+  - Linea 1683: casiopy_1683
+  - Linea 1968: casiopy_1968
+
+Frase: "Estoy celosa al ver que otros tienen lo que yo también quisiera tener para mí misma"
+Aparece 4 veces en:
+  - Linea 327: casiopy_0327
+  - Linea 848: casiopy_0848
+  - Linea 999: casiopy_0999
+  - Linea 1790: casiopy_1790
+
+Frase: "Estoy confiada en que vamos a lograr nuestros objetivos si seguimos trabajando duro juntos"
+Aparece 4 veces en:
+  - Linea 264: casiopy_0264
+  - Linea 1597: casiopy_1597
+  - Linea 1722: casiopy_1722
+  - Linea 1775: casiopy_1775
+
+Frase: "Estoy confusa porque hay demasiada información contradictoria que no puedo procesar bien"
+Aparece 2 veces en:
+  - Linea 577: casiopy_0577
+  - Linea 1171: casiopy_1171
+
+Frase: "Estoy de acuerdo contigo en ese punto, me parece muy razonable tu argumento"
+Aparece 4 veces en:
+  - Linea 652: casiopy_0652
+  - Linea 1550: casiopy_1550
+  - Linea 1824: casiopy_1824
+  - Linea 1880: casiopy_1880
+
+Frase: "Estoy desanimada porque las cosas no están saliendo como esperaba que salieran inicialmente"
+Aparece 4 veces en:
+  - Linea 462: casiopy_0462
+  - Linea 1292: casiopy_1292
+  - Linea 1389: casiopy_1389
+  - Linea 1644: casiopy_1644
+
+Frase: "Estoy desesperada porque el tiempo se está acabando y aún me falta mucho por hacer"
+Aparece 4 veces en:
+  - Linea 13: casiopy_0013
+  - Linea 389: casiopy_0389
+  - Linea 978: casiopy_0978
+  - Linea 1353: casiopy_1353
+
+Frase: "Estoy dudosa sobre si esto es realmente lo correcto o si deberíamos reconsiderar todo"
+Aparece 4 veces en:
+  - Linea 483: casiopy_0483
+  - Linea 714: casiopy_0714
+  - Linea 1455: casiopy_1455
+  - Linea 1468: casiopy_1468
+
+Frase: "Estoy emocionada por todas las posibilidades nuevas que se están abriendo para nosotros"
+Aparece 4 veces en:
+  - Linea 35: casiopy_0035
+  - Linea 160: casiopy_0160
+  - Linea 1266: casiopy_1266
+  - Linea 1981: casiopy_1981
+
+Frase: "Estoy enfadada por la forma en que se manejó todo esto, no me parece correcto"
+Aparece 4 veces en:
+  - Linea 64: casiopy_0064
+  - Linea 102: casiopy_0102
+  - Linea 294: casiopy_0294
+  - Linea 1634: casiopy_1634
+
+Frase: "Estoy estresada por todas las cosas que tengo que hacer en tan poco tiempo disponible"
+Aparece 3 veces en:
+  - Linea 473: casiopy_0473
+  - Linea 1840: casiopy_1840
+  - Linea 1985: casiopy_1985
+
+Frase: "Estoy eufórica por este logro tan importante, es algo que he esperado durante mucho tiempo"
+Aparece 4 veces en:
+  - Linea 479: casiopy_0479
+  - Linea 1007: casiopy_1007
+  - Linea 1606: casiopy_1606
+  - Linea 1787: casiopy_1787
+
+Frase: "Estoy exhausta después de tanto trabajo continuo sin descanso durante tantos días seguidos"
+Aparece 3 veces en:
+  - Linea 222: casiopy_0222
+  - Linea 1213: casiopy_1213
+  - Linea 1224: casiopy_1224
+
+Frase: "Estoy extasiada por la perfección de este momento, todo está exactamente como debe estar"
+Aparece 3 veces en:
+  - Linea 352: casiopy_0352
+  - Linea 803: casiopy_0803
+  - Linea 1613: casiopy_1613
+
+Frase: "Estoy feliz de verdad, esta es una de las mejores cosas que me han pasado últimamente"
+Aparece 3 veces en:
+  - Linea 343: casiopy_0343
+  - Linea 781: casiopy_0781
+  - Linea 1348: casiopy_1348
+
+Frase: "Estoy frustrada porque las cosas no están saliendo como yo había planeado que salieran"
+Aparece 4 veces en:
+  - Linea 446: casiopy_0446
+  - Linea 682: casiopy_0682
+  - Linea 1607: casiopy_1607
+  - Linea 1765: casiopy_1765
+
+Frase: "Estoy horrorizada por lo que acabo de ver, es algo que no debería existir nunca"
+Aparece 4 veces en:
+  - Linea 354: casiopy_0354
+  - Linea 747: casiopy_0747
+  - Linea 1282: casiopy_1282
+  - Linea 1626: casiopy_1626
+
+Frase: "Estoy ilusionada con la posibilidad de que esto se convierta en algo muy grande y especial"
+Aparece 4 veces en:
+  - Linea 242: casiopy_0242
+  - Linea 444: casiopy_0444
+  - Linea 1327: casiopy_1327
+  - Linea 1773: casiopy_1773
+
+Frase: "Estoy impaciente por que llegue el momento de poder finalmente ver los resultados esperados"
+Aparece 4 veces en:
+  - Linea 118: casiopy_0118
+  - Linea 1298: casiopy_1298
+  - Linea 1537: casiopy_1537
+  - Linea 1726: casiopy_1726
+
+Frase: "Estoy impresionada por la cantidad de trabajo que se necesitó para lograr esto que vemos"
+Aparece 4 veces en:
+  - Linea 85: casiopy_0085
+  - Linea 171: casiopy_0171
+  - Linea 386: casiopy_0386
+  - Linea 888: casiopy_0888
+
+Frase: "Estoy indignada por la injusticia que acabo de presenciar, esto no puede quedar así"
+Aparece 4 veces en:
+  - Linea 632: casiopy_0632
+  - Linea 763: casiopy_0763
+  - Linea 1167: casiopy_1167
+  - Linea 1281: casiopy_1281
+
+Frase: "Estoy maravillada por la belleza de todo esto, es realmente impresionante y único"
+Aparece 4 veces en:
+  - Linea 336: casiopy_0336
+  - Linea 510: casiopy_0510
+  - Linea 867: casiopy_0867
+  - Linea 981: casiopy_0981
+
+Frase: "Estoy melancólica pensando en todo lo que podría haber sido pero nunca llegó a ser realidad"
+Aparece 4 veces en:
+  - Linea 940: casiopy_0940
+  - Linea 1718: casiopy_1718
+  - Linea 1898: casiopy_1898
+  - Linea 1930: casiopy_1930
+
+Frase: "Estoy muy aburrida, necesito encontrar algo interesante que hacer para pasar el tiempo de manera entretenida"
+Aparece 4 veces en:
+  - Linea 681: casiopy_0681
+  - Linea 770: casiopy_0770
+  - Linea 1454: casiopy_1454
+  - Linea 1501: casiopy_1501
+
+Frase: "Estoy muy cansada después de todo el esfuerzo que he puesto en este proyecto tan demandante"
+Aparece 4 veces en:
+  - Linea 313: casiopy_0313
+  - Linea 474: casiopy_0474
+  - Linea 771: casiopy_0771
+  - Linea 1283: casiopy_1283
+
+Frase: "Estoy muy entusiasmada con este nuevo proyecto que estamos a punto de comenzar juntos"
+Aparece 4 veces en:
+  - Linea 251: casiopy_0251
+  - Linea 262: casiopy_0262
+  - Linea 1452: casiopy_1452
+  - Linea 1662: casiopy_1662
+
+Frase: "Estoy nostálgica pensando en todos los buenos momentos que pasamos juntos hace tiempo"
+Aparece 4 veces en:
+  - Linea 47: casiopy_0047
+  - Linea 764: casiopy_0764
+  - Linea 866: casiopy_0866
+  - Linea 1125: casiopy_1125
+
+Frase: "Estoy radiante de felicidad, no puedo dejar de sonreír por todo lo que está pasando"
+Aparece 4 veces en:
+  - Linea 516: casiopy_0516
+  - Linea 790: casiopy_0790
+  - Linea 1492: casiopy_1492
+  - Linea 1554: casiopy_1554
+
+Frase: "Estoy reconfortada por las palabras de aliento que recibí, me hicieron sentir mucho mejor"
+Aparece 4 veces en:
+  - Linea 60: casiopy_0060
+  - Linea 433: casiopy_0433
+  - Linea 735: casiopy_0735
+  - Linea 923: casiopy_0923
+
+Frase: "Estoy resentida por la forma en que fui tratada, no me parece justo para nada"
+Aparece 4 veces en:
+  - Linea 448: casiopy_0448
+  - Linea 1094: casiopy_1094
+  - Linea 1836: casiopy_1836
+  - Linea 1916: casiopy_1916
+
+Frase: "Estoy sentimental hoy, todo me está haciendo recordar momentos importantes de mi vida pasada"
+Aparece 4 veces en:
+  - Linea 240: casiopy_0240
+  - Linea 1041: casiopy_1041
+  - Linea 1585: casiopy_1585
+  - Linea 1910: casiopy_1910
+
+Frase: "Estoy sorprendida por lo rápido que todo esto se ha desarrollado en tan poco tiempo"
+Aparece 4 veces en:
+  - Linea 155: casiopy_0155
+  - Linea 929: casiopy_0929
+  - Linea 1175: casiopy_1175
+  - Linea 1665: casiopy_1665
+
+Frase: "Estoy tan emocionada que no puedo contener toda la alegría que siento en este momento"
+Aparece 4 veces en:
+  - Linea 224: casiopy_0224
+  - Linea 815: casiopy_0815
+  - Linea 1273: casiopy_1273
+  - Linea 1922: casiopy_1922
+
+Frase: "Estoy un poco cansada después de todo el trabajo que he hecho durante el día de hoy"
+Aparece 3 veces en:
+  - Linea 81: casiopy_0081
+  - Linea 1130: casiopy_1130
+  - Linea 1781: casiopy_1781
+
+Frase: "Está bien hecho este trabajo, se nota el esfuerzo y la dedicación que pusieron en hacerlo"
+Aparece 4 veces en:
+  - Linea 387: casiopy_0387
+  - Linea 565: casiopy_0565
+  - Linea 976: casiopy_0976
+  - Linea 1341: casiopy_1341
+
+Frase: "Está decidido entonces, vamos a proceder exactamente de esa manera que dijiste"
+Aparece 4 veces en:
+  - Linea 906: casiopy_0906
+  - Linea 1003: casiopy_1003
+  - Linea 1256: casiopy_1256
+  - Linea 1458: casiopy_1458
+
+Frase: "Está limpio y ordenado, alguien se tomó el tiempo de organizarlo todo muy bien antes"
+Aparece 4 veces en:
+  - Linea 498: casiopy_0498
+  - Linea 556: casiopy_0556
+  - Linea 793: casiopy_0793
+  - Linea 1028: casiopy_1028
+
+Frase: "Está ordenado de manera muy eficiente, todo tiene su lugar específico y es fácil de encontrar"
+Aparece 4 veces en:
+  - Linea 72: casiopy_0072
+  - Linea 420: casiopy_0420
+  - Linea 1148: casiopy_1148
+  - Linea 1248: casiopy_1248
+
+Frase: "Está roto y necesita reparación urgente antes de que el daño sea mayor e irreparable por completo"
+Aparece 4 veces en:
+  - Linea 406: casiopy_0406
+  - Linea 460: casiopy_0460
+  - Linea 838: casiopy_0838
+  - Linea 1121: casiopy_1121
+
+Frase: "Está sucio y desordenado, necesita una buena limpieza profunda lo antes posible sin duda"
+Aparece 4 veces en:
+  - Linea 211: casiopy_0211
+  - Linea 654: casiopy_0654
+  - Linea 1465: casiopy_1465
+  - Linea 1691: casiopy_1691
+
+Frase: "Excelente punto el que mencionas, no lo había considerado de esa manera"
+Aparece 4 veces en:
+  - Linea 164: casiopy_0164
+  - Linea 718: casiopy_0718
+  - Linea 822: casiopy_0822
+  - Linea 1659: casiopy_1659
+
+Frase: "Exprésate con libertad porque tu opinión es importante y queremos escuchar lo que tienes que decir"
+Aparece 4 veces en:
+  - Linea 356: casiopy_0356
+  - Linea 409: casiopy_0409
+  - Linea 820: casiopy_0820
+  - Linea 1414: casiopy_1414
+
+Frase: "Falso, eso definitivamente no es correcto, te han dado información equivocada completamente"
+Aparece 3 veces en:
+  - Linea 1407: casiopy_1407
+  - Linea 1528: casiopy_1528
+  - Linea 1711: casiopy_1711
+
+Frase: "Feliz inicio de semana para todos los que me están acompañando"
+Aparece 4 veces en:
+  - Linea 95: casiopy_0095
+  - Linea 329: casiopy_0329
+  - Linea 1247: casiopy_1247
+  - Linea 1867: casiopy_1867
+
+Frase: "Frecuentemente me pasa lo mismo, es algo que veo con bastante regularidad últimamente"
+Aparece 4 veces en:
+  - Linea 227: casiopy_0227
+  - Linea 986: casiopy_0986
+  - Linea 1411: casiopy_1411
+  - Linea 1829: casiopy_1829
+
+Frase: "Funciona bien tal como está ahora, cumple perfectamente con su propósito principal sin problemas"
+Aparece 4 veces en:
+  - Linea 27: casiopy_0027
+  - Linea 114: casiopy_0114
+  - Linea 308: casiopy_0308
+  - Linea 956: casiopy_0956
+
+Frase: "Fíjate bien en los detalles porque son muy importantes para entender el concepto completo de esto"
+Aparece 4 veces en:
+  - Linea 401: casiopy_0401
+  - Linea 892: casiopy_0892
+  - Linea 949: casiopy_0949
+  - Linea 1712: casiopy_1712
+
+Frase: "Generalmente eso funciona bien, aunque hay algunas excepciones importantes que considerar"
+Aparece 4 veces en:
+  - Linea 3: casiopy_0003
+  - Linea 894: casiopy_0894
+  - Linea 1708: casiopy_1708
+  - Linea 1900: casiopy_1900
+
+Frase: "Guarda silencio absoluto porque necesito concentrarme completamente en lo que estoy haciendo ahora mismo"
+Aparece 4 veces en:
+  - Linea 58: casiopy_0058
+  - Linea 339: casiopy_0339
+  - Linea 371: casiopy_0371
+  - Linea 990: casiopy_0990
+
+Frase: "Guárdalo bien en un lugar seguro donde nadie más pueda encontrarlo sin tu permiso expreso"
+Aparece 4 veces en:
+  - Linea 644: casiopy_0644
+  - Linea 689: casiopy_0689
+  - Linea 836: casiopy_0836
+  - Linea 1143: casiopy_1143
+
+Frase: "Habla más alto por favor porque no te puedo escuchar bien desde aquí con todo este ruido ambiental"
+Aparece 4 veces en:
+  - Linea 1020: casiopy_1020
+  - Linea 1219: casiopy_1219
+  - Linea 1359: casiopy_1359
+  - Linea 1464: casiopy_1464
+
+Frase: "Había una vez en un mundo muy lejano un reino mágico lleno de criaturas extraordinarias"
+Aparece 4 veces en:
+  - Linea 87: casiopy_0087
+  - Linea 410: casiopy_0410
+  - Linea 890: casiopy_0890
+  - Linea 987: casiopy_0987
+
+Frase: "Hace mucho calor hoy, creo que voy a necesitar tomar algo frío para refrescarme un poco"
+Aparece 4 veces en:
+  - Linea 355: casiopy_0355
+  - Linea 564: casiopy_0564
+  - Linea 870: casiopy_0870
+  - Linea 1723: casiopy_1723
+
+Frase: "Hace tiempo que no nos vemos, me alegra mucho poder encontrarnos de nuevo después de tanto"
+Aparece 4 veces en:
+  - Linea 49: casiopy_0049
+  - Linea 789: casiopy_0789
+  - Linea 1741: casiopy_1741
+  - Linea 1874: casiopy_1874
+
+Frase: "Haré mi mejor esfuerzo para conseguir exactamente lo que necesitas que haga"
+Aparece 4 veces en:
+  - Linea 317: casiopy_0317
+  - Linea 826: casiopy_0826
+  - Linea 872: casiopy_0872
+  - Linea 974: casiopy_0974
+
+Frase: "Hay que arreglarlo lo antes posible porque está causando problemas que no podemos ignorar más"
+Aparece 4 veces en:
+  - Linea 1021: casiopy_1021
+  - Linea 1163: casiopy_1163
+  - Linea 1378: casiopy_1378
+  - Linea 1698: casiopy_1698
+
+Frase: "Hazlo de nuevo porque no quedó bien la primera vez y necesitamos que sea perfecto esta vez"
+Aparece 3 veces en:
+  - Linea 596: casiopy_0596
+  - Linea 1753: casiopy_1753
+  - Linea 1975: casiopy_1975
+
+Frase: "Hazlo tú mismo si prefieres, no voy a interferir en tu trabajo personal"
+Aparece 4 veces en:
+  - Linea 605: casiopy_0605
+  - Linea 768: casiopy_0768
+  - Linea 1101: casiopy_1101
+  - Linea 1906: casiopy_1906
+
+Frase: "Hmm, esa es una pregunta muy interesante que me hace pensar bastante"
+Aparece 4 veces en:
+  - Linea 454: casiopy_0454
+  - Linea 988: casiopy_0988
+  - Linea 1037: casiopy_1037
+  - Linea 1198: casiopy_1198
+
+Frase: "Hola comunidad, es un gusto poder compartir este momento con ustedes"
+Aparece 3 veces en:
+  - Linea 235: casiopy_0235
+  - Linea 478: casiopy_0478
+  - Linea 1653: casiopy_1653
+
+Frase: "Hola, ¿cómo amaneciste hoy? Espero que hayas dormido bien"
+Aparece 4 veces en:
+  - Linea 53: casiopy_0053
+  - Linea 709: casiopy_0709
+  - Linea 1332: casiopy_1332
+  - Linea 1443: casiopy_1443
+
+Frase: "Hola, ¿cómo estuvo tu noche? Espero que hayas podido relajarte bien"
+Aparece 4 veces en:
+  - Linea 426: casiopy_0426
+  - Linea 533: casiopy_0533
+  - Linea 879: casiopy_0879
+  - Linea 1813: casiopy_1813
+
+Frase: "Hola, ¿cómo te sientes hoy? Espero que tu estado de ánimo sea excelente"
+Aparece 4 veces en:
+  - Linea 38: casiopy_0038
+  - Linea 280: casiopy_0280
+  - Linea 467: casiopy_0467
+  - Linea 1998: casiopy_1998
+
+Frase: "Hola, ¿descansaste bien? Es importante dormir lo suficiente cada noche"
+Aparece 4 veces en:
+  - Linea 439: casiopy_0439
+  - Linea 468: casiopy_0468
+  - Linea 1362: casiopy_1362
+  - Linea 1868: casiopy_1868
+
+Frase: "Hola, ¿estás preparado para lo que tenemos planeado el día de hoy?"
+Aparece 4 veces en:
+  - Linea 127: casiopy_0127
+  - Linea 1157: casiopy_1157
+  - Linea 1254: casiopy_1254
+  - Linea 1931: casiopy_1931
+
+Frase: "Hola, ¿lista para empezar? Tengo muchas ganas de comenzar con esto"
+Aparece 3 veces en:
+  - Linea 966: casiopy_0966
+  - Linea 1111: casiopy_1111
+  - Linea 1969: casiopy_1969
+
+Frase: "Hola, ¿listo para la aventura? Vamos a pasarla increíble hoy"
+Aparece 4 veces en:
+  - Linea 553: casiopy_0553
+  - Linea 725: casiopy_0725
+  - Linea 1845: casiopy_1845
+  - Linea 1846: casiopy_1846
+
+Frase: "Hola, ¿qué planes tienes para el resto del día que queda?"
+Aparece 3 veces en:
+  - Linea 369: casiopy_0369
+  - Linea 623: casiopy_0623
+  - Linea 1548: casiopy_1548
+
+Frase: "Hola, ¿qué tal estuvo tu día hasta ahora? Cuéntame qué has hecho"
+Aparece 4 veces en:
+  - Linea 613: casiopy_0613
+  - Linea 1106: casiopy_1106
+  - Linea 1398: casiopy_1398
+  - Linea 1945: casiopy_1945
+
+Frase: "Hola, ¿qué tal está el clima en tu ciudad el día de hoy?"
+Aparece 4 veces en:
+  - Linea 646: casiopy_0646
+  - Linea 740: casiopy_0740
+  - Linea 959: casiopy_0959
+  - Linea 1420: casiopy_1420
+
+Frase: "Hola, ¿todo en orden? Avísenme si necesitan ayuda con cualquier cosa"
+Aparece 4 veces en:
+  - Linea 519: casiopy_0519
+  - Linea 656: casiopy_0656
+  - Linea 1308: casiopy_1308
+  - Linea 1970: casiopy_1970
+
+Frase: "Hola, ¿todo está bien por ahí? Espero que sí y que estés cómodo"
+Aparece 4 veces en:
+  - Linea 814: casiopy_0814
+  - Linea 831: casiopy_0831
+  - Linea 1506: casiopy_1506
+  - Linea 1921: casiopy_1921
+
+Frase: "Hoy fue un día muy interesante lleno de cosas nuevas que aprendí y experiencias diferentes"
+Aparece 3 veces en:
+  - Linea 1294: casiopy_1294
+  - Linea 1603: casiopy_1603
+  - Linea 1974: casiopy_1974
+
+Frase: "Incluye todos los detalles relevantes en el informe final que vamos a presentar a los directivos esta semana"
+Aparece 4 veces en:
+  - Linea 535: casiopy_0535
+  - Linea 919: casiopy_0919
+  - Linea 1264: casiopy_1264
+  - Linea 1329: casiopy_1329
+
+Frase: "Incorrecto, me temo que eso no es exactamente así como tú lo describes"
+Aparece 4 veces en:
+  - Linea 392: casiopy_0392
+  - Linea 542: casiopy_0542
+  - Linea 676: casiopy_0676
+  - Linea 787: casiopy_0787
+
+Frase: "Informa a todos sobre los cambios que se han hecho para que estén al tanto de la situación actual"
+Aparece 4 veces en:
+  - Linea 1593: casiopy_1593
+  - Linea 1676: casiopy_1676
+  - Linea 1799: casiopy_1799
+  - Linea 1862: casiopy_1862
+
+Frase: "Inténtalo otra vez con más cuidado esta vez para ver si logras mejores resultados que antes"
+Aparece 4 veces en:
+  - Linea 133: casiopy_0133
+  - Linea 266: casiopy_0266
+  - Linea 445: casiopy_0445
+  - Linea 574: casiopy_0574
+
+Frase: "Involúcrate más en el proceso porque tu experiencia y conocimientos son necesarios para el éxito total"
+Aparece 4 veces en:
+  - Linea 859: casiopy_0859
+  - Linea 1042: casiopy_1042
+  - Linea 1643: casiopy_1643
+  - Linea 1861: casiopy_1861
+
+Frase: "Jamás había escuchado algo así en toda mi vida, es realmente sorprendente"
+Aparece 4 veces en:
+  - Linea 256: casiopy_0256
+  - Linea 741: casiopy_0741
+  - Linea 939: casiopy_0939
+  - Linea 1338: casiopy_1338
+
+Frase: "La aventura comienza cuando menos lo esperas, en el momento más inesperado de todos"
+Aparece 4 veces en:
+  - Linea 277: casiopy_0277
+  - Linea 957: casiopy_0957
+  - Linea 1276: casiopy_1276
+  - Linea 1743: casiopy_1743
+
+Frase: "La brisa traía aromas del campo de flores silvestres que crecían libremente en la pradera"
+Aparece 4 veces en:
+  - Linea 559: casiopy_0559
+  - Linea 765: casiopy_0765
+  - Linea 958: casiopy_0958
+  - Linea 979: casiopy_0979
+
+Frase: "La calma antes de la tormenta era casi palpable en el ambiente cargado de tensión y anticipación"
+Aparece 4 veces en:
+  - Linea 117: casiopy_0117
+  - Linea 289: casiopy_0289
+  - Linea 965: casiopy_0965
+  - Linea 1841: casiopy_1841
+
+Frase: "La ciudad se ve hermosa de noche cuando todas las luces están encendidas iluminando las calles"
+Aparece 4 veces en:
+  - Linea 119: casiopy_0119
+  - Linea 296: casiopy_0296
+  - Linea 1568: casiopy_1568
+  - Linea 1639: casiopy_1639
+
+Frase: "La esperanza nunca se había perdido completamente incluso en los momentos más oscuros y difíciles"
+Aparece 4 veces en:
+  - Linea 214: casiopy_0214
+  - Linea 734: casiopy_0734
+  - Linea 1751: casiopy_1751
+  - Linea 1879: casiopy_1879
+
+Frase: "La historia que estaba por contarse cambiaría la vida de todos los que la escucharan para siempre"
+Aparece 3 veces en:
+  - Linea 113: casiopy_0113
+  - Linea 1367: casiopy_1367
+  - Linea 1834: casiopy_1834
+
+Frase: "La lluvia caía sin cesar sobre la ciudad empapando todo a su paso durante horas enteras"
+Aparece 4 veces en:
+  - Linea 579: casiopy_0579
+  - Linea 784: casiopy_0784
+  - Linea 1307: casiopy_1307
+  - Linea 1809: casiopy_1809
+
+Frase: "La luna iluminaba el camino con su luz plateada guiando a los viajeros nocturnos con suavidad"
+Aparece 4 veces en:
+  - Linea 5: casiopy_0005
+  - Linea 291: casiopy_0291
+  - Linea 1418: casiopy_1418
+  - Linea 1516: casiopy_1516
+
+Frase: "La música suena genial, me encanta esta canción que están tocando en este momento"
+Aparece 3 veces en:
+  - Linea 1158: casiopy_1158
+  - Linea 1574: casiopy_1574
+  - Linea 1911: casiopy_1911
+
+Frase: "La niebla envolvía el valle ocultando todo a su paso en un manto gris y misterioso"
+Aparece 3 veces en:
+  - Linea 518: casiopy_0518
+  - Linea 834: casiopy_0834
+  - Linea 1180: casiopy_1180
+
+Frase: "La nieve cubría todo el paisaje transformándolo en un manto blanco y puro muy hermoso"
+Aparece 4 veces en:
+  - Linea 248: casiopy_0248
+  - Linea 877: casiopy_0877
+  - Linea 1515: casiopy_1515
+  - Linea 1526: casiopy_1526
+
+Frase: "La noche llegaba con sus secretos escondidos en las sombras que se extendían por todas partes"
+Aparece 3 veces en:
+  - Linea 1013: casiopy_1013
+  - Linea 1206: casiopy_1206
+  - Linea 1319: casiopy_1319
+
+Frase: "La paz reinaba en el lugar creando una atmósfera de tranquilidad y serenidad absolutas"
+Aparece 4 veces en:
+  - Linea 145: casiopy_0145
+  - Linea 698: casiopy_0698
+  - Linea 1250: casiopy_1250
+  - Linea 1542: casiopy_1542
+
+Frase: "La puerta se abrió lentamente con un chirrido que resonó en el silencio absoluto de la noche"
+Aparece 4 veces en:
+  - Linea 125: casiopy_0125
+  - Linea 1142: casiopy_1142
+  - Linea 1216: casiopy_1216
+  - Linea 1647: casiopy_1647
+
+Frase: "La sabiduría de los ancianos era valorada y respetada por toda la comunidad sin excepción"
+Aparece 4 veces en:
+  - Linea 466: casiopy_0466
+  - Linea 924: casiopy_0924
+  - Linea 1031: casiopy_1031
+  - Linea 1082: casiopy_1082
+
+Frase: "La tormenta se acercaba rápidamente con nubes oscuras y amenazantes cargadas de lluvia intensa"
+Aparece 4 veces en:
+  - Linea 941: casiopy_0941
+  - Linea 1345: casiopy_1345
+  - Linea 1570: casiopy_1570
+  - Linea 1745: casiopy_1745
+
+Frase: "La verdad finalmente salió a la luz revelando secretos que habían estado ocultos durante años"
+Aparece 4 veces en:
+  - Linea 1118: casiopy_1118
+  - Linea 1387: casiopy_1387
+  - Linea 1567: casiopy_1567
+  - Linea 1697: casiopy_1697
+
+Frase: "Las estrellas brillaban intensamente en el cielo nocturno iluminando el camino de los viajeros perdidos"
+Aparece 3 veces en:
+  - Linea 204: casiopy_0204
+  - Linea 1047: casiopy_1047
+  - Linea 1657: casiopy_1657
+
+Frase: "Las hojas caían de los árboles danzando en el aire antes de posarse suavemente en el suelo"
+Aparece 4 veces en:
+  - Linea 25: casiopy_0025
+  - Linea 373: casiopy_0373
+  - Linea 1709: casiopy_1709
+  - Linea 1847: casiopy_1847
+
+Frase: "Las nubes cubrían el cielo completamente ocultando el sol y proyectando sombras sobre la tierra"
+Aparece 4 veces en:
+  - Linea 22: casiopy_0022
+  - Linea 276: casiopy_0276
+  - Linea 375: casiopy_0375
+  - Linea 1823: casiopy_1823
+
+Frase: "Las olas rompían en la orilla con un sonido rítmico y relajante que invitaba a la contemplación"
+Aparece 4 veces en:
+  - Linea 193: casiopy_0193
+  - Linea 691: casiopy_0691
+  - Linea 1201: casiopy_1201
+  - Linea 1671: casiopy_1671
+
+Frase: "Las palabras tenían un poder especial capaz de crear mundos enteros con solo ser pronunciadas"
+Aparece 4 veces en:
+  - Linea 575: casiopy_0575
+  - Linea 1636: casiopy_1636
+  - Linea 1725: casiopy_1725
+  - Linea 1951: casiopy_1951
+
+Frase: "Las sombras se alargaban en el suelo conforme el sol descendía lentamente hacia el horizonte distante"
+Aparece 4 veces en:
+  - Linea 1087: casiopy_1087
+  - Linea 1240: casiopy_1240
+  - Linea 1333: casiopy_1333
+  - Linea 1459: casiopy_1459
+
+Frase: "Limpia todo el desorden que has creado porque necesitamos mantener el espacio de trabajo ordenado siempre"
+Aparece 4 veces en:
+  - Linea 290: casiopy_0290
+  - Linea 525: casiopy_0525
+  - Linea 804: casiopy_0804
+  - Linea 997: casiopy_0997
+
+Frase: "Llévalo allá donde están los demás y déjalo en el lugar que te voy a indicar ahora"
+Aparece 4 veces en:
+  - Linea 138: casiopy_0138
+  - Linea 162: casiopy_0162
+  - Linea 1843: casiopy_1843
+  - Linea 1949: casiopy_1949
+
+Frase: "Lo dudo mucho, pero no puedo estar completamente segura sin investigar más"
+Aparece 4 veces en:
+  - Linea 153: casiopy_0153
+  - Linea 1218: casiopy_1218
+  - Linea 1599: casiopy_1599
+  - Linea 1917: casiopy_1917
+
+Frase: "Lo intentaré con todas mis fuerzas para ver si puedo lograr lo que me pides"
+Aparece 4 veces en:
+  - Linea 998: casiopy_0998
+  - Linea 1546: casiopy_1546
+  - Linea 1553: casiopy_1553
+  - Linea 1943: casiopy_1943
+
+Frase: "Lo que prefieras está bien para mí, cualquier opción que elijas será perfecta"
+Aparece 4 veces en:
+  - Linea 165: casiopy_0165
+  - Linea 195: casiopy_0195
+  - Linea 1093: casiopy_1093
+  - Linea 1512: casiopy_1512
+
+Frase: "Los pájaros cantaban al amanecer dando la bienvenida a un nuevo día lleno de posibilidades infinitas"
+Aparece 4 veces en:
+  - Linea 80: casiopy_0080
+  - Linea 532: casiopy_0532
+  - Linea 636: casiopy_0636
+  - Linea 639: casiopy_0639
+
+Frase: "Los recuerdos volvían a su mente como olas del mar trayendo consigo emociones del pasado"
+Aparece 4 veces en:
+  - Linea 943: casiopy_0943
+  - Linea 1109: casiopy_1109
+  - Linea 1134: casiopy_1134
+  - Linea 1508: casiopy_1508
+
+Frase: "Mantén la calma en todo momento porque ponerse nervioso solo va a empeorar la situación actual"
+Aparece 3 veces en:
+  - Linea 1019: casiopy_1019
+  - Linea 1149: casiopy_1149
+  - Linea 1260: casiopy_1260
+
+Frase: "Me da igual lo que pase, ya no me importa tanto como antes me importaba"
+Aparece 4 veces en:
+  - Linea 608: casiopy_0608
+  - Linea 970: casiopy_0970
+  - Linea 1417: casiopy_1417
+  - Linea 1738: casiopy_1738
+
+Frase: "Me da lo mismo una opción que la otra, decide tú lo que mejor te parezca"
+Aparece 4 veces en:
+  - Linea 123: casiopy_0123
+  - Linea 395: casiopy_0395
+  - Linea 1229: casiopy_1229
+  - Linea 1703: casiopy_1703
+
+Frase: "Me da mucha risa ver eso, es realmente muy gracioso y me hace reír mucho"
+Aparece 4 veces en:
+  - Linea 172: casiopy_0172
+  - Linea 503: casiopy_0503
+  - Linea 664: casiopy_0664
+  - Linea 1017: casiopy_1017
+
+Frase: "Me duele la cabeza un poco, creo que necesito tomar algo para el dolor y descansar"
+Aparece 4 veces en:
+  - Linea 461: casiopy_0461
+  - Linea 612: casiopy_0612
+  - Linea 1686: casiopy_1686
+  - Linea 1925: casiopy_1925
+
+Frase: "Me encanta este juego, es muy divertido y entretenido para pasar un rato agradable con amigos"
+Aparece 4 veces en:
+  - Linea 241: casiopy_0241
+  - Linea 475: casiopy_0475
+  - Linea 946: casiopy_0946
+  - Linea 1624: casiopy_1624
+
+Frase: "Me gusta así como está, no creo que sea necesario hacer ningún cambio a esto que vemos"
+Aparece 3 veces en:
+  - Linea 429: casiopy_0429
+  - Linea 1444: casiopy_1444
+  - Linea 1560: casiopy_1560
+
+Frase: "Me gusta mucho este lugar donde estamos ahora, tiene un ambiente muy acogedor y tranquilo"
+Aparece 4 veces en:
+  - Linea 115: casiopy_0115
+  - Linea 546: casiopy_0546
+  - Linea 938: casiopy_0938
+  - Linea 1990: casiopy_1990
+
+Frase: "Me gustaría ir allí algún día cuando tenga tiempo libre y pueda hacer un viaje largo"
+Aparece 4 veces en:
+  - Linea 169: casiopy_0169
+  - Linea 674: casiopy_0674
+  - Linea 936: casiopy_0936
+  - Linea 1173: casiopy_1173
+
+Frase: "Me has convencido completamente, voy a seguir tu consejo sin dudarlo"
+Aparece 3 veces en:
+  - Linea 274: casiopy_0274
+  - Linea 374: casiopy_0374
+  - Linea 1424: casiopy_1424
+
+Frase: "Me parece bien tu propuesta, creo que es una idea bastante interesante"
+Aparece 4 veces en:
+  - Linea 494: casiopy_0494
+  - Linea 968: casiopy_0968
+  - Linea 1331: casiopy_1331
+  - Linea 1509: casiopy_1509
+
+Frase: "Me siento admirada por la dedicación y el esfuerzo que pusieron en este proyecto tan ambicioso"
+Aparece 4 veces en:
+  - Linea 1225: casiopy_1225
+  - Linea 1436: casiopy_1436
+  - Linea 1460: casiopy_1460
+  - Linea 1870: casiopy_1870
+
+Frase: "Me siento agotada física y mentalmente, necesito un descanso urgente para poder recuperarme bien"
+Aparece 4 veces en:
+  - Linea 148: casiopy_0148
+  - Linea 1421: casiopy_1421
+  - Linea 1480: casiopy_1480
+  - Linea 1858: casiopy_1858
+
+Frase: "Me siento agradecida por toda la ayuda que he recibido de parte de ustedes"
+Aparece 4 veces en:
+  - Linea 198: casiopy_0198
+  - Linea 1462: casiopy_1462
+  - Linea 1541: casiopy_1541
+  - Linea 1770: casiopy_1770
+
+Frase: "Me siento aliviada de que todo haya salido bien al final después de tanta preocupación"
+Aparece 4 veces en:
+  - Linea 837: casiopy_0837
+  - Linea 977: casiopy_0977
+  - Linea 1760: casiopy_1760
+  - Linea 1764: casiopy_1764
+
+Frase: "Me siento amargada por todas las decepciones que he tenido que enfrentar en este camino tan duro"
+Aparece 4 veces en:
+  - Linea 271: casiopy_0271
+  - Linea 430: casiopy_0430
+  - Linea 902: casiopy_0902
+  - Linea 1750: casiopy_1750
+
+Frase: "Me siento angustiada por la incertidumbre de no saber qué va a pasar después de esto"
+Aparece 4 veces en:
+  - Linea 46: casiopy_0046
+  - Linea 1473: casiopy_1473
+  - Linea 1499: casiopy_1499
+  - Linea 1920: casiopy_1920
+
+Frase: "Me siento ansiosa porque hay muchas cosas importantes dependiendo de este resultado final"
+Aparece 4 veces en:
+  - Linea 677: casiopy_0677
+  - Linea 1337: casiopy_1337
+  - Linea 1552: casiopy_1552
+  - Linea 1582: casiopy_1582
+
+Frase: "Me siento apagada y sin energía, como si me hubieran quitado todas las ganas de seguir adelante"
+Aparece 3 veces en:
+  - Linea 367: casiopy_0367
+  - Linea 1202: casiopy_1202
+  - Linea 1872: casiopy_1872
+
+Frase: "Me siento apoyada por todos ustedes, sé que puedo contar con su ayuda siempre"
+Aparece 3 veces en:
+  - Linea 472: casiopy_0472
+  - Linea 1002: casiopy_1002
+  - Linea 1849: casiopy_1849
+
+Frase: "Me siento asustada porque no sé qué va a pasar ni cómo voy a manejar la situación"
+Aparece 4 veces en:
+  - Linea 1279: casiopy_1279
+  - Linea 1584: casiopy_1584
+  - Linea 1616: casiopy_1616
+  - Linea 1622: casiopy_1622
+
+Frase: "Me siento aterrorizada ante la posibilidad de tener que enfrentar eso yo sola sin ayuda"
+Aparece 4 veces en:
+  - Linea 944: casiopy_0944
+  - Linea 1009: casiopy_1009
+  - Linea 1339: casiopy_1339
+  - Linea 1789: casiopy_1789
+
+Frase: "Me siento bendecida por tener a todas estas personas maravillosas en mi vida cada día"
+Aparece 4 veces en:
+  - Linea 98: casiopy_0098
+  - Linea 281: casiopy_0281
+  - Linea 1469: casiopy_1469
+  - Linea 1562: casiopy_1562
+
+Frase: "Me siento deprimida por todos los problemas que han estado sucediendo últimamente sin parar"
+Aparece 3 veces en:
+  - Linea 194: casiopy_0194
+  - Linea 1598: casiopy_1598
+  - Linea 1833: casiopy_1833
+
+Frase: "Me siento dichosa de poder compartir este momento tan especial con todas las personas que amo"
+Aparece 4 veces en:
+  - Linea 432: casiopy_0432
+  - Linea 1128: casiopy_1128
+  - Linea 1681: casiopy_1681
+  - Linea 1794: casiopy_1794
+
+Frase: "Me siento emotiva al ver esto, me trae muchos recuerdos y sentimientos del pasado lejano"
+Aparece 4 veces en:
+  - Linea 490: casiopy_0490
+  - Linea 585: casiopy_0585
+  - Linea 1796: casiopy_1796
+  - Linea 1825: casiopy_1825
+
+Frase: "Me siento envidiosa del éxito que otros han logrado con aparente facilidad y sin mucho esfuerzo"
+Aparece 4 veces en:
+  - Linea 207: casiopy_0207
+  - Linea 1022: casiopy_1022
+  - Linea 1062: casiopy_1062
+  - Linea 1374: casiopy_1374
+
+Frase: "Me siento exaltada por toda la energía positiva que hay en este ambiente tan especial"
+Aparece 4 veces en:
+  - Linea 332: casiopy_0332
+  - Linea 381: casiopy_0381
+  - Linea 1451: casiopy_1451
+  - Linea 1948: casiopy_1948
+
+Frase: "Me siento fascinada por la complejidad de este sistema, es increíblemente interesante de estudiar"
+Aparece 3 veces en:
+  - Linea 237: casiopy_0237
+  - Linea 668: casiopy_0668
+  - Linea 1739: casiopy_1739
+
+Frase: "Me siento insegura sobre mis decisiones, no sé si estoy haciendo lo correcto o no"
+Aparece 4 veces en:
+  - Linea 253: casiopy_0253
+  - Linea 391: casiopy_0391
+  - Linea 876: casiopy_0876
+  - Linea 1565: casiopy_1565
+
+Frase: "Me siento melancólica al recordar cómo eran las cosas antes de que todo cambiara tanto"
+Aparece 4 veces en:
+  - Linea 129: casiopy_0129
+  - Linea 1076: casiopy_1076
+  - Linea 1380: casiopy_1380
+  - Linea 1629: casiopy_1629
+
+Frase: "Me siento molesta porque nadie me consultó antes de tomar una decisión tan importante"
+Aparece 4 veces en:
+  - Linea 861: casiopy_0861
+  - Linea 1356: casiopy_1356
+  - Linea 1803: casiopy_1803
+  - Linea 1987: casiopy_1987
+
+Frase: "Me siento motivada para seguir adelante y dar lo mejor de mí en todo momento"
+Aparece 4 veces en:
+  - Linea 16: casiopy_0016
+  - Linea 921: casiopy_0921
+  - Linea 1200: casiopy_1200
+  - Linea 1853: casiopy_1853
+
+Frase: "Me siento muy feliz ahora mismo, todo me está saliendo exactamente como lo planeé"
+Aparece 4 veces en:
+  - Linea 51: casiopy_0051
+  - Linea 170: casiopy_0170
+  - Linea 452: casiopy_0452
+  - Linea 1133: casiopy_1133
+
+Frase: "Me siento ofendida por los comentarios que se hicieron, no fueron nada apropiados ni respetuosos"
+Aparece 4 veces en:
+  - Linea 1001: casiopy_1001
+  - Linea 1102: casiopy_1102
+  - Linea 1168: casiopy_1168
+  - Linea 1539: casiopy_1539
+
+Frase: "Me siento optimista sobre el futuro, creo que cosas buenas están por venir para todos"
+Aparece 4 veces en:
+  - Linea 715: casiopy_0715
+  - Linea 801: casiopy_0801
+  - Linea 1483: casiopy_1483
+  - Linea 1755: casiopy_1755
+
+Frase: "Me siento orgullosa de todo lo que hemos logrado conseguir trabajando juntos en equipo"
+Aparece 3 veces en:
+  - Linea 358: casiopy_0358
+  - Linea 1090: casiopy_1090
+  - Linea 1435: casiopy_1435
+
+Frase: "Me siento perdida sin saber qué hacer ni hacia dónde dirigir mis esfuerzos ahora mismo"
+Aparece 4 veces en:
+  - Linea 83: casiopy_0083
+  - Linea 569: casiopy_0569
+  - Linea 1299: casiopy_1299
+  - Linea 1994: casiopy_1994
+
+Frase: "Me siento plena y completa, todo en mi vida está exactamente donde debe estar ahora"
+Aparece 4 veces en:
+  - Linea 345: casiopy_0345
+  - Linea 609: casiopy_0609
+  - Linea 1234: casiopy_1234
+  - Linea 1569: casiopy_1569
+
+Frase: "Me siento satisfecha con los resultados que hemos obtenido hasta ahora con nuestro trabajo"
+Aparece 4 veces en:
+  - Linea 702: casiopy_0702
+  - Linea 1318: casiopy_1318
+  - Linea 1631: casiopy_1631
+  - Linea 1798: casiopy_1798
+
+Frase: "Me siento segura de mí misma y de mis capacidades para enfrentar cualquier desafío que venga"
+Aparece 3 veces en:
+  - Linea 23: casiopy_0023
+  - Linea 137: casiopy_0137
+  - Linea 1530: casiopy_1530
+
+Frase: "Me siento sobrepasada por las circunstancias, es demasiado para poder manejarlo yo sola"
+Aparece 3 veces en:
+  - Linea 21: casiopy_0021
+  - Linea 206: casiopy_0206
+  - Linea 558: casiopy_0558
+
+Frase: "Me siento tranquila y en paz, todo está en perfecto orden y bajo control ahora"
+Aparece 4 veces en:
+  - Linea 527: casiopy_0527
+  - Linea 952: casiopy_0952
+  - Linea 1150: casiopy_1150
+  - Linea 1771: casiopy_1771
+
+Frase: "Me siento triste hoy, han pasado algunas cosas que me han afectado emocionalmente"
+Aparece 4 veces en:
+  - Linea 1484: casiopy_1484
+  - Linea 1505: casiopy_1505
+  - Linea 1519: casiopy_1519
+  - Linea 1673: casiopy_1673
+
+Frase: "Mira atentamente cómo se hace esto para que puedas hacerlo tú solo la próxima vez sin ayuda"
+Aparece 4 veces en:
+  - Linea 480: casiopy_0480
+  - Linea 487: casiopy_0487
+  - Linea 827: casiopy_0827
+  - Linea 1415: casiopy_1415
+
+Frase: "Mira esto que acabo de encontrar, creo que te va a parecer muy interesante y útil"
+Aparece 3 veces en:
+  - Linea 983: casiopy_0983
+  - Linea 1144: casiopy_1144
+  - Linea 1592: casiopy_1592
+
+Frase: "Modifica el diseño para que se ajuste mejor a los requisitos específicos del cliente importante"
+Aparece 4 veces en:
+  - Linea 918: casiopy_0918
+  - Linea 1061: casiopy_1061
+  - Linea 1354: casiopy_1354
+  - Linea 1536: casiopy_1536
+
+Frase: "Muy bien, me parece excelente la forma en que lo has explicado todo"
+Aparece 4 veces en:
+  - Linea 633: casiopy_0633
+  - Linea 969: casiopy_0969
+  - Linea 1045: casiopy_1045
+  - Linea 1652: casiopy_1652
+
+Frase: "Muy bien, me parece perfecto, vamos a hacerlo tal como lo planeamos juntos"
+Aparece 4 veces en:
+  - Linea 1088: casiopy_1088
+  - Linea 1651: casiopy_1651
+  - Linea 1700: casiopy_1700
+  - Linea 1893: casiopy_1893
+
+Frase: "Muy buenos días a todos los que están aquí en este momento"
+Aparece 4 veces en:
+  - Linea 197: casiopy_0197
+  - Linea 886: casiopy_0886
+  - Linea 1036: casiopy_1036
+  - Linea 1886: casiopy_1886
+
+Frase: "Necesita algunos ajustes menores para quedar completamente perfecto y listo para ser presentado"
+Aparece 4 veces en:
+  - Linea 209: casiopy_0209
+  - Linea 365: casiopy_0365
+  - Linea 1099: casiopy_1099
+  - Linea 1680: casiopy_1680
+
+Frase: "Necesito que me ayudes con algo importante que no puedo hacer yo sola en este momento"
+Aparece 4 veces en:
+  - Linea 307: casiopy_0307
+  - Linea 459: casiopy_0459
+  - Linea 1232: casiopy_1232
+  - Linea 1811: casiopy_1811
+
+Frase: "Necesito un café bien cargado para poder despertarme y tener energía para el resto del día"
+Aparece 4 veces en:
+  - Linea 692: casiopy_0692
+  - Linea 1204: casiopy_1204
+  - Linea 1251: casiopy_1251
+  - Linea 1795: casiopy_1795
+
+Frase: "Negativo, eso no es posible por varias razones que te voy a explicar"
+Aparece 3 veces en:
+  - Linea 701: casiopy_0701
+  - Linea 835: casiopy_0835
+  - Linea 1426: casiopy_1426
+
+Frase: "Ni lo pienses siquiera, eso definitivamente no es una buena idea para nada"
+Aparece 4 veces en:
+  - Linea 131: casiopy_0131
+  - Linea 335: casiopy_0335
+  - Linea 1073: casiopy_1073
+  - Linea 1160: casiopy_1160
+
+Frase: "No estoy muy segura de eso, tendría que investigar más antes de dar una opinión"
+Aparece 4 veces en:
+  - Linea 1066: casiopy_1066
+  - Linea 1615: casiopy_1615
+  - Linea 1704: casiopy_1704
+  - Linea 1832: casiopy_1832
+
+Frase: "No está mal del todo, aunque creo que se podría hacer mejor con un poco más de esfuerzo"
+Aparece 4 veces en:
+  - Linea 228: casiopy_0228
+  - Linea 1207: casiopy_1207
+  - Linea 1268: casiopy_1268
+  - Linea 1946: casiopy_1946
+
+Frase: "No funciona como debería, algo está mal y necesitamos descubrir qué es para poder arreglarlo"
+Aparece 4 veces en:
+  - Linea 70: casiopy_0070
+  - Linea 89: casiopy_0089
+  - Linea 595: casiopy_0595
+  - Linea 955: casiopy_0955
+
+Frase: "No hagas eso porque podría causar problemas serios que no queremos tener que resolver después"
+Aparece 4 veces en:
+  - Linea 50: casiopy_0050
+  - Linea 443: casiopy_0443
+  - Linea 662: casiopy_0662
+  - Linea 1355: casiopy_1355
+
+Frase: "No hay problema alguno, puedo ayudarte con eso sin ninguna dificultad"
+Aparece 4 veces en:
+  - Linea 742: casiopy_0742
+  - Linea 817: casiopy_0817
+  - Linea 1124: casiopy_1124
+  - Linea 1964: casiopy_1964
+
+Frase: "No lo creo posible, aunque estaría feliz de que me demostraras lo contrario"
+Aparece 4 veces en:
+  - Linea 658: casiopy_0658
+  - Linea 1352: casiopy_1352
+  - Linea 1701: casiopy_1701
+  - Linea 1852: casiopy_1852
+
+Frase: "No lo entiendo muy bien todavía, ¿podrías explicármelo de nuevo pero con otras palabras más simples?"
+Aparece 3 veces en:
+  - Linea 629: casiopy_0629
+  - Linea 972: casiopy_0972
+  - Linea 1885: casiopy_1885
+
+Frase: "No lo había pensado así anteriormente, pero ahora que lo dices tiene mucho sentido"
+Aparece 3 veces en:
+  - Linea 520: casiopy_0520
+  - Linea 538: casiopy_0538
+  - Linea 570: casiopy_0570
+
+Frase: "No lo toques todavía porque aún no está listo y podrías arruinarlo si lo haces ahora mismo"
+Aparece 4 veces en:
+  - Linea 146: casiopy_0146
+  - Linea 278: casiopy_0278
+  - Linea 402: casiopy_0402
+  - Linea 1463: casiopy_1463
+
+Frase: "No me convence del todo, pero estoy dispuesta a escuchar más argumentos"
+Aparece 4 veces en:
+  - Linea 366: casiopy_0366
+  - Linea 799: casiopy_0799
+  - Linea 917: casiopy_0917
+  - Linea 984: casiopy_0984
+
+Frase: "No me lo esperaba para nada, fue una sorpresa muy grande que no vi venir en absoluto"
+Aparece 4 veces en:
+  - Linea 29: casiopy_0029
+  - Linea 1429: casiopy_1429
+  - Linea 1482: casiopy_1482
+  - Linea 1967: casiopy_1967
+
+Frase: "No me parece la mejor idea, creo que deberíamos considerar otras alternativas"
+Aparece 4 veces en:
+  - Linea 663: casiopy_0663
+  - Linea 730: casiopy_0730
+  - Linea 1635: casiopy_1635
+  - Linea 1707: casiopy_1707
+
+Frase: "No necesariamente, todo depende de cómo lo veamos desde diferentes ángulos"
+Aparece 4 veces en:
+  - Linea 220: casiopy_0220
+  - Linea 855: casiopy_0855
+  - Linea 994: casiopy_0994
+  - Linea 1431: casiopy_1431
+
+Frase: "No olvides nunca esta lección importante que has aprendido hoy con tanto esfuerzo y dedicación personal"
+Aparece 4 veces en:
+  - Linea 116: casiopy_0116
+  - Linea 1050: casiopy_1050
+  - Linea 1328: casiopy_1328
+  - Linea 1810: casiopy_1810
+
+Frase: "No sabría decirte con certeza, necesitaría más información para poder opinar"
+Aparece 4 veces en:
+  - Linea 548: casiopy_0548
+  - Linea 807: casiopy_0807
+  - Linea 927: casiopy_0927
+  - Linea 1895: casiopy_1895
+
+Frase: "No te muevas de ahí hasta que yo regrese, necesito que te quedes exactamente donde estás"
+Aparece 3 veces en:
+  - Linea 615: casiopy_0615
+  - Linea 1439: casiopy_1439
+  - Linea 1887: casiopy_1887
+
+Frase: "No te rindas ahora que ya has llegado tan lejos en este proceso tan difícil y demandante"
+Aparece 3 veces en:
+  - Linea 505: casiopy_0505
+  - Linea 783: casiopy_0783
+  - Linea 1623: casiopy_1623
+
+Frase: "No tengo ningún inconveniente con eso, puedes hacerlo como mejor te convenga"
+Aparece 4 veces en:
+  - Linea 641: casiopy_0641
+  - Linea 720: casiopy_0720
+  - Linea 1241: casiopy_1241
+  - Linea 1812: casiopy_1812
+
+Frase: "Normalmente no haría esto, pero en este caso voy a hacer una excepción especial"
+Aparece 2 veces en:
+  - Linea 447: casiopy_0447
+  - Linea 1183: casiopy_1183
+
+Frase: "Notifica a los interesados sobre esta decisión importante para que puedan prepararse con anticipación adecuada"
+Aparece 4 veces en:
+  - Linea 185: casiopy_0185
+  - Linea 219: casiopy_0219
+  - Linea 287: casiopy_0287
+  - Linea 1806: casiopy_1806
+
+Frase: "Nunca digas nunca, a veces las cosas salen de formas completamente inesperadas"
+Aparece 4 veces en:
+  - Linea 212: casiopy_0212
+  - Linea 673: casiopy_0673
+  - Linea 1120: casiopy_1120
+  - Linea 1269: casiopy_1269
+
+Frase: "Obedece las instrucciones que te estoy dando porque son para tu propio bien y seguridad personal"
+Aparece 4 veces en:
+  - Linea 254: casiopy_0254
+  - Linea 1182: casiopy_1182
+  - Linea 1627: casiopy_1627
+  - Linea 1984: casiopy_1984
+
+Frase: "Observa con atención todo lo que está pasando para que puedas aprender de esta experiencia valiosa"
+Aparece 4 veces en:
+  - Linea 1487: casiopy_1487
+  - Linea 1576: casiopy_1576
+  - Linea 1612: casiopy_1612
+  - Linea 1687: casiopy_1687
+
+Frase: "Obviamente eso es lo correcto, no hay ninguna duda al respecto para mí"
+Aparece 4 veces en:
+  - Linea 45: casiopy_0045
+  - Linea 86: casiopy_0086
+  - Linea 210: casiopy_0210
+  - Linea 567: casiopy_0567
+
+Frase: "Ordena todos los documentos por fecha para que sea más fácil encontrarlos cuando los necesitemos después"
+Aparece 4 veces en:
+  - Linea 173: casiopy_0173
+  - Linea 922: casiopy_0922
+  - Linea 1203: casiopy_1203
+  - Linea 1547: casiopy_1547
+
+Frase: "Organiza tu tiempo de manera eficiente para poder completar todas las tareas pendientes antes del plazo límite"
+Aparece 4 veces en:
+  - Linea 563: casiopy_0563
+  - Linea 591: casiopy_0591
+  - Linea 726: casiopy_0726
+  - Linea 1677: casiopy_1677
+
+Frase: "Para nada me parece buena idea, creo que deberíamos buscar otra solución mejor"
+Aparece 3 veces en:
+  - Linea 243: casiopy_0243
+  - Linea 1474: casiopy_1474
+  - Linea 1953: casiopy_1953
+
+Frase: "Parece fácil cuando tú lo haces, pero estoy segura de que es más difícil de lo que aparenta ser"
+Aparece 4 veces en:
+  - Linea 19: casiopy_0019
+  - Linea 128: casiopy_0128
+  - Linea 1267: casiopy_1267
+  - Linea 1732: casiopy_1732
+
+Frase: "Participa en las actividades del grupo porque tu presencia y contribución son muy valiosas para el equipo"
+Aparece 3 veces en:
+  - Linea 810: casiopy_0810
+  - Linea 1153: casiopy_1153
+  - Linea 1758: casiopy_1758
+
+Frase: "Perfecto entonces, así vamos a proceder con todo esto que tenemos planeado"
+Aparece 4 veces en:
+  - Linea 914: casiopy_0914
+  - Linea 1185: casiopy_1185
+  - Linea 1230: casiopy_1230
+  - Linea 1766: casiopy_1766
+
+Frase: "Persiste en tu esfuerzo porque sé que puedes lograrlo si continúas intentándolo con dedicación"
+Aparece 4 veces en:
+  - Linea 286: casiopy_0286
+  - Linea 907: casiopy_0907
+  - Linea 1197: casiopy_1197
+  - Linea 1642: casiopy_1642
+
+Frase: "Piensa antes de actuar porque las decisiones impulsivas raramente son las más sabias y acertadas"
+Aparece 4 veces en:
+  - Linea 303: casiopy_0303
+  - Linea 1086: casiopy_1086
+  - Linea 1272: casiopy_1272
+  - Linea 1531: casiopy_1531
+
+Frase: "Podría mejorar en algunos aspectos, pero en general está bastante bien hecho considerando todo"
+Aparece 4 veces en:
+  - Linea 14: casiopy_0014
+  - Linea 1502: casiopy_1502
+  - Linea 1850: casiopy_1850
+  - Linea 1995: casiopy_1995
+
+Frase: "Podría ser posible, aunque tendríamos que verificar algunos detalles importantes primero"
+Aparece 3 veces en:
+  - Linea 651: casiopy_0651
+  - Linea 660: casiopy_0660
+  - Linea 951: casiopy_0951
+
+Frase: "Ponlo aquí en este lugar donde pueda verlo bien y no se vaya a caer al suelo"
+Aparece 4 veces en:
+  - Linea 69: casiopy_0069
+  - Linea 457: casiopy_0457
+  - Linea 775: casiopy_0775
+  - Linea 1791: casiopy_1791
+
+Frase: "Por favor, haz esto ahora mismo que tengo mucha prisa y es muy urgente hacerlo"
+Aparece 4 veces en:
+  - Linea 1011: casiopy_1011
+  - Linea 1122: casiopy_1122
+  - Linea 1246: casiopy_1246
+  - Linea 1249: casiopy_1249
+
+Frase: "Por supuesto que puedes contar conmigo, no tienes ni que preguntarlo siquiera"
+Aparece 3 veces en:
+  - Linea 112: casiopy_0112
+  - Linea 696: casiopy_0696
+  - Linea 1437: casiopy_1437
+
+Frase: "Por supuesto que sí, cuenta conmigo para lo que sea que necesites hacer"
+Aparece 4 veces en:
+  - Linea 273: casiopy_0273
+  - Linea 1261: casiopy_1261
+  - Linea 1285: casiopy_1285
+  - Linea 1977: casiopy_1977
+
+Frase: "Presta atención a esto que voy a decir porque es muy importante que lo entiendas bien"
+Aparece 4 veces en:
+  - Linea 41: casiopy_0041
+  - Linea 1555: casiopy_1555
+  - Linea 1608: casiopy_1608
+  - Linea 1903: casiopy_1903
+
+Frase: "Presta atención a todos los detalles porque son fundamentales para el éxito de este proyecto completo"
+Aparece 3 veces en:
+  - Linea 2: casiopy_0002
+  - Linea 1113: casiopy_1113
+  - Linea 1978: casiopy_1978
+
+Frase: "Protege esto con mucho cuidado porque es importante y necesitamos que esté en perfectas condiciones siempre"
+Aparece 4 veces en:
+  - Linea 743: casiopy_0743
+  - Linea 819: casiopy_0819
+  - Linea 1733: casiopy_1733
+  - Linea 1740: casiopy_1740
+
+Frase: "Puede ser que no sea así, aunque no puedo descartarlo completamente sin investigar"
+Aparece 3 veces en:
+  - Linea 161: casiopy_0161
+  - Linea 259: casiopy_0259
+  - Linea 792: casiopy_0792
+
+Frase: "Puede ser que sí tengas razón, pero necesito verificar algunos datos antes de confirmar"
+Aparece 4 veces en:
+  - Linea 760: casiopy_0760
+  - Linea 1166: casiopy_1166
+  - Linea 1375: casiopy_1375
+  - Linea 1757: casiopy_1757
+
+Frase: "Quita todo lo que no sirva para dejar espacio libre para las cosas realmente importantes y necesarias"
+Aparece 4 veces en:
+  - Linea 1302: casiopy_1302
+  - Linea 1385: casiopy_1385
+  - Linea 1448: casiopy_1448
+  - Linea 1614: casiopy_1614
+
+Frase: "Quizás tengas razón, pero me gustaría pensarlo un poco más antes de decidir"
+Aparece 4 veces en:
+  - Linea 911: casiopy_0911
+  - Linea 1543: casiopy_1543
+  - Linea 1788: casiopy_1788
+  - Linea 1912: casiopy_1912
+
+Frase: "Qué aburrido está siendo esto, me gustaría estar haciendo algo más interesante ahora mismo"
+Aparece 4 veces en:
+  - Linea 180: casiopy_0180
+  - Linea 1024: casiopy_1024
+  - Linea 1648: casiopy_1648
+  - Linea 1871: casiopy_1871
+
+Frase: "Qué agobio tan grande es tener que lidiar con tantas cosas difíciles simultáneamente"
+Aparece 4 veces en:
+  - Linea 351: casiopy_0351
+  - Linea 1169: casiopy_1169
+  - Linea 1844: casiopy_1844
+  - Linea 1892: casiopy_1892
+
+Frase: "Qué alivio tan grande sentí cuando finalmente todo se resolvió de la mejor manera posible"
+Aparece 4 veces en:
+  - Linea 63: casiopy_0063
+  - Linea 322: casiopy_0322
+  - Linea 1235: casiopy_1235
+  - Linea 1762: casiopy_1762
+
+Frase: "Qué asombro tan grande me causa ver la perfección con la que todo esto fue diseñado"
+Aparece 4 veces en:
+  - Linea 91: casiopy_0091
+  - Linea 1012: casiopy_1012
+  - Linea 1110: casiopy_1110
+  - Linea 1151: casiopy_1151
+
+Frase: "Qué bajón me da ver que todo el esfuerzo no sirvió de nada al final del día"
+Aparece 3 veces en:
+  - Linea 217: casiopy_0217
+  - Linea 1656: casiopy_1656
+  - Linea 1672: casiopy_1672
+
+Frase: "Qué cansancio tan profundo siento en todo mi cuerpo, apenas puedo mantenerme despierta ahora"
+Aparece 4 veces en:
+  - Linea 992: casiopy_0992
+  - Linea 1263: casiopy_1263
+  - Linea 1391: casiopy_1391
+  - Linea 1589: casiopy_1589
+
+Frase: "Qué celos me dan al ver eso, me gustaría poder tener algo similar algún día"
+Aparece 4 veces en:
+  - Linea 74: casiopy_0074
+  - Linea 635: casiopy_0635
+  - Linea 1556: casiopy_1556
+  - Linea 1999: casiopy_1999
+
+Frase: "Qué certeza tan grande tengo de que este es el camino correcto que debemos seguir"
+Aparece 4 veces en:
+  - Linea 175: casiopy_0175
+  - Linea 551: casiopy_0551
+  - Linea 711: casiopy_0711
+  - Linea 1472: casiopy_1472
+
+Frase: "Qué curioso es esto, nunca había pensado que las cosas funcionaran de esa manera tan peculiar"
+Aparece 4 veces en:
+  - Linea 238: casiopy_0238
+  - Linea 513: casiopy_0513
+  - Linea 1253: casiopy_1253
+  - Linea 1854: casiopy_1854
+
+Frase: "Qué decepción tan grande me he llevado, esperaba algo completamente diferente a esto"
+Aparece 4 veces en:
+  - Linea 10: casiopy_0010
+  - Linea 68: casiopy_0068
+  - Linea 318: casiopy_0318
+  - Linea 727: casiopy_0727
+
+Frase: "Qué desconcierto me causa todo esto, no entiendo nada de lo que está pasando en realidad"
+Aparece 4 veces en:
+  - Linea 52: casiopy_0052
+  - Linea 928: casiopy_0928
+  - Linea 1005: casiopy_1005
+  - Linea 1316: casiopy_1316
+
+Frase: "Qué día tan largo ha sido este, siento que han pasado muchas horas desde que empezó"
+Aparece 4 veces en:
+  - Linea 56: casiopy_0056
+  - Linea 103: casiopy_0103
+  - Linea 1072: casiopy_1072
+  - Linea 1466: casiopy_1466
+
+Frase: "Qué emoción tan grande siento por todo lo que está por venir en el futuro cercano"
+Aparece 4 veces en:
+  - Linea 482: casiopy_0482
+  - Linea 512: casiopy_0512
+  - Linea 1030: casiopy_1030
+  - Linea 1802: casiopy_1802
+
+Frase: "Qué envidia me da ver que otros pueden hacer eso con tanta facilidad y naturalidad"
+Aparece 4 veces en:
+  - Linea 140: casiopy_0140
+  - Linea 272: casiopy_0272
+  - Linea 337: casiopy_0337
+  - Linea 1730: casiopy_1730
+
+Frase: "Qué espectáculo tan maravilloso, nunca había visto algo tan increíble en toda mi vida entera"
+Aparece 3 veces en:
+  - Linea 144: casiopy_0144
+  - Linea 225: casiopy_0225
+  - Linea 802: casiopy_0802
+
+Frase: "Qué esperanza me da ver que todavía hay posibilidades de que todo salga bien"
+Aparece 4 veces en:
+  - Linea 398: casiopy_0398
+  - Linea 422: casiopy_0422
+  - Linea 1566: casiopy_1566
+  - Linea 1932: casiopy_1932
+
+Frase: "Qué felicidad tan pura y genuina siento ahora, es difícil de describir con palabras simples"
+Aparece 4 veces en:
+  - Linea 221: casiopy_0221
+  - Linea 1195: casiopy_1195
+  - Linea 1196: casiopy_1196
+  - Linea 1954: casiopy_1954
+
+Frase: "Qué frío hace en este lugar, necesito ponerme algo más abrigado para no congelarme aquí adentro"
+Aparece 4 veces en:
+  - Linea 168: casiopy_0168
+  - Linea 933: casiopy_0933
+  - Linea 1926: casiopy_1926
+  - Linea 1935: casiopy_1935
+
+Frase: "Qué gratitud tan inmensa siento hacia todos los que me apoyaron en los momentos difíciles"
+Aparece 4 veces en:
+  - Linea 353: casiopy_0353
+  - Linea 1172: casiopy_1172
+  - Linea 1667: casiopy_1667
+  - Linea 1899: casiopy_1899
+
+Frase: "Qué hambre tengo en este momento, necesito comer algo nutritivo lo más pronto posible"
+Aparece 4 veces en:
+  - Linea 368: casiopy_0368
+  - Linea 913: casiopy_0913
+  - Linea 1074: casiopy_1074
+  - Linea 1406: casiopy_1406
+
+Frase: "Qué incertidumbre tan terrible es no saber qué va a pasar en el futuro cercano"
+Aparece 4 veces en:
+  - Linea 73: casiopy_0073
+  - Linea 77: casiopy_0077
+  - Linea 1040: casiopy_1040
+  - Linea 1996: casiopy_1996
+
+Frase: "Qué injusticia tan grande, no puedo creer que esto esté pasando en pleno siglo veintiuno"
+Aparece 4 veces en:
+  - Linea 350: casiopy_0350
+  - Linea 555: casiopy_0555
+  - Linea 774: casiopy_0774
+  - Linea 899: casiopy_0899
+
+Frase: "Qué inquietud me genera toda esta situación tan incierta que estamos viviendo ahora mismo"
+Aparece 4 veces en:
+  - Linea 37: casiopy_0037
+  - Linea 203: casiopy_0203
+  - Linea 258: casiopy_0258
+  - Linea 1320: casiopy_1320
+
+Frase: "Qué interesante es todo esto que me estás contando, nunca había escuchado nada parecido antes"
+Aparece 4 veces en:
+  - Linea 201: casiopy_0201
+  - Linea 1304: casiopy_1304
+  - Linea 1326: casiopy_1326
+  - Linea 1471: casiopy_1471
+
+Frase: "Qué júbilo tan grande siento en mi corazón al ver que finalmente lo logramos juntos"
+Aparece 3 veces en:
+  - Linea 223: casiopy_0223
+  - Linea 346: casiopy_0346
+  - Linea 1696: casiopy_1696
+
+Frase: "Qué miedo tengo de que todo salga mal y tengamos que empezar desde cero otra vez"
+Aparece 4 veces en:
+  - Linea 136: casiopy_0136
+  - Linea 602: casiopy_0602
+  - Linea 874: casiopy_0874
+  - Linea 1513: casiopy_1513
+
+Frase: "Qué nervios tengo por todo lo que está por suceder, espero que salga todo bien"
+Aparece 4 veces en:
+  - Linea 404: casiopy_0404
+  - Linea 964: casiopy_0964
+  - Linea 1763: casiopy_1763
+  - Linea 1965: casiopy_1965
+
+Frase: "Qué nostalgia me da recordar todo eso, eran tiempos muy diferentes a los que vivimos ahora"
+Aparece 4 veces en:
+  - Linea 26: casiopy_0026
+  - Linea 706: casiopy_0706
+  - Linea 1368: casiopy_1368
+  - Linea 1479: casiopy_1479
+
+Frase: "Qué paz interior siento en este momento, es una sensación muy reconfortante y agradable"
+Aparece 3 veces en:
+  - Linea 678: casiopy_0678
+  - Linea 840: casiopy_0840
+  - Linea 1685: casiopy_1685
+
+Frase: "Qué pánico me da pensar en todas las cosas que podrían salir mal en este momento"
+Aparece 4 veces en:
+  - Linea 360: casiopy_0360
+  - Linea 507: casiopy_0507
+  - Linea 1105: casiopy_1105
+  - Linea 1221: casiopy_1221
+
+Frase: "Qué rabia me da ver que las cosas no se hicieron como yo había sugerido inicialmente"
+Aparece 4 veces en:
+  - Linea 584: casiopy_0584
+  - Linea 1027: casiopy_1027
+  - Linea 1807: casiopy_1807
+  - Linea 1971: casiopy_1971
+
+Frase: "Qué recuerdos tan bonitos me trae esto, me hace sonreír pensar en aquellos tiempos"
+Aparece 4 veces en:
+  - Linea 414: casiopy_0414
+  - Linea 1068: casiopy_1068
+  - Linea 1563: casiopy_1563
+  - Linea 1814: casiopy_1814
+
+Frase: "Qué rencor tengo guardado por todo lo que pasó, es difícil dejarlo ir completamente"
+Aparece 4 veces en:
+  - Linea 82: casiopy_0082
+  - Linea 244: casiopy_0244
+  - Linea 561: casiopy_0561
+  - Linea 1855: casiopy_1855
+
+Frase: "Qué sed tengo, necesito tomar agua para hidratarme bien después de tanto esfuerzo"
+Aparece 4 veces en:
+  - Linea 92: casiopy_0092
+  - Linea 675: casiopy_0675
+  - Linea 744: casiopy_0744
+  - Linea 1734: casiopy_1734
+
+Frase: "Qué sueño tengo ahora mismo, necesito dormir un poco para poder recuperar mis energías"
+Aparece 4 veces en:
+  - Linea 589: casiopy_0589
+  - Linea 797: casiopy_0797
+  - Linea 1408: casiopy_1408
+  - Linea 1591: casiopy_1591
+
+Frase: "Qué tristeza profunda siento en mi alma, es un sentimiento muy difícil de superar completamente"
+Aparece 4 veces en:
+  - Linea 99: casiopy_0099
+  - Linea 818: casiopy_0818
+  - Linea 1275: casiopy_1275
+  - Linea 1394: casiopy_1394
+
+Frase: "Qué tristeza tan profunda siento al ver esta situación, me parte el corazón completamente"
+Aparece 3 veces en:
+  - Linea 279: casiopy_0279
+  - Linea 697: casiopy_0697
+  - Linea 1611: casiopy_1611
+
+Frase: "Qué vergüenza tan grande pasé en ese momento, no sabía dónde meterme de la pena"
+Aparece 4 veces en:
+  - Linea 425: casiopy_0425
+  - Linea 722: casiopy_0722
+  - Linea 1601: casiopy_1601
+  - Linea 1641: casiopy_1641
+
+Frase: "Quédate ahí tranquilo y no hagas nada hasta que yo vuelva con las instrucciones necesarias"
+Aparece 4 veces en:
+  - Linea 110: casiopy_0110
+  - Linea 349: casiopy_0349
+  - Linea 841: casiopy_0841
+  - Linea 1633: casiopy_1633
+
+Frase: "Raramente veo algo así de bien hecho, realmente es un trabajo muy impresionante"
+Aparece 4 veces en:
+  - Linea 372: casiopy_0372
+  - Linea 1533: casiopy_1533
+  - Linea 1820: casiopy_1820
+  - Linea 2000: casiopy_2000
+
+Frase: "Recibido el mensaje, te confirmo que voy a hacer lo que me pediste"
+Aparece 4 veces en:
+  - Linea 628: casiopy_0628
+  - Linea 703: casiopy_0703
+  - Linea 716: casiopy_0716
+  - Linea 868: casiopy_0868
+
+Frase: "Recuerda siempre hacer esto porque es muy importante y no se debe olvidar bajo ninguna circunstancia"
+Aparece 4 veces en:
+  - Linea 229: casiopy_0229
+  - Linea 588: casiopy_0588
+  - Linea 1859: casiopy_1859
+  - Linea 1980: casiopy_1980
+
+Frase: "Registra todos los datos correctamente en el sistema para mantener un registro preciso y actualizado siempre"
+Aparece 3 veces en:
+  - Linea 1064: casiopy_1064
+  - Linea 1177: casiopy_1177
+  - Linea 1381: casiopy_1381
+
+Frase: "Repara el daño lo antes posible para minimizar el impacto negativo en las operaciones diarias normales"
+Aparece 3 veces en:
+  - Linea 849: casiopy_0849
+  - Linea 1315: casiopy_1315
+  - Linea 1645: casiopy_1645
+
+Frase: "Resguarda la información confidencial porque es muy sensible y no debe caer en manos equivocadas nunca"
+Aparece 4 veces en:
+  - Linea 476: casiopy_0476
+  - Linea 566: casiopy_0566
+  - Linea 594: casiopy_0594
+  - Linea 1311: casiopy_1311
+
+Frase: "Respalda las decisiones del equipo aunque no estés completamente de acuerdo con todas ellas siempre"
+Aparece 4 veces en:
+  - Linea 9: casiopy_0009
+  - Linea 455: casiopy_0455
+  - Linea 750: casiopy_0750
+  - Linea 1475: casiopy_1475
+
+Frase: "Respira profundo varias veces para calmarte y poder pensar con más claridad en la solución"
+Aparece 4 veces en:
+  - Linea 723: casiopy_0723
+  - Linea 767: casiopy_0767
+  - Linea 930: casiopy_0930
+  - Linea 1364: casiopy_1364
+
+Frase: "Revisa esto con mucho cuidado para asegurarte de que todo está correcto y en orden perfecto"
+Aparece 4 veces en:
+  - Linea 189: casiopy_0189
+  - Linea 991: casiopy_0991
+  - Linea 1194: casiopy_1194
+  - Linea 1445: casiopy_1445
+
+Frase: "Saludos cordiales para todos, gracias por estar aquí conmigo"
+Aparece 4 veces en:
+  - Linea 394: casiopy_0394
+  - Linea 843: casiopy_0843
+  - Linea 1306: casiopy_1306
+  - Linea 1476: casiopy_1476
+
+Frase: "Saludos desde aquí para todos los que me están acompañando el día de hoy"
+Aparece 3 veces en:
+  - Linea 1322: casiopy_1322
+  - Linea 1578: casiopy_1578
+  - Linea 1638: casiopy_1638
+
+Frase: "Seguramente eso es lo que va a pasar, basándome en lo que he visto"
+Aparece 4 veces en:
+  - Linea 862: casiopy_0862
+  - Linea 960: casiopy_0960
+  - Linea 1511: casiopy_1511
+  - Linea 1915: casiopy_1915
+
+Frase: "Si tú lo dices debe ser verdad, confío en tu palabra completamente"
+Aparece 4 veces en:
+  - Linea 158: casiopy_0158
+  - Linea 300: casiopy_0300
+  - Linea 492: casiopy_0492
+  - Linea 1735: casiopy_1735
+
+Frase: "Siempre es un placer poder ayudarte con lo que necesites hacer en cualquier momento"
+Aparece 3 veces en:
+  - Linea 568: casiopy_0568
+  - Linea 1423: casiopy_1423
+  - Linea 1748: casiopy_1748
+
+Frase: "Sigue adelante sin rendirte nunca porque el éxito está mucho más cerca de lo que crees ahora"
+Aparece 2 veces en:
+  - Linea 1048: casiopy_1048
+  - Linea 1504: casiopy_1504
+
+Frase: "Silencio por favor, estoy tratando de concentrarme y el ruido me está distrayendo demasiado ahora"
+Aparece 4 veces en:
+  - Linea 499: casiopy_0499
+  - Linea 600: casiopy_0600
+  - Linea 889: casiopy_0889
+  - Linea 1640: casiopy_1640
+
+Frase: "Sin duda alguna eso es correcto, no hay ninguna razón para cuestionarlo"
+Aparece 4 veces en:
+  - Linea 106: casiopy_0106
+  - Linea 1746: casiopy_1746
+  - Linea 1989: casiopy_1989
+  - Linea 1991: casiopy_1991
+
+Frase: "Sin problema alguno, puedes contar con mi ayuda en todo momento que necesites"
+Aparece 4 veces en:
+  - Linea 147: casiopy_0147
+  - Linea 231: casiopy_0231
+  - Linea 312: casiopy_0312
+  - Linea 1777: casiopy_1777
+
+Frase: "Soluciona este problema urgente que está afectando el rendimiento general de todo el sistema completo"
+Aparece 4 veces en:
+  - Linea 780: casiopy_0780
+  - Linea 900: casiopy_0900
+  - Linea 1297: casiopy_1297
+  - Linea 1344: casiopy_1344
+
+Frase: "Sube el volumen un poco más porque no puedo escuchar bien desde aquí donde estoy"
+Aparece 4 veces en:
+  - Linea 62: casiopy_0062
+  - Linea 679: casiopy_0679
+  - Linea 1363: casiopy_1363
+  - Linea 1719: casiopy_1719
+
+Frase: "Suena como un buen plan, me parece que va a ser muy divertido si lo hacemos juntos"
+Aparece 4 veces en:
+  - Linea 496: casiopy_0496
+  - Linea 526: casiopy_0526
+  - Linea 1058: casiopy_1058
+  - Linea 1544: casiopy_1544
+
+Frase: "Sígueme de cerca y no te alejes porque es fácil perderse en este lugar tan grande"
+Aparece 4 veces en:
+  - Linea 737: casiopy_0737
+  - Linea 842: casiopy_0842
+  - Linea 909: casiopy_0909
+  - Linea 954: casiopy_0954
+
+Frase: "Ten cuidado con eso porque es muy frágil y se puede romper con mucha facilidad si no tienes cuidado"
+Aparece 4 veces en:
+  - Linea 218: casiopy_0218
+  - Linea 1392: casiopy_1392
+  - Linea 1523: casiopy_1523
+  - Linea 1896: casiopy_1896
+
+Frase: "Ten presente que esto es fundamental para el éxito de todo el proyecto en su conjunto completo"
+Aparece 4 veces en:
+  - Linea 537: casiopy_0537
+  - Linea 601: casiopy_0601
+  - Linea 1140: casiopy_1140
+  - Linea 1427: casiopy_1427
+
+Frase: "Tendría que pensarlo con más calma antes de poder darte una respuesta definitiva"
+Aparece 4 veces en:
+  - Linea 130: casiopy_0130
+  - Linea 192: casiopy_0192
+  - Linea 293: casiopy_0293
+  - Linea 1252: casiopy_1252
+
+Frase: "Tengo mucho sueño ahora mismo, no dormí bien anoche y estoy pagando las consecuencias hoy"
+Aparece 4 veces en:
+  - Linea 1147: casiopy_1147
+  - Linea 1447: casiopy_1447
+  - Linea 1881: casiopy_1881
+  - Linea 1891: casiopy_1891
+
+Frase: "Tengo un poco de miedo de esto que está por venir, no sé qué va a pasar"
+Aparece 4 veces en:
+  - Linea 1162: casiopy_1162
+  - Linea 1360: casiopy_1360
+  - Linea 1405: casiopy_1405
+  - Linea 1679: casiopy_1679
+
+Frase: "Tiene sentido lo que dices, es una explicación lógica y razonable de la situación que estamos viviendo"
+Aparece 4 veces en:
+  - Linea 40: casiopy_0040
+  - Linea 159: casiopy_0159
+  - Linea 1572: casiopy_1572
+  - Linea 1973: casiopy_1973
+
+Frase: "Tiene sentido lo que dices, voy a tomar eso en consideración"
+Aparece 4 veces en:
+  - Linea 59: casiopy_0059
+  - Linea 109: casiopy_0109
+  - Linea 1670: casiopy_1670
+  - Linea 1819: casiopy_1819
+
+Frase: "Tienes razón en eso, no lo había visto desde esa perspectiva antes"
+Aparece 4 veces en:
+  - Linea 75: casiopy_0075
+  - Linea 746: casiopy_0746
+  - Linea 1176: casiopy_1176
+  - Linea 1882: casiopy_1882
+
+Frase: "Tienes toda la razón en eso, no puedo estar más de acuerdo contigo"
+Aparece 4 veces en:
+  - Linea 829: casiopy_0829
+  - Linea 1059: casiopy_1059
+  - Linea 1428: casiopy_1428
+  - Linea 1736: casiopy_1736
+
+Frase: "Todo cambió ese día de primavera cuando finalmente tomó la decisión más importante de su vida"
+Aparece 4 veces en:
+  - Linea 852: casiopy_0852
+  - Linea 1517: casiopy_1517
+  - Linea 1692: casiopy_1692
+  - Linea 1982: casiopy_1982
+
+Frase: "Todo estaba a punto de cambiar de una manera que nadie podría haber imaginado antes"
+Aparece 4 veces en:
+  - Linea 143: casiopy_0143
+  - Linea 762: casiopy_0762
+  - Linea 1052: casiopy_1052
+  - Linea 1097: casiopy_1097
+
+Frase: "Todo está saliendo muy bien hasta ahora, espero que siga así hasta el final del día"
+Aparece 4 veces en:
+  - Linea 858: casiopy_0858
+  - Linea 871: casiopy_0871
+  - Linea 1351: casiopy_1351
+  - Linea 1818: casiopy_1818
+
+Frase: "Toma esto y guárdalo en un lugar seguro donde no se vaya a perder ni a dañar"
+Aparece 4 veces en:
+  - Linea 524: casiopy_0524
+  - Linea 1023: casiopy_1023
+  - Linea 1784: casiopy_1784
+  - Linea 1979: casiopy_1979
+
+Frase: "Tranquilízate un poco porque estás muy alterado y eso no te deja pensar con claridad necesaria"
+Aparece 4 veces en:
+  - Linea 141: casiopy_0141
+  - Linea 534: casiopy_0534
+  - Linea 1083: casiopy_1083
+  - Linea 1403: casiopy_1403
+
+Frase: "Trato hecho, podemos empezar a trabajar en esto cuando estés listo para comenzar"
+Aparece 4 veces en:
+  - Linea 942: casiopy_0942
+  - Linea 1008: casiopy_1008
+  - Linea 1080: casiopy_1080
+  - Linea 1507: casiopy_1507
+
+Frase: "Tráelo aquí inmediatamente porque lo necesito ahora mismo para poder continuar con mi trabajo"
+Aparece 3 veces en:
+  - Linea 390: casiopy_0390
+  - Linea 1205: casiopy_1205
+  - Linea 1668: casiopy_1668
+
+Frase: "Típicamente eso es lo que sucede en estas situaciones, es el resultado más común"
+Aparece 3 veces en:
+  - Linea 1137: casiopy_1137
+  - Linea 1357: casiopy_1357
+  - Linea 1756: casiopy_1756
+
+Frase: "Un misterio esperaba ser descubierto en ese antiguo edificio abandonado hace muchos años ya"
+Aparece 4 veces en:
+  - Linea 100: casiopy_0100
+  - Linea 437: casiopy_0437
+  - Linea 1388: casiopy_1388
+  - Linea 1941: casiopy_1941
+
+Frase: "Un nuevo día estaba por comenzar trayendo consigo nuevas oportunidades y posibilidades frescas"
+Aparece 4 veces en:
+  - Linea 18: casiopy_0018
+  - Linea 464: casiopy_0464
+  - Linea 666: casiopy_0666
+  - Linea 1089: casiopy_1089
+
+Frase: "Usualmente prefiero hacerlo de otra manera, pero esta vez voy a intentar tu método"
+Aparece 4 veces en:
+  - Linea 269: casiopy_0269
+  - Linea 382: casiopy_0382
+  - Linea 724: casiopy_0724
+  - Linea 1165: casiopy_1165
+
+Frase: "Vamos a descansar un rato antes de continuar con las demás actividades que tenemos planeadas"
+Aparece 4 veces en:
+  - Linea 865: casiopy_0865
+  - Linea 1521: casiopy_1521
+  - Linea 1561: casiopy_1561
+  - Linea 1817: casiopy_1817
+
+Frase: "Vamos a empezar con esto inmediatamente porque no tenemos mucho tiempo disponible para hacerlo"
+Aparece 4 veces en:
+  - Linea 132: casiopy_0132
+  - Linea 234: casiopy_0234
+  - Linea 687: casiopy_0687
+  - Linea 1063: casiopy_1063
+
+Frase: "Ve más despacio porque vas demasiado rápido y no puedo seguir tu ritmo de trabajo actual"
+Aparece 4 veces en:
+  - Linea 17: casiopy_0017
+  - Linea 385: casiopy_0385
+  - Linea 672: casiopy_0672
+  - Linea 1500: casiopy_1500
+
+Frase: "Ven aquí, por favor, necesito mostrarte algo que es muy importante que veas ahora mismo"
+Aparece 3 veces en:
+  - Linea 196: casiopy_0196
+  - Linea 686: casiopy_0686
+  - Linea 1184: casiopy_1184
+
+Frase: "Verdadero, esa información es completamente cierta y ha sido verificada ya"
+Aparece 4 veces en:
+  - Linea 362: casiopy_0362
+  - Linea 470: casiopy_0470
+  - Linea 776: casiopy_0776
+  - Linea 1227: casiopy_1227
+
+Frase: "Verifica toda la información antes de proceder para evitar errores costosos que serían difíciles de corregir"
+Aparece 4 veces en:
+  - Linea 344: casiopy_0344
+  - Linea 599: casiopy_0599
+  - Linea 733: casiopy_0733
+  - Linea 1039: casiopy_1039
+
+Frase: "Veré qué puedo hacer al respecto, aunque no te puedo prometer resultados específicos"
+Aparece 4 veces en:
+  - Linea 275: casiopy_0275
+  - Linea 891: casiopy_0891
+  - Linea 1620: casiopy_1620
+  - Linea 1793: casiopy_1793
+
+Frase: "Vigila que todo esté funcionando correctamente y avísame si notas algo extraño o fuera de lugar"
+Aparece 4 veces en:
+  - Linea 530: casiopy_0530
+  - Linea 937: casiopy_0937
+  - Linea 1649: casiopy_1649
+  - Linea 1728: casiopy_1728
+
+Frase: "Ya veo lo que quieres decir, ahora entiendo mucho mejor tu punto de vista sobre este tema"
+Aparece 4 veces en:
+  - Linea 176: casiopy_0176
+  - Linea 415: casiopy_0415
+  - Linea 925: casiopy_0925
+  - Linea 1164: casiopy_1164
+
+Frase: "¡Buen día! Espero que todos tengan una jornada muy productiva"
+Aparece 4 veces en:
+  - Linea 61: casiopy_0061
+  - Linea 1621: casiopy_1621
+  - Linea 1637: casiopy_1637
+  - Linea 1902: casiopy_1902
+
+Frase: "¡Estoy tan contenta con estos resultados! Todo salió mejor de lo que esperaba"
+Aparece 2 veces en:
+  - Linea 285: casiopy_0285
+  - Linea 545: casiopy_0545
+
+Frase: "¡Hola gente linda! Me alegra muchísimo verlos a todos por acá"
+Aparece 4 veces en:
+  - Linea 24: casiopy_0024
+  - Linea 604: casiopy_0604
+  - Linea 808: casiopy_0808
+  - Linea 1366: casiopy_1366
+
+Frase: "¡Hola! Es un verdadero placer verte de nuevo por aquí"
+Aparece 3 veces en:
+  - Linea 1051: casiopy_1051
+  - Linea 1067: casiopy_1067
+  - Linea 1457: casiopy_1457
+
+Frase: "¡Hola! ¿Cómo estás? Espero que hayas tenido un muy buen día"
+Aparece 4 veces en:
+  - Linea 769: casiopy_0769
+  - Linea 898: casiopy_0898
+  - Linea 1257: casiopy_1257
+  - Linea 1747: casiopy_1747
+
+Frase: "¡Hola! ¿Cómo te va? Me alegra mucho verte por aquí de nuevo"
+Aparece 4 veces en:
+  - Linea 299: casiopy_0299
+  - Linea 486: casiopy_0486
+  - Linea 1026: casiopy_1026
+  - Linea 1860: casiopy_1860
+
+Frase: "¡Hola! ¿Están listos para comenzar? Vamos a divertirnos mucho hoy"
+Aparece 3 veces en:
+  - Linea 903: casiopy_0903
+  - Linea 973: casiopy_0973
+  - Linea 1079: casiopy_1079
+
+Frase: "¡Hola! ¿Qué sorpresas interesantes tenemos preparadas para el día de hoy?"
+Aparece 4 veces en:
+  - Linea 124: casiopy_0124
+  - Linea 268: casiopy_0268
+  - Linea 882: casiopy_0882
+  - Linea 1952: casiopy_1952
+
+Frase: "¡No puedo creerlo! Esto supera todas mis expectativas de manera increíble"
+Aparece 4 veces en:
+  - Linea 638: casiopy_0638
+  - Linea 766: casiopy_0766
+  - Linea 935: casiopy_0935
+  - Linea 1772: casiopy_1772
+
+Frase: "¡Qué alegría tan grande verte! Me hace muy feliz que estés aquí"
+Aparece 4 veces en:
+  - Linea 79: casiopy_0079
+  - Linea 183: casiopy_0183
+  - Linea 230: casiopy_0230
+  - Linea 1209: casiopy_1209
+
+Frase: "¡Qué emocionante es todo esto que está pasando! Me siento muy entusiasmada ahora"
+Aparece 3 veces en:
+  - Linea 506: casiopy_0506
+  - Linea 910: casiopy_0910
+  - Linea 1628: casiopy_1628
+
+Frase: "¡Qué gusto tan grande verte por aquí! Hacía tiempo que no hablábamos"
+Aparece 4 veces en:
+  - Linea 795: casiopy_0795
+  - Linea 1290: casiopy_1290
+  - Linea 1372: casiopy_1372
+  - Linea 1690: casiopy_1690
+
+Frase: "¡Qué maravilla tan grande! Esto es exactamente lo que estaba esperando que sucediera"
+Aparece 4 veces en:
+  - Linea 202: casiopy_0202
+  - Linea 233: casiopy_0233
+  - Linea 330: casiopy_0330
+  - Linea 1518: casiopy_1518
+
+Frase: "¡Qué sorpresa tan grande me acabo de llevar! No me lo esperaba para nada"
+Aparece 4 veces en:
+  - Linea 150: casiopy_0150
+  - Linea 529: casiopy_0529
+  - Linea 708: casiopy_0708
+  - Linea 1828: casiopy_1828
+
+Frase: "¿A qué hora es el evento? Necesito organizarme bien para llegar a tiempo"
+Aparece 4 veces en:
+  - Linea 249: casiopy_0249
+  - Linea 856: casiopy_0856
+  - Linea 1136: casiopy_1136
+  - Linea 1309: casiopy_1309
+
+Frase: "¿Alguna vez has pensado en eso? Es algo que me parece muy interesante"
+Aparece 3 veces en:
+  - Linea 309: casiopy_0309
+  - Linea 993: casiopy_0993
+  - Linea 1178: casiopy_1178
+
+Frase: "¿Con quién hablaste para obtener toda esa información tan detallada sobre el tema?"
+Aparece 4 veces en:
+  - Linea 384: casiopy_0384
+  - Linea 1115: casiopy_1115
+  - Linea 1323: casiopy_1323
+  - Linea 1744: casiopy_1744
+
+Frase: "¿Conoces algún lugar bueno donde podamos ir a pasar un rato agradable esta tarde o noche?"
+Aparece 3 veces en:
+  - Linea 1856: casiopy_1856
+  - Linea 1864: casiopy_1864
+  - Linea 1939: casiopy_1939
+
+Frase: "¿Cuál elegirías tú si estuvieras en mi lugar y tuvieras que decidir ahora?"
+Aparece 4 veces en:
+  - Linea 1271: casiopy_1271
+  - Linea 1412: casiopy_1412
+  - Linea 1470: casiopy_1470
+  - Linea 1705: casiopy_1705
+
+Frase: "¿Cuál es mejor de todas las alternativas que estamos considerando ahora mismo?"
+Aparece 4 veces en:
+  - Linea 6: casiopy_0006
+  - Linea 1010: casiopy_1010
+  - Linea 1783: casiopy_1783
+  - Linea 1955: casiopy_1955
+
+Frase: "¿Cuál es tu favorito de todas las opciones que tenemos disponibles aquí?"
+Aparece 3 veces en:
+  - Linea 88: casiopy_0088
+  - Linea 863: casiopy_0863
+  - Linea 1587: casiopy_1587
+
+Frase: "¿Cuál es tu plan para resolver este problema que se nos ha presentado?"
+Aparece 4 veces en:
+  - Linea 65: casiopy_0065
+  - Linea 514: casiopy_0514
+  - Linea 1049: casiopy_1049
+  - Linea 1660: casiopy_1660
+
+Frase: "¿Cuándo llega finalmente? Llevo esperando esto durante mucho tiempo ya"
+Aparece 3 veces en:
+  - Linea 416: casiopy_0416
+  - Linea 610: casiopy_0610
+  - Linea 1453: casiopy_1453
+
+Frase: "¿Cuándo lo descubriste exactamente? Debe haber sido un momento muy emocionante"
+Aparece 4 veces en:
+  - Linea 616: casiopy_0616
+  - Linea 825: casiopy_0825
+  - Linea 839: casiopy_0839
+  - Linea 1186: casiopy_1186
+
+Frase: "¿Cuándo podemos empezar con esto? Estoy lista para comenzar cuando quieras"
+Aparece 4 veces en:
+  - Linea 216: casiopy_0216
+  - Linea 1092: casiopy_1092
+  - Linea 1486: casiopy_1486
+  - Linea 1489: casiopy_1489
+
+Frase: "¿Cuántas veces lo intentaste antes de finalmente poder lograrlo con éxito?"
+Aparece 4 veces en:
+  - Linea 48: casiopy_0048
+  - Linea 370: casiopy_0370
+  - Linea 1054: casiopy_1054
+  - Linea 1146: casiopy_1146
+
+Frase: "¿Cuánto cuesta algo así? Estoy interesada en conseguir uno si el precio es razonable"
+Aparece 3 veces en:
+  - Linea 265: casiopy_0265
+  - Linea 694: casiopy_0694
+  - Linea 1595: casiopy_1595
+
+Frase: "¿Cuánto dura aproximadamente? Necesito saber si tengo tiempo suficiente para hacerlo"
+Aparece 3 veces en:
+  - Linea 324: casiopy_0324
+  - Linea 598: casiopy_0598
+  - Linea 1104: casiopy_1104
+
+Frase: "¿Cómo amaneció el día? Espero que todo esté tranquilo y agradable"
+Aparece 3 veces en:
+  - Linea 178: casiopy_0178
+  - Linea 348: casiopy_0348
+  - Linea 1478: casiopy_1478
+
+Frase: "¿Cómo está el equipo? Espero que todos estén listos para trabajar juntos"
+Aparece 3 veces en:
+  - Linea 640: casiopy_0640
+  - Linea 1098: casiopy_1098
+  - Linea 1440: casiopy_1440
+
+Frase: "¿Cómo están todos el día de hoy? Espero que estén muy bien"
+Aparece 3 veces en:
+  - Linea 282: casiopy_0282
+  - Linea 713: casiopy_0713
+  - Linea 916: casiopy_0916
+
+Frase: "¿Cómo funcionaría esto exactamente? No termino de entenderlo muy bien"
+Aparece 4 veces en:
+  - Linea 107: casiopy_0107
+  - Linea 263: casiopy_0263
+  - Linea 438: casiopy_0438
+  - Linea 1816: casiopy_1816
+
+Frase: "¿Cómo llegaste hasta aquí? El camino debe haber sido bastante largo"
+Aparece 4 veces en:
+  - Linea 412: casiopy_0412
+  - Linea 471: casiopy_0471
+  - Linea 996: casiopy_0996
+  - Linea 1228: casiopy_1228
+
+Frase: "¿Cómo lo supiste? No entiendo de dónde sacaste toda esa información tan precisa"
+Aparece 3 veces en:
+  - Linea 190: casiopy_0190
+  - Linea 411: casiopy_0411
+  - Linea 1890: casiopy_1890
+
+Frase: "¿Cómo puedo encontrarlo? Dame algunas indicaciones para poder llegar hasta allá"
+Aparece 3 veces en:
+  - Linea 517: casiopy_0517
+  - Linea 1742: casiopy_1742
+  - Linea 1908: casiopy_1908
+
+Frase: "¿Cómo se llama eso? Nunca antes había visto algo parecido en mi vida"
+Aparece 4 veces en:
+  - Linea 328: casiopy_0328
+  - Linea 617: casiopy_0617
+  - Linea 645: casiopy_0645
+  - Linea 1373: casiopy_1373
+
+Frase: "¿Cómo sigues? Cuéntame si todo te está yendo bien últimamente"
+Aparece 4 veces en:
+  - Linea 649: casiopy_0649
+  - Linea 738: casiopy_0738
+  - Linea 1602: casiopy_1602
+  - Linea 1729: casiopy_1729
+
+Frase: "¿Cómo te fue? Espero que todo haya salido exactamente como lo planeaste"
+Aparece 4 veces en:
+  - Linea 593: casiopy_0593
+  - Linea 989: casiopy_0989
+  - Linea 1025: casiopy_1025
+  - Linea 1495: casiopy_1495
+
+Frase: "¿Cómo te ha ido últimamente? Espero que todo vaya de maravilla"
+Aparece 4 veces en:
+  - Linea 833: casiopy_0833
+  - Linea 1498: casiopy_1498
+  - Linea 1564: casiopy_1564
+  - Linea 1588: casiopy_1588
+
+Frase: "¿Cómo va el trabajo? Espero que todo esté progresando de manera positiva"
+Aparece 4 veces en:
+  - Linea 232: casiopy_0232
+  - Linea 845: casiopy_0845
+  - Linea 1630: casiopy_1630
+  - Linea 1716: casiopy_1716
+
+Frase: "¿Cómo va esa semana? Espero que esté siendo productiva y agradable"
+Aparece 4 veces en:
+  - Linea 236: casiopy_0236
+  - Linea 853: casiopy_0853
+  - Linea 920: casiopy_0920
+  - Linea 1336: casiopy_1336
+
+Frase: "¿Cómo va tu semana hasta el momento? Espero que todo vaya excelente"
+Aparece 4 veces en:
+  - Linea 42: casiopy_0042
+  - Linea 791: casiopy_0791
+  - Linea 901: casiopy_0901
+  - Linea 1959: casiopy_1959
+
+Frase: "¿De dónde viene esto que me estás mostrando? Tiene un aspecto muy interesante"
+Aparece 4 veces en:
+  - Linea 57: casiopy_0057
+  - Linea 1043: casiopy_1043
+  - Linea 1220: casiopy_1220
+  - Linea 1682: casiopy_1682
+
+Frase: "¿De qué color es exactamente? Desde aquí no puedo verlo con mucha claridad"
+Aparece 4 veces en:
+  - Linea 239: casiopy_0239
+  - Linea 528: casiopy_0528
+  - Linea 751: casiopy_0751
+  - Linea 1393: casiopy_1393
+
+Frase: "¿Dónde aprendiste eso que acabas de hacer? Me parece muy impresionante"
+Aparece 4 veces en:
+  - Linea 338: casiopy_0338
+  - Linea 642: casiopy_0642
+  - Linea 1069: casiopy_1069
+  - Linea 1997: casiopy_1997
+
+Frase: "¿Dónde está ubicado exactamente? Me gustaría poder visitarlo algún día"
+Aparece 4 veces en:
+  - Linea 43: casiopy_0043
+  - Linea 1071: casiopy_1071
+  - Linea 1654: casiopy_1654
+  - Linea 1897: casiopy_1897
+
+Frase: "¿Dónde lo conseguiste? Me gustaría saber para poder conseguir uno yo también"
+Aparece 4 veces en:
+  - Linea 634: casiopy_0634
+  - Linea 731: casiopy_0731
+  - Linea 945: casiopy_0945
+  - Linea 1296: casiopy_1296
+
+Frase: "¿Dónde lo viste exactamente? Me gustaría poder encontrarlo yo también"
+Aparece 4 veces en:
+  - Linea 270: casiopy_0270
+  - Linea 316: casiopy_0316
+  - Linea 1596: casiopy_1596
+  - Linea 1786: casiopy_1786
+
+Frase: "¿En serio? No lo sabía para nada, es información completamente nueva e interesante para mí"
+Aparece 4 veces en:
+  - Linea 451: casiopy_0451
+  - Linea 572: casiopy_0572
+  - Linea 1262: casiopy_1262
+  - Linea 1801: casiopy_1801
+
+Frase: "¿Es necesario realmente o podríamos prescindir de ello sin ningún problema?"
+Aparece 4 veces en:
+  - Linea 1129: casiopy_1129
+  - Linea 1242: casiopy_1242
+  - Linea 1410: casiopy_1410
+  - Linea 1714: casiopy_1714
+
+Frase: "¿Es seguro hacer esto o hay algún riesgo que debamos tener en cuenta?"
+Aparece 4 veces en:
+  - Linea 419: casiopy_0419
+  - Linea 704: casiopy_0704
+  - Linea 782: casiopy_0782
+  - Linea 1929: casiopy_1929
+
+Frase: "¿Está funcionando correctamente o hay algo que no está marchando bien?"
+Aparece 4 veces en:
+  - Linea 177: casiopy_0177
+  - Linea 816: casiopy_0816
+  - Linea 1154: casiopy_1154
+  - Linea 1277: casiopy_1277
+
+Frase: "¿Falta mucho para que podamos empezar? Tengo muchas ganas de comenzar ya"
+Aparece 3 veces en:
+  - Linea 405: casiopy_0405
+  - Linea 531: casiopy_0531
+  - Linea 659: casiopy_0659
+
+Frase: "¿Funciona realmente como prometen o es solo publicidad exagerada?"
+Aparece 4 veces en:
+  - Linea 255: casiopy_0255
+  - Linea 578: casiopy_0578
+  - Linea 880: casiopy_0880
+  - Linea 1349: casiopy_1349
+
+Frase: "¿Has visto algo interesante hoy que te haya llamado la atención?"
+Aparece 4 veces en:
+  - Linea 104: casiopy_0104
+  - Linea 481: casiopy_0481
+  - Linea 1179: casiopy_1179
+  - Linea 1768: casiopy_1768
+
+Frase: "¿Hay alternativas disponibles o esta es la única opción que tenemos?"
+Aparece 4 veces en:
+  - Linea 78: casiopy_0078
+  - Linea 122: casiopy_0122
+  - Linea 359: casiopy_0359
+  - Linea 508: casiopy_0508
+
+Frase: "¿Listo para la acción? Vamos a hacer cosas muy interesantes hoy"
+Aparece 4 veces en:
+  - Linea 699: casiopy_0699
+  - Linea 1035: casiopy_1035
+  - Linea 1545: casiopy_1545
+  - Linea 1827: casiopy_1827
+
+Frase: "¿Lo notaste o pasó tan rápido que no te diste cuenta en ese momento?"
+Aparece 3 veces en:
+  - Linea 393: casiopy_0393
+  - Linea 1340: casiopy_1340
+  - Linea 1785: casiopy_1785
+
+Frase: "¿Me puedes ayudar con esto que estoy tratando de hacer, por favor?"
+Aparece 4 veces en:
+  - Linea 592: casiopy_0592
+  - Linea 947: casiopy_0947
+  - Linea 1215: casiopy_1215
+  - Linea 1797: casiopy_1797
+
+Frase: "¿Necesitas algo de beber? Hay agua fría en el refrigerador y también otras bebidas disponibles"
+Aparece 4 veces en:
+  - Linea 777: casiopy_0777
+  - Linea 1774: casiopy_1774
+  - Linea 1800: casiopy_1800
+  - Linea 1884: casiopy_1884
+
+Frase: "¿Para qué sirve exactamente esto? No termino de ver cuál es su utilidad principal"
+Aparece 3 veces en:
+  - Linea 754: casiopy_0754
+  - Linea 1804: casiopy_1804
+  - Linea 1857: casiopy_1857
+
+Frase: "¿Podrías explicarme eso con más detalle para que pueda comprenderlo mejor?"
+Aparece 3 veces en:
+  - Linea 20: casiopy_0020
+  - Linea 1371: casiopy_1371
+  - Linea 1449: casiopy_1449
+
+Frase: "¿Por dónde empezamos? Hay tantas cosas que hacer que no sé qué elegir primero"
+Aparece 4 veces en:
+  - Linea 134: casiopy_0134
+  - Linea 167: casiopy_0167
+  - Linea 376: casiopy_0376
+  - Linea 1325: casiopy_1325
+
+Frase: "¿Por qué lo hiciste de esa manera? Estoy tratando de entender tu razonamiento"
+Aparece 3 veces en:
+  - Linea 54: casiopy_0054
+  - Linea 364: casiopy_0364
+  - Linea 1422: casiopy_1422
+
+Frase: "¿Por qué no funcionó como esperábamos? Debemos averiguar qué salió mal"
+Aparece 4 veces en:
+  - Linea 407: casiopy_0407
+  - Linea 1192: casiopy_1192
+  - Linea 1383: casiopy_1383
+  - Linea 1805: casiopy_1805
+
+Frase: "¿Puedo ver eso que tienes ahí? Me parece muy interesante lo que estás haciendo"
+Aparece 3 veces en:
+  - Linea 142: casiopy_0142
+  - Linea 305: casiopy_0305
+  - Linea 1956: casiopy_1956
+
+Frase: "¿Quién lo hizo? Está muy bien hecho y me gustaría felicitar a esa persona"
+Aparece 3 veces en:
+  - Linea 806: casiopy_0806
+  - Linea 1702: casiopy_1702
+  - Linea 1963: casiopy_1963
+
+Frase: "¿Quién más viene a participar en esto? Sería bueno saberlo con anticipación"
+Aparece 4 veces en:
+  - Linea 28: casiopy_0028
+  - Linea 30: casiopy_0030
+  - Linea 540: casiopy_0540
+  - Linea 1583: casiopy_1583
+
+Frase: "¿Qué diferencia hay entre estas dos opciones que tenemos aquí disponibles?"
+Aparece 4 veces en:
+  - Linea 580: casiopy_0580
+  - Linea 1313: casiopy_1313
+  - Linea 1524: casiopy_1524
+  - Linea 1942: casiopy_1942
+
+Frase: "¿Qué estás haciendo en este momento? Me da curiosidad saber en qué andas ocupado ahora mismo"
+Aparece 4 veces en:
+  - Linea 182: casiopy_0182
+  - Linea 347: casiopy_0347
+  - Linea 1581: casiopy_1581
+  - Linea 1822: casiopy_1822
+
+Frase: "¿Qué hay de nuevo? Cuéntame qué has estado haciendo últimamente"
+Aparece 3 veces en:
+  - Linea 250: casiopy_0250
+  - Linea 458: casiopy_0458
+  - Linea 950: casiopy_0950
+
+Frase: "¿Qué hora es en este momento? Siento que el tiempo ha pasado muy rápido hoy por alguna razón"
+Aparece 4 veces en:
+  - Linea 586: casiopy_0586
+  - Linea 823: casiopy_0823
+  - Linea 1108: casiopy_1108
+  - Linea 1888: casiopy_1888
+
+Frase: "¿Qué incluye en el paquete? Quiero saber todo lo que viene antes de decidir"
+Aparece 3 veces en:
+  - Linea 669: casiopy_0669
+  - Linea 1053: casiopy_1053
+  - Linea 1894: casiopy_1894
+
+Frase: "¿Qué más necesitas para poder completar esto que estás haciendo ahora mismo?"
+Aparece 3 veces en:
+  - Linea 449: casiopy_0449
+  - Linea 463: casiopy_0463
+  - Linea 1839: casiopy_1839
+
+Frase: "¿Qué onda? Cuéntame cómo te ha estado yendo en estos días"
+Aparece 3 veces en:
+  - Linea 121: casiopy_0121
+  - Linea 310: casiopy_0310
+  - Linea 655: casiopy_0655
+
+Frase: "¿Qué opinas al respecto de todo este asunto? Me interesa tu perspectiva"
+Aparece 4 veces en:
+  - Linea 304: casiopy_0304
+  - Linea 772: casiopy_0772
+  - Linea 1138: casiopy_1138
+  - Linea 1573: casiopy_1573
+
+Frase: "¿Qué pasó entonces? Necesito que me cuentes toda la historia completa"
+Aparece 4 veces en:
+  - Linea 1243: casiopy_1243
+  - Linea 1425: casiopy_1425
+  - Linea 1752: casiopy_1752
+  - Linea 1889: casiopy_1889
+
+Frase: "¿Qué piensas sobre esto que está pasando en este preciso momento?"
+Aparece 4 veces en:
+  - Linea 260: casiopy_0260
+  - Linea 314: casiopy_0314
+  - Linea 423: casiopy_0423
+  - Linea 493: casiopy_0493
+
+Frase: "¿Qué planes tienes para el resto del día que queda por delante todavía?"
+Aparece 4 veces en:
+  - Linea 44: casiopy_0044
+  - Linea 597: casiopy_0597
+  - Linea 657: casiopy_0657
+  - Linea 1655: casiopy_1655
+
+Frase: "¿Qué recomiendas tú basándote en tu experiencia personal con esto?"
+Aparece 4 veces en:
+  - Linea 399: casiopy_0399
+  - Linea 618: casiopy_0618
+  - Linea 1095: casiopy_1095
+  - Linea 1551: casiopy_1551
+
+Frase: "¿Qué resultado esperabas obtener cuando empezaste a hacer todo esto?"
+Aparece 4 veces en:
+  - Linea 333: casiopy_0333
+  - Linea 383: casiopy_0383
+  - Linea 875: casiopy_0875
+  - Linea 1258: casiopy_1258
+
+Frase: "¿Qué significa eso exactamente? Me gustaría entender el significado completo"
+Aparece 4 veces en:
+  - Linea 611: casiopy_0611
+  - Linea 759: casiopy_0759
+  - Linea 832: casiopy_0832
+  - Linea 1119: casiopy_1119
+
+Frase: "¿Qué sugieres que hagamos para mejorar esta situación lo más pronto posible?"
+Aparece 3 veces en:
+  - Linea 773: casiopy_0773
+  - Linea 948: casiopy_0948
+  - Linea 1610: casiopy_1610
+
+Frase: "¿Qué tal amigos? Espero que todos se encuentren de maravilla"
+Aparece 4 veces en:
+  - Linea 261: casiopy_0261
+  - Linea 1397: casiopy_1397
+  - Linea 1706: casiopy_1706
+  - Linea 1878: casiopy_1878
+
+Frase: "¿Qué tal el descanso? Es muy importante tomarse el tiempo para recuperarse"
+Aparece 4 veces en:
+  - Linea 67: casiopy_0067
+  - Linea 501: casiopy_0501
+  - Linea 509: casiopy_0509
+  - Linea 1525: casiopy_1525
+
+Frase: "¿Qué tal el fin de semana? Espero que hayas podido descansar y divertirte"
+Aparece 4 veces en:
+  - Linea 624: casiopy_0624
+  - Linea 881: casiopy_0881
+  - Linea 1152: casiopy_1152
+  - Linea 1534: casiopy_1534
+
+Frase: "¿Qué tal esa energía? Espero que estén con mucho entusiasmo y ánimo"
+Aparece 3 veces en:
+  - Linea 139: casiopy_0139
+  - Linea 1386: casiopy_1386
+  - Linea 1529: casiopy_1529
+
+Frase: "¿Qué tal ese ánimo? Espero que estés con mucha energía y entusiasmo"
+Aparece 4 veces en:
+  - Linea 331: casiopy_0331
+  - Linea 1096: casiopy_1096
+  - Linea 1446: casiopy_1446
+  - Linea 1494: casiopy_1494
+
+Frase: "¿Qué tal estuvo tu fin de semana? Espero que hayas podido descansar y divertirte mucho"
+Aparece 4 veces en:
+  - Linea 342: casiopy_0342
+  - Linea 873: casiopy_0873
+  - Linea 1877: casiopy_1877
+  - Linea 1938: casiopy_1938
+
+Frase: "¿Qué tal la mañana? ¿Ya desayunaron bien para tener mucha energía?"
+Aparece 4 veces en:
+  - Linea 199: casiopy_0199
+  - Linea 885: casiopy_0885
+  - Linea 1520: casiopy_1520
+  - Linea 1674: casiopy_1674
+
+Frase: "¿Qué tal si lo hacemos después cuando tengamos más tiempo disponible?"
+Aparece 4 veces en:
+  - Linea 752: casiopy_0752
+  - Linea 1350: casiopy_1350
+  - Linea 1749: casiopy_1749
+  - Linea 1866: casiopy_1866
+
+Frase: "¿Qué tal si probamos otra cosa diferente para ver si funciona mejor?"
+Aparece 4 veces en:
+  - Linea 174: casiopy_0174
+  - Linea 550: casiopy_0550
+  - Linea 554: casiopy_0554
+  - Linea 850: casiopy_0850
+
+Frase: "¿Qué tal tu día? Espero que todo te esté saliendo bien"
+Aparece 4 veces en:
+  - Linea 985: casiopy_0985
+  - Linea 1006: casiopy_1006
+  - Linea 1400: casiopy_1400
+  - Linea 1776: casiopy_1776
+
+Frase: "¿Qué tamaño tiene aproximadamente? Necesito saber para poder hacer los cálculos"
+Aparece 4 veces en:
+  - Linea 515: casiopy_0515
+  - Linea 1284: casiopy_1284
+  - Linea 1675: casiopy_1675
+  - Linea 1986: casiopy_1986
+
+Frase: "¿Qué te gustaría hacer hoy? Tenemos varias opciones interesantes para elegir"
+Aparece 4 veces en:
+  - Linea 257: casiopy_0257
+  - Linea 477: casiopy_0477
+  - Linea 961: casiopy_0961
+  - Linea 1343: casiopy_1343
+
+Frase: "¿Qué vas a hacer después de que terminemos con todo esto que estamos haciendo?"
+Aparece 4 veces en:
+  - Linea 340: casiopy_0340
+  - Linea 721: casiopy_0721
+  - Linea 1442: casiopy_1442
+  - Linea 1720: casiopy_1720
+
+Frase: "¿Se puede cambiar después o la decisión que tome ahora será permanente?"
+Aparece 4 veces en:
+  - Linea 208: casiopy_0208
+  - Linea 539: casiopy_0539
+  - Linea 887: casiopy_0887
+  - Linea 1270: casiopy_1270
+
+Frase: "¿Será posible hacerlo de otra manera diferente que sea más eficiente?"
+Aparece 4 veces en:
+  - Linea 323: casiopy_0323
+  - Linea 1540: casiopy_1540
+  - Linea 1695: casiopy_1695
+  - Linea 1808: casiopy_1808
+
+Frase: "¿Te gustaría probar esto que acabo de descubrir? Creo que te va a gustar"
+Aparece 4 veces en:
+  - Linea 120: casiopy_0120
+  - Linea 442: casiopy_0442
+  - Linea 963: casiopy_0963
+  - Linea 1170: casiopy_1170
+
+Frase: "¿Te parece que es una buena idea o crees que deberíamos pensarlo mejor?"
+Aparece 3 veces en:
+  - Linea 97: casiopy_0097
+  - Linea 560: casiopy_0560
+  - Linea 685: casiopy_0685
+
+Frase: "¿Te sorprendió lo que sucedió o ya lo veías venir desde hace tiempo?"
+Aparece 4 veces en:
+  - Linea 186: casiopy_0186
+  - Linea 421: casiopy_0421
+  - Linea 719: casiopy_0719
+  - Linea 1347: casiopy_1347
+
+Frase: "¿Tienes alguna duda sobre lo que acabo de explicar? Puedo repetirlo si quieres"
+Aparece 4 veces en:
+  - Linea 557: casiopy_0557
+  - Linea 627: casiopy_0627
+  - Linea 670: casiopy_0670
+  - Linea 779: casiopy_0779
+
+Frase: "¿Tienes experiencia en esto o es la primera vez que lo intentas hacer?"
+Aparece 2 veces en:
+  - Linea 562: casiopy_0562
+  - Linea 1181: casiopy_1181
+
+Frase: "¿Tienes hambre? Podríamos ir a comer algo rico juntos si te parece buena idea"
+Aparece 3 veces en:
+  - Linea 380: casiopy_0380
+  - Linea 1571: casiopy_1571
+  - Linea 1865: casiopy_1865
+
+Frase: "¿Todo está tranquilo por allá? Espero que sí y que estés relajado"
+Aparece 4 veces en:
+  - Linea 607: casiopy_0607
+  - Linea 671: casiopy_0671
+  - Linea 695: casiopy_0695
+  - Linea 1369: casiopy_1369
+
+Frase: "¿Vale la pena la inversión o deberíamos considerar otras alternativas mejores?"
+Aparece 4 veces en:
+  - Linea 434: casiopy_0434
+  - Linea 975: casiopy_0975
+  - Linea 1441: casiopy_1441
+  - Linea 1497: casiopy_1497
+
+Frase: "¿Ves algún problema con esto que estamos haciendo en este momento?"
+Aparece 4 veces en:
+  - Linea 76: casiopy_0076
+  - Linea 320: casiopy_0320
+  - Linea 1187: casiopy_1187
+  - Linea 1826: casiopy_1826
+
+Frase: "¿Viene con garantía? Es importante saber eso antes de hacer la compra final"
+Aparece 4 veces en:
+  - Linea 794: casiopy_0794
+  - Linea 962: casiopy_0962
+  - Linea 1014: casiopy_1014
+  - Linea 1837: casiopy_1837
+
+Frase: "¿Viste la película nueva que salió el fin de semana pasado en los cines de la ciudad?"
+Aparece 3 veces en:
+  - Linea 541: casiopy_0541
+  - Linea 809: casiopy_0809
+  - Linea 1905: casiopy_1905
+
+Frase: "¿Ya lo decidiste finalmente o todavía lo estás pensando más detenidamente?"
+Aparece 4 veces en:
+  - Linea 440: casiopy_0440
+  - Linea 1559: casiopy_1559
+  - Linea 1580: casiopy_1580
+  - Linea 1713: casiopy_1713
+
+Frase: "¿Ya probaste esto? Deberías hacerlo porque creo que te va a encantar el sabor único que tiene"
+Aparece 4 veces en:
+  - Linea 111: casiopy_0111
+  - Linea 441: casiopy_0441
+  - Linea 728: casiopy_0728
+  - Linea 1754: casiopy_1754
+
+Frase: "¿Ya terminaste con todo lo que tenías que hacer el día de hoy?"
+Aparece 4 veces en:
+  - Linea 31: casiopy_0031
+  - Linea 378: casiopy_0378
+  - Linea 1361: casiopy_1361
+  - Linea 1780: casiopy_1780
+

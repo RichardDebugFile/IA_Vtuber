@@ -1,0 +1,51 @@
+# ============================================================
+# CASIOPY MEMORY SERVICE - DEPENDENCIAS PYTHON
+# ============================================================
+
+# Web Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Database
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.25
+asyncpg==0.29.0
+
+# Vector Database
+pgvector==0.2.4
+chromadb==0.4.22
+
+# Embeddings & NLP
+sentence-transformers==2.3.1
+transformers==4.37.2
+torch==2.2.0
+
+# Fine-tuning (Unsloth)
+# Nota: Instalar Unsloth requiere:
+# pip install "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git"
+# Se instala por separado después de los requisitos base
+trl==0.7.10
+datasets==2.16.1
+accelerate==0.26.1
+bitsandbytes==0.42.0
+
+# Utilities
+python-dotenv==1.0.1
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# Data Processing
+pandas==2.2.0
+numpy==1.26.3
+
+# Logging & Monitoring
+loguru==0.7.2
+
+# Async Support
+httpx==0.26.0
+aiofiles==23.2.1
+
+# Testing (opcional)
+pytest==8.0.0
+pytest-asyncio==0.23.3

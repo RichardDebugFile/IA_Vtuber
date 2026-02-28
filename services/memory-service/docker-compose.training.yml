@@ -1,0 +1,111 @@
+# ============================================================
+# Docker Compose para Entrenamiento de LoRA
+# Memory Service - Casiopy VTuber AI
+# ============================================================
+#
+# Uso:
+#   docker-compose -f docker-compose.training.yml up -d dashboard
+#   docker-compose -f docker-compose.training.yml run --rm train
+#   docker-compose -f docker-compose.training.yml down
+#
+# ============================================================
+
+version: '3.8'
+
+services:
+  # ========================================
+  # Training Dashboard
+  # ========================================
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.training
+    image: casiopy-training:latest
+    container_name: casiopy-training-dashboard
+    command: dashboard
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./scripts:/workspace/scripts
+      - ./frontend:/workspace/frontend
+      - ./exports:/workspace/exports
+      - ./models:/workspace/models
+      - ./logs:/workspace/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    networks:
+      - training-network
+
+  # ========================================
+  # Training Job (one-off)
+  # ========================================
+  train:
+    build:
+      context: .
+      dockerfile: Dockerfile.training
+    image: casiopy-training:latest
+    container_name: casiopy-training-job
+    command: train --dataset /workspace/exports/personality/v1_production/casiopy_personality_v1.0.0.jsonl --epochs 3 --batch_size 2 --learning_rate 2e-4
+    volumes:
+      - ./scripts:/workspace/scripts
+      - ./exports:/workspace/exports
+      - ./models:/workspace/models
+      - ./logs:/workspace/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - training-network
+    profiles:
+      - training  # Solo se ejecuta manualmente
+
+networks:
+  training-network:
+    driver: bridge
+
+# ============================================================
+# Comandos Utiles:
+# ============================================================
+#
+# 1. Build de la imagen:
+#    docker-compose -f docker-compose.training.yml build
+#
+# 2. Iniciar dashboard:
+#    docker-compose -f docker-compose.training.yml up -d dashboard
+#    Acceder a: http://localhost:5000
+#
+# 3. Ver logs del dashboard:
+#    docker-compose -f docker-compose.training.yml logs -f dashboard
+#
+# 4. Ejecutar entrenamiento (sin dashboard):
+#    docker-compose -f docker-compose.training.yml run --rm train
+#
+# 5. Ejecutar con parametros personalizados:
+#    docker-compose -f docker-compose.training.yml run --rm train \
+#      train --dataset /workspace/exports/personality/v1_production/casiopy_personality_v1.0.0.jsonl \
+#      --epochs 5 --batch_size 4
+#
+# 6. Shell interactivo:
+#    docker-compose -f docker-compose.training.yml run --rm train bash
+#
+# 7. Detener todo:
+#    docker-compose -f docker-compose.training.yml down
+#
+# 8. Limpiar volumenes:
+#    docker-compose -f docker-compose.training.yml down -v
+#
+# ============================================================

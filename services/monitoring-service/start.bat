@@ -30,8 +30,11 @@ echo.
 REM Activar venv y arrancar el servicio
 echo Iniciando Monitoring Service en puerto 8900...
 echo.
-echo Accede al dashboard en:
+echo Accede al dashboard con control completo:
 echo   http://127.0.0.1:8900/monitoring
+echo.
+echo IMPORTANTE: Usa /monitoring (no la raíz)
+echo            Ahí están los botones de Start/Stop/Restart
 echo.
 echo Presiona Ctrl+C para detener el servicio
 echo ========================================
@@ -40,7 +43,19 @@ echo.
 REM Cambiar al directorio del proyecto
 cd /d "%~dp0"
 
-REM Ejecutar el servidor
-"..\..\venv\Scripts\python.exe" -m uvicorn src.main:app --host 127.0.0.1 --port 8900 --reload
+REM Ejecutar el servidor en segundo plano y abrir navegador
+start /B "Monitoring Service" "..\..\venv\Scripts\python.exe" -m uvicorn src.main:app --host 127.0.0.1 --port 8900
 
-pause
+REM Esperar 3 segundos para que el servidor inicie
+timeout /t 3 /nobreak >nul
+
+REM Abrir navegador en el dashboard de monitoring
+start http://127.0.0.1:8900/monitoring
+
+echo.
+echo Servidor iniciado y navegador abierto
+echo Presiona cualquier tecla para detener el servidor...
+pause >nul
+
+REM Detener el servidor al cerrar
+powershell -Command "Get-NetTCPConnection -LocalPort 8900 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }" >nul 2>&1

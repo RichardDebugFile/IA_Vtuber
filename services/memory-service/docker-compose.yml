@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  memory-postgres:
+    image: ankane/pgvector:latest
+    container_name: casiopy-memory-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: memory_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-casiopy_memory_2024}
+      POSTGRES_DB: casiopy_memory
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - memory-data:/var/lib/postgresql/data
+      - ./backups:/backups
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "8821:5432"  # Puerto 8821 para mantener orden con otros servicios
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U memory_user -d casiopy_memory"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: >
+      postgres
+      -c wal_level=replica
+      -c archive_mode=on
+      -c archive_command='test ! -f /backups/wal/%f && cp %p /backups/wal/%f'
+      -c max_wal_senders=3
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c maintenance_work_mem=128MB
+      -c checkpoint_completion_target=0.9
+      -c random_page_cost=1.1
+
+  # Backup automático
+  memory-backup:
+    image: prodrigestivill/postgres-backup-local:16
+    container_name: casiopy-memory-backup
+    restart: unless-stopped
+    environment:
+      POSTGRES_HOST: memory-postgres
+      POSTGRES_DB: casiopy_memory
+      POSTGRES_USER: memory_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-casiopy_memory_2024}
+      SCHEDULE: "0 */1 * * *"  # Cada hora
+      BACKUP_KEEP_DAYS: 7
+      BACKUP_KEEP_WEEKS: 4
+      BACKUP_KEEP_MONTHS: 6
+      BACKUP_DIR: /backups/hourly
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      memory-postgres:
+        condition: service_healthy
+
+volumes:
+  memory-data:
+    driver: local

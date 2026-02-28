@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+.venv_training/
+
+# Unsloth compiled cache
+unsloth_compiled_cache/
+**/unsloth_compiled_cache/
+
+# Logs
+logs/
+*.log
+build.log
+
+# Basura temporal
+nul
+=*
+
+# Database backups
+backups/
+!backups/.gitkeep
+
+# Exports
+exports/
+!exports/.gitkeep
+
+# LoRA adapters (large files)
+lora_adapters/
+!lora_adapters/.gitkeep
+models/
+!models/.gitkeep
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+docker-volumes/

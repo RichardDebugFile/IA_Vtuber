@@ -15,7 +15,7 @@ pip install -e .
 python -m src.server
 ```
 
-El servidor estará disponible en `http://localhost:8803`
+El servidor estará disponible en `http://localhost:8802`
 
 ### 3. Probar el Servicio
 
@@ -24,7 +24,7 @@ El servidor estará disponible en `http://localhost:8803`
 python test_quick.py
 
 # Ver documentación interactiva
-# Abrir en navegador: http://localhost:8803/docs
+# Abrir en navegador: http://localhost:8802/docs
 ```
 
 ---
@@ -41,7 +41,7 @@ import httpx
 async def generate_blips(text: str, emotion: str = "neutral"):
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            "http://localhost:8803/blips/generate",
+            "http://localhost:8802/blips/generate",
             json={
                 "text": text,
                 "emotion": emotion,
@@ -240,7 +240,7 @@ Crear archivo `.env` en `services/tts-blips/`:
 
 ```bash
 # Puerto del servicio
-BLIPS_PORT=8803
+BLIPS_PORT=8802
 
 # Host (0.0.0.0 para acceso externo)
 BLIPS_HOST=0.0.0.0
@@ -296,11 +296,11 @@ python example_integration.py
 ### El servidor no inicia
 
 ```bash
-# Verificar que el puerto 8803 esté libre
-netstat -ano | findstr :8803
+# Verificar que el puerto 8802 esté libre
+netstat -ano | findstr :8802
 
 # Cambiar puerto si es necesario
-BLIPS_PORT=8804 python -m src.server
+BLIPS_PORT=8805 python -m src.server
 ```
 
 ### Audio sin sonido o muy bajo

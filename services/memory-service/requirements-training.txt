@@ -1,0 +1,64 @@
+# ============================================================
+# Dependencias para Entrenamiento de LoRA
+# Memory Service - Casiopy VTuber AI
+# ============================================================
+#
+# Instalacion:
+#   pip install -r requirements-training.txt
+#
+# Nota: PyTorch debe instalarse primero con CUDA:
+#   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+#
+# ============================================================
+
+# Deep Learning Framework
+# torch==2.4.0+cu124  # Instalar manualmente con el comando de arriba
+# torchvision==0.19.0+cu124
+# torchaudio==2.4.0+cu124
+
+# Unsloth - Entrenamiento eficiente de LLMs
+# unsloth @ git+https://github.com/unslothai/unsloth.git  # Instalar manualmente
+
+# Transformers y Training (versiones compatibles con Unsloth)
+transformers==4.51.3
+datasets==3.4.1
+trl==0.18.2
+accelerate==0.34.2
+peft==0.13.0
+
+# Cuantizacion
+bitsandbytes==0.43.3
+
+# Tokenizers
+tokenizers==0.21.0
+sentencepiece==0.2.0
+
+# Utilidades
+numpy==1.26.4
+scipy==1.13.1
+pandas==2.2.2
+
+# Progress bars y logging
+tqdm==4.66.5
+
+# Dashboard web (Flask + SocketIO)
+Flask==3.0.0
+flask-socketio==5.3.5
+python-socketio==5.10.0
+
+# System monitoring
+psutil==5.9.6
+
+# GPU monitoring (NVIDIA)
+nvidia-ml-py3==7.352.0
+
+# JSON y data handling
+jsonlines==4.0.0
+
+# ============================================================
+# Versiones especificas para compatibilidad
+# ============================================================
+
+# Evitar conflictos con Unsloth
+# protobuf==3.20.3
+# packaging==24.1

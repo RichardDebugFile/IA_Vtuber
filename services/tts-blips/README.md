@@ -81,7 +81,7 @@ pip install -e .
 
 ### Desarrollo
 ```bash
-python -m uvicorn src.server:app --reload --port 8803
+python -m uvicorn src.server:app --reload --port 8802
 ```
 
 ### Testing
@@ -93,7 +93,7 @@ pytest tests/
 
 Variables de entorno (`.env`):
 ```bash
-BLIPS_PORT=8803
+BLIPS_PORT=8802
 BLIPS_HOST=0.0.0.0
 BLIPS_CACHE_ENABLED=true
 BLIPS_FEMALE_PITCH=220  # Hz (rango femenino: 180-250)

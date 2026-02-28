@@ -1,0 +1,15 @@
+# Archivos generados - no versionar
+data/wavs_44k/
+data/metadata.list.cleaned
+data/train.list
+data/val.list
+data/config.json
+logs/
+output/
+__pycache__/
+*.pyc
+
+# Mantener la estructura de directorios
+!data/.gitkeep
+!logs/.gitkeep
+!output/.gitkeep

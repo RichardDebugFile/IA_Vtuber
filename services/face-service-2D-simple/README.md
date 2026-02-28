@@ -30,7 +30,7 @@ Este servicio proporciona la representación visual de la VTuber mediante una ve
                                │
                                ▼
                     Gateway WebSocket
-                    (ws://127.0.0.1:8765/ws)
+                    (ws://127.0.0.1:8800/ws)
 ```
 
 ## Características Principales
@@ -128,7 +128,7 @@ python run_gui.py
 
 ```bash
 # URL del WebSocket del gateway
-export GATEWAY_WS="ws://127.0.0.1:8765/ws"
+export GATEWAY_WS="ws://127.0.0.1:8800/ws"
 ```
 
 ### Controles
@@ -298,7 +298,7 @@ panel = TextPanel(
 - **Linux**: Instalar compositor (compton, picom) para transparencia
 
 ### El WebSocket no conecta
-- Verificar que el gateway está corriendo en `ws://127.0.0.1:8765/ws`
+- Verificar que el gateway está corriendo en `ws://127.0.0.1:8800/ws`
 - Revisar logs en consola para errores de conexión
 - Comprobar firewall/antivirus
 

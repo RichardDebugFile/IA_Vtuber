@@ -19,6 +19,7 @@ from .config import (
     BEST_OF,
     TEMPERATURE,
     SAMPLE_RATE,
+    INITIAL_PROMPT,
 )
 
 logger = logging.getLogger(__name__)
@@ -27,13 +28,15 @@ logger = logging.getLogger(__name__)
 class Transcriber:
     """Speech-to-text transcription using Faster Whisper."""
 
-    def __init__(self):
+    def __init__(self, model_name: Optional[str] = None):
         if not FASTER_WHISPER_AVAILABLE:
             raise RuntimeError(
                 "faster-whisper not available. Install with: pip install faster-whisper"
             )
 
-        logger.info(f"Loading Whisper model: {WHISPER_MODEL} on device: {DEVICE}")
+        # Use provided model name or default from config
+        self.model_name = model_name or WHISPER_MODEL
+        logger.info(f"Loading Whisper model: {self.model_name} on device: {DEVICE}")
 
         # Determine best compute type for device
         actual_device = DEVICE
@@ -65,7 +68,7 @@ class Transcriber:
 
         # Load Whisper model
         self.model = WhisperModel(
-            WHISPER_MODEL,
+            self.model_name,
             device=actual_device,
             compute_type=actual_compute_type,
             download_root=None,  # Use default cache
@@ -116,6 +119,8 @@ class Transcriber:
             temperature=TEMPERATURE,
             vad_filter=True,  # Enable voice activity detection
             word_timestamps=include_timestamps,
+            initial_prompt=INITIAL_PROMPT,  # Spanish context to improve accuracy
+            condition_on_previous_text=True,  # Use previous segments for context
         )
 
         # Collect segments

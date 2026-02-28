@@ -1,0 +1,115 @@
+# ============================================================
+# Dockerfile para Entrenamiento de LoRA
+# Memory Service - Casiopy VTuber AI
+# ============================================================
+#
+# Build:
+#   docker build -f Dockerfile.training -t casiopy-training .
+#
+# Run (con GPU):
+#   docker run --gpus all -it -v .:/workspace -p 5000:5000 casiopy-training
+#
+# Run (Dashboard):
+#   docker run --gpus all -it -v .:/workspace -p 5000:5000 casiopy-training dashboard
+#
+# Run (Entrenamiento directo):
+#   docker run --gpus all -it -v .:/workspace casiopy-training train \
+#     --dataset /workspace/exports/personality/v1_production/casiopy_personality_v1.0.0.jsonl \
+#     --epochs 3
+#
+# ============================================================
+
+FROM nvidia/cuda:12.4.0-devel-ubuntu22.04
+
+# Metadatos
+LABEL maintainer="Casiopy VTuber AI"
+LABEL description="Entorno de entrenamiento para LoRA de personalidad"
+LABEL version="1.0.0"
+
+# Variables de entorno
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV CUDA_HOME=/usr/local/cuda
+ENV PATH=/usr/local/cuda/bin:$PATH
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+
+# Directorio de trabajo
+WORKDIR /workspace
+
+# Instalar dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    python3.10 \
+    python3-pip \
+    python3-dev \
+    git \
+    wget \
+    vim \
+    htop \
+    nvtop \
+    && rm -rf /var/lib/apt/lists/*
+
+# Actualizar pip
+RUN python3 -m pip install --upgrade pip setuptools wheel
+
+# Instalar PyTorch Nightly con soporte para sm_120 (RTX 5060 Ti Blackwell)
+RUN pip install --pre torch --index-url https://download.pytorch.org/whl/nightly/cu124
+
+# Instalar bitsandbytes para cuantización 4bit
+RUN pip install bitsandbytes
+
+# Instalar Unsloth
+RUN pip install "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git"
+
+# Copiar requirements
+COPY requirements-training.txt /tmp/requirements-training.txt
+
+# Instalar dependencias de Python (excepto torch, bitsandbytes y unsloth que ya estan)
+RUN grep -v "^#" /tmp/requirements-training.txt | \
+    grep -v "^torch" | \
+    grep -v "unsloth" | \
+    grep -v "bitsandbytes" | \
+    grep -v "torchaudio" | \
+    grep -v "torchvision" | \
+    grep -v "^$" | \
+    xargs -r pip install
+
+# Copiar codigo del servicio
+COPY scripts/ /workspace/scripts/
+COPY frontend/ /workspace/frontend/
+COPY exports/ /workspace/exports/
+
+# Crear directorio para modelos
+RUN mkdir -p /workspace/models/lora_adapters
+
+# Verificar instalacion (solo PyTorch, Unsloth requiere GPU en runtime)
+RUN python3 -c "import torch; print(f'PyTorch: {torch.__version__}')"
+
+# Exponer puerto del dashboard
+EXPOSE 5000
+
+# Script de entrada
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["bash"]
+
+# ============================================================
+# Uso:
+# ============================================================
+#
+# 1. Build de la imagen:
+#    docker build -f Dockerfile.training -t casiopy-training .
+#
+# 2. Ejecutar dashboard:
+#    docker run --gpus all -it -v $(pwd):/workspace -p 5000:5000 casiopy-training dashboard
+#
+# 3. Entrenar directamente:
+#    docker run --gpus all -it -v $(pwd):/workspace casiopy-training train \
+#      --dataset /workspace/exports/personality/v1_production/casiopy_personality_v1.0.0.jsonl \
+#      --epochs 3 --batch_size 2 --learning_rate 2e-4
+#
+# 4. Shell interactivo:
+#    docker run --gpus all -it -v $(pwd):/workspace casiopy-training bash
+#
+# ============================================================

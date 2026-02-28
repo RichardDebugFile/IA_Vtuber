@@ -45,10 +45,10 @@ Sistema completo de monitoreo y control de todos los microservicios del proyecto
 
 | Servicio | Puerto | Color |
 |----------|--------|-------|
-| Gateway | 8765 | Verde |
+| Gateway | 8800 | Verde |
 | Conversation AI | 8801 | Azul |
-| TTS Service | 8802 | Naranja |
-| Assistant | 8803 | Morado |
+| TTS Service | 8803 | Naranja |
+| Assistant | 8802 | Morado |
 | Fish Audio Server | 8080 | Cyan |
 
 ## Instalación
@@ -126,7 +126,7 @@ Respuesta:
 {
   "tts": {
     "name": "TTS Service",
-    "port": 8802,
+    "port": 8803,
     "status": "online",
     "response_time_ms": 12.5,
     "color": "#FF9800"
@@ -201,8 +201,8 @@ Edita `src/main.py` y añade el servicio al diccionario `SERVICES`:
 SERVICES = {
     "mi_servicio": {
         "name": "Mi Servicio",
-        "port": 8804,
-        "health_url": "http://127.0.0.1:8804/health",
+        "port": 8805,
+        "health_url": "http://127.0.0.1:8805/health",
         "start_cmd": None,
         "color": "#E91E63"
     }

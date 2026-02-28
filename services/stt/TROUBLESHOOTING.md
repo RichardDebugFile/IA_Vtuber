@@ -142,7 +142,7 @@ El servicio muestra:
 
 ```bash
 # Health check
-curl http://127.0.0.1:8806/health
+curl http://127.0.0.1:8803/health
 
 # Debería retornar:
 {

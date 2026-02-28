@@ -9,7 +9,7 @@ import httpx
 class BlipsClient:
     """Simple HTTP client for the blips service."""
 
-    def __init__(self, base_url: str = "http://127.0.0.1:8803"):
+    def __init__(self, base_url: str = "http://127.0.0.1:8802"):
         self.base_url = base_url
 
     async def generate(

@@ -15,7 +15,7 @@ cd services/stt
 ```bash
 # Opción 1: Desde el directorio del servicio
 cd services/stt
-../../venv/Scripts/python.exe -m uvicorn src.server:app --host 127.0.0.1 --port 8806
+../../venv/Scripts/python.exe -m uvicorn src.server:app --host 127.0.0.1 --port 8803
 
 # Opción 2: Desde el monitoring service
 # Ir a http://127.0.0.1:8900 y hacer clic en "Start" en el servicio STT
@@ -26,7 +26,7 @@ cd services/stt
 ### 1. Health Check
 
 ```bash
-curl http://127.0.0.1:8806/health
+curl http://127.0.0.1:8803/health
 ```
 
 Respuesta esperada:
@@ -55,7 +55,7 @@ Respuesta esperada:
 
 ```bash
 # Usando curl
-curl -X POST http://127.0.0.1:8806/transcribe \
+curl -X POST http://127.0.0.1:8803/transcribe \
   -F "file=@audio.wav" \
   -F "language=es" \
   -F "include_timestamps=false"
@@ -70,7 +70,7 @@ with open("audio.wav", "rb") as f:
     data = {"language": "es", "include_timestamps": "false"}
 
     response = httpx.post(
-        "http://127.0.0.1:8806/transcribe",
+        "http://127.0.0.1:8803/transcribe",
         files=files,
         data=data,
         timeout=60.0
@@ -123,8 +123,8 @@ export LANGUAGE=es
 - Verificar VRAM disponible con `nvidia-smi`
 
 ### "Connection refused"
-- Verificar que el servicio está corriendo: `curl http://127.0.0.1:8806/health`
-- Verificar puerto no esté en uso: `netstat -ano | findstr :8806`
+- Verificar que el servicio está corriendo: `curl http://127.0.0.1:8803/health`
+- Verificar puerto no esté en uso: `netstat -ano | findstr :8803`
 
 ## Próximos Pasos
 

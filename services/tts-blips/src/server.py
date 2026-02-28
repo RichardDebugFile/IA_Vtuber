@@ -159,7 +159,7 @@ async def preview_blip(
 def main():
     import uvicorn
 
-    port = int(os.getenv("BLIPS_PORT", "8804"))
+    port = int(os.getenv("BLIPS_PORT", "8805"))
     host = os.getenv("BLIPS_HOST", "0.0.0.0")
 
     print(f"[BLIPS] Starting server on {host}:{port}")

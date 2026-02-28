@@ -32,11 +32,11 @@ class HealthHandler(BaseHTTPRequestHandler):
         pass
 
 
-def start_health_server(port: int = 8805):
+def start_health_server(port: int = 8804):
     """Start health check server in background thread.
 
     Args:
-        port: Port to listen on (default: 8805)
+        port: Port to listen on (default: 8804)
     """
     def run_server():
         server = HTTPServer(("0.0.0.0", port), HealthHandler)

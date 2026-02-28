@@ -37,7 +37,7 @@ except Exception:
 
 
 # ---- Config (.env) -----------------------------------------------------------
-GATEWAY_HTTP = os.getenv("GATEWAY_HTTP", "http://127.0.0.1:8765")
+GATEWAY_HTTP = os.getenv("GATEWAY_HTTP", "http://127.0.0.1:8800")
 CONVERSATION_HTTP = os.getenv("CONVERSATION_HTTP", "http://127.0.0.1:8801")
 FISH_TTS_HTTP = os.getenv("FISH_TTS_HTTP", "http://127.0.0.1:8080/v1/tts")  # informativo
 TTS_HTTP = os.getenv("TTS_HTTP", "http://127.0.0.1:8802")

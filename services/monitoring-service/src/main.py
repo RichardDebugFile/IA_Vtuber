@@ -73,34 +73,16 @@ VENV_PYTHON = PROJECT_ROOT / "venv" / "Scripts" / "python.exe"
 
 # Service configuration
 SERVICES = {
-    "fish": {
-        "name": "Fish Audio Server (Docker)",
-        "port": 8080,
-        "health_url": "http://127.0.0.1:8080/v1/health",
+    # ── Núcleo (880x) ───────────────────────────────────────────────────────────
+    "gateway": {
+        "name": "Gateway",
+        "port": 8800,
+        "health_url": "http://127.0.0.1:8800/health",
+        "start_cmd": f'start /B cmd /c "cd services/gateway && "{VENV_PYTHON}" -m uvicorn src.main:app --host 127.0.0.1 --port 8800"',
+        "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8800 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
         "cwd": str(PROJECT_ROOT),
-        "color": "#00BCD4",
-        "manageable": False,  # Controlado por Docker, no directamente
-        "managed_by": "docker"  # Indica que se controla mediante Docker
-    },
-    "tts": {
-        "name": "TTS Service",
-        "port": 8802,
-        "health_url": "http://127.0.0.1:8802/health",
-        "start_cmd": f'start /B cmd /c "cd services/tts && "{VENV_PYTHON}" -m uvicorn src.server:app --host 127.0.0.1 --port 8802"',
-        "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8802 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
-        "cwd": str(PROJECT_ROOT),
-        "color": "#FF9800",
-        "manageable": True,
-        "requires": ["fish"]  # TTS requiere que Fish esté corriendo
-    },
-    "ollama": {
-        "name": "Ollama (LLM Server)",
-        "port": 11434,
-        "health_url": "http://127.0.0.1:11434/",
-        "cwd": str(PROJECT_ROOT),
-        "color": "#673AB7",
-        "manageable": False,  # Ollama se maneja externamente
-        "external": True  # Indica que es servicio externo
+        "color": "#4CAF50",
+        "manageable": True
     },
     "conversation": {
         "name": "Conversation AI",
@@ -114,59 +96,184 @@ SERVICES = {
         "ui_path": "/conversation-test",
         "requires": ["ollama"]  # Requiere Ollama corriendo
     },
-    "gateway": {
-        "name": "Gateway",
-        "port": 8765,
-        "health_url": "http://127.0.0.1:8765/health",
-        "start_cmd": f'start /B cmd /c "cd services/gateway && "{VENV_PYTHON}" -m uvicorn src.main:app --host 127.0.0.1 --port 8765"',
-        "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8765 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
-        "cwd": str(PROJECT_ROOT),
-        "color": "#4CAF50",
-        "manageable": True
-    },
     "assistant": {
         "name": "Assistant",
-        "port": 8803,
-        "health_url": "http://127.0.0.1:8803/health",
+        "port": 8802,
+        "health_url": "http://127.0.0.1:8802/health",
         "start_cmd": None,
         "cwd": str(PROJECT_ROOT),
         "color": "#9C27B0",
         "manageable": False
     },
-    "tts-blips": {
-        "name": "TTS Blips (Dialogue)",
-        "port": 8804,
-        "health_url": "http://127.0.0.1:8804/health",
-        "start_cmd": f'start /B cmd /c "cd /D services\\tts-blips && "{VENV_PYTHON}" -m src.server"',
-        "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8804 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
-        "cwd": str(PROJECT_ROOT),
-        "color": "#E91E63",
-        "manageable": True,
-        "ui_path": "/blips-test"  # Nueva ventana de interfaz
-    },
-    "face": {
-        "name": "Face Service 2D (VTuber Avatar)",
-        "port": 8805,
-        "health_url": "http://127.0.0.1:8805/health",
-        "start_cmd": f'start "VTuber Face" cmd /c "cd /D services\\face-service-2D-simple && "{VENV_PYTHON}" run_gui.py"',
-        "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8805 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
-        "cwd": str(PROJECT_ROOT),
-        "color": "#FF5722",
-        "manageable": True,
-        "requires": ["gateway"],  # Requiere gateway para recibir eventos
-        "service_type": "GUI"  # Indica que es aplicación GUI
-    },
     "stt": {
         "name": "STT (Speech-to-Text)",
-        "port": 8806,
-        "health_url": "http://127.0.0.1:8806/health",
-        "start_cmd": f'start /B cmd /c "cd services/stt && "{VENV_PYTHON}" -m uvicorn src.server:app --host 127.0.0.1 --port 8806"',
-        "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8806 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
+        "port": 8803,
+        "health_url": "http://127.0.0.1:8803/health",
+        "start_cmd": f'start /B cmd /c "cd services/stt && "{VENV_PYTHON}" -m uvicorn src.server:app --host 127.0.0.1 --port 8803"',
+        "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8803 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
         "cwd": str(PROJECT_ROOT),
         "color": "#00BCD4",
         "manageable": True,
-        "ui_path": "/stt-test"  # Nueva ventana de interfaz de prueba
-    }
+        "ui_path": "/stt-test"
+    },
+    "face": {
+        "name": "Face Service 2D (VTuber Avatar)",
+        "port": 8804,
+        "health_url": "http://127.0.0.1:8804/health",
+        "start_cmd": f'start "VTuber Face" cmd /c "cd /D services\\face-service-2D-simple && "{VENV_PYTHON}" run_gui.py"',
+        "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8804 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
+        "cwd": str(PROJECT_ROOT),
+        "color": "#FF5722",
+        "manageable": True,
+        "requires": ["gateway"],
+        "service_type": "GUI"
+    },
+    "tts-blips": {
+        "name": "TTS Blips (Dialogue)",
+        "port": 8805,
+        "health_url": "http://127.0.0.1:8805/health",
+        "start_cmd": f'start /B cmd /c "cd /D services\\tts-blips && "{VENV_PYTHON}" -m src.server"',
+        "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8805 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
+        "cwd": str(PROJECT_ROOT),
+        "color": "#E91E63",
+        "manageable": True,
+        "ui_path": "/blips-test"
+    },
+    "tts": {
+        "name": "TTS Service",
+        "port": 8806,
+        "health_url": "http://127.0.0.1:8806/health",
+        "start_cmd": f'start /B cmd /c "cd services/tts && "{VENV_PYTHON}" -m uvicorn src.server:app --host 127.0.0.1 --port 8806"',
+        "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8806 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
+        "cwd": str(PROJECT_ROOT),
+        "color": "#FF9800",
+        "manageable": True,
+        "requires": ["fish"]
+    },
+
+    # ── TTS Stack (881x) ────────────────────────────────────────────────────────
+    "tts-router": {
+        "name": "TTS Router (enrutador central)",
+        "port": 8810,
+        "health_url": "http://127.0.0.1:8810/health",
+        "start_cmd": (
+            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\tts-router" && '
+            f'"{VENV_PYTHON}" server.py"'
+        ),
+        "stop_cmd": (
+            'powershell -Command "Get-NetTCPConnection -LocalPort 8810 -ErrorAction SilentlyContinue'
+            ' | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"'
+        ),
+        "cwd": str(PROJECT_ROOT),
+        "color": "#F57C00",
+        "manageable": True,
+        "description": "Enrutador TTS – recibe /synthesize y delega al backend según el modo seleccionado."
+    },
+    "tts-casiopy": {
+        "name": "TTS Casiopy FT (voz principal · DEFAULT)",
+        "port": 8815,
+        "health_url": "http://127.0.0.1:8815/health",
+        "start_cmd": (
+            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\tts-casiopy" && '
+            f'"{PROJECT_ROOT}\\services\\tts-openvoice\\venv\\Scripts\\python.exe" server.py"'
+        ),
+        "stop_cmd": (
+            'powershell -Command "Get-NetTCPConnection -LocalPort 8815 -ErrorAction SilentlyContinue'
+            ' | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"'
+        ),
+        "cwd": str(PROJECT_ROOT),
+        "color": "#E91E8C",
+        "manageable": True,
+        "description": "MeloTTS fine-tuneado (casiopy) – voz principal del proyecto. RTF ~1.5. Sin ToneColorConverter."
+    },
+    "tts-openvoice": {
+        "name": "TTS OpenVoice V2 (streaming rápido)",
+        "port": 8811,
+        "health_url": "http://127.0.0.1:8811/health",
+        "start_cmd": (
+            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\tts-openvoice" && '
+            f'"{PROJECT_ROOT}\\services\\tts-openvoice\\venv\\Scripts\\python.exe" server.py"'
+        ),
+        "stop_cmd": (
+            'powershell -Command "Get-NetTCPConnection -LocalPort 8811 -ErrorAction SilentlyContinue'
+            ' | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"'
+        ),
+        "cwd": str(PROJECT_ROOT),
+        "color": "#43A047",
+        "manageable": True,
+        "description": "OpenVoice V2 – MeloTTS ES + ToneColorConverter. RTF ~0.2. Uso: streaming."
+    },
+    "tts-cosyvoice": {
+        "name": "TTS CosyVoice3 (streaming calidad)",
+        "port": 8812,
+        "health_url": "http://127.0.0.1:8812/health",
+        "start_cmd": (
+            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\tts-cosyvoice" && '
+            f'"{PROJECT_ROOT}\\services\\tts-cosyvoice\\venv\\Scripts\\python.exe" server.py"'
+        ),
+        "stop_cmd": (
+            'powershell -Command "Get-NetTCPConnection -LocalPort 8812 -ErrorAction SilentlyContinue'
+            ' | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"'
+        ),
+        "cwd": str(PROJECT_ROOT),
+        "color": "#00897B",
+        "manageable": True,
+        "description": "CosyVoice3-0.5B – Zero-shot / Cross-lingual. RTF ~1.4. Uso: streaming ocasiones especiales."
+    },
+    "tts-qwen3": {
+        "name": "TTS Qwen3-TTS (creación contenido)",
+        "port": 8813,
+        "health_url": "http://127.0.0.1:8813/health",
+        "start_cmd": (
+            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\tts-qwen3" && '
+            f'"{PROJECT_ROOT}\\services\\tts-qwen3\\venv\\Scripts\\python.exe" server.py"'
+        ),
+        "stop_cmd": (
+            'powershell -Command "Get-NetTCPConnection -LocalPort 8813 -ErrorAction SilentlyContinue'
+            ' | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"'
+        ),
+        "cwd": str(PROJECT_ROOT),
+        "color": "#7B1FA2",
+        "manageable": True,
+        "description": "Qwen3-TTS-12Hz-0.6B – LLM-based AR TTS. RTF ~5. Uso: datasets / contenido."
+    },
+    "tts-fish": {
+        "name": "TTS Fish Speech Local (creación contenido)",
+        "port": 8814,
+        "health_url": "http://127.0.0.1:8814/health",
+        "start_cmd": (
+            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\tts-fish" && '
+            f'"{PROJECT_ROOT}\\services\\tts-fish\\venv\\Scripts\\python.exe" server.py"'
+        ),
+        "stop_cmd": (
+            'powershell -Command "Get-NetTCPConnection -LocalPort 8814 -ErrorAction SilentlyContinue'
+            ' | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"'
+        ),
+        "cwd": str(PROJECT_ROOT),
+        "color": "#1565C0",
+        "manageable": True,
+        "description": "Fish Speech openaudio-s1-mini – Llama + VQ-GAN. RTF ~2.2. Uso: datasets / contenido."
+    },
+
+    # ── Externos ────────────────────────────────────────────────────────────────
+    "ollama": {
+        "name": "Ollama (LLM Server)",
+        "port": 11434,
+        "health_url": "http://127.0.0.1:11434/",
+        "cwd": str(PROJECT_ROOT),
+        "color": "#673AB7",
+        "manageable": False,
+        "external": True
+    },
+    "fish": {
+        "name": "Fish Audio Server (Docker)",
+        "port": 8080,
+        "health_url": "http://127.0.0.1:8080/v1/health",
+        "cwd": str(PROJECT_ROOT),
+        "color": "#00BCD4",
+        "manageable": False,
+        "managed_by": "docker"
+    },
 }
 
 
@@ -285,8 +392,9 @@ async def check_service_health(service_id: str, config: dict) -> ServiceStatus:
 
 @app.get("/")
 async def root():
-    """Serve the main dashboard."""
-    return FileResponse(STATIC_DIR / "index.html")
+    """Redirect to the monitoring dashboard."""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/monitoring")
 
 
 @app.get("/tts")
@@ -313,10 +421,22 @@ async def vtuber_chat_page():
     return FileResponse(STATIC_DIR / "vtuber-chat.html")
 
 
+@app.get("/tts-backends")
+async def tts_backends_page():
+    """Serve the TTS backends control & testing page."""
+    return FileResponse(STATIC_DIR / "tts-backends.html")
+
+
 @app.get("/monitoring")
 async def monitoring_page():
     """Serve the advanced monitoring page."""
     return FileResponse(STATIC_DIR / "monitoring.html")
+
+
+@app.get("/logs")
+async def logs_page():
+    """Serve the logs and audit page."""
+    return FileResponse(STATIC_DIR / "logs.html")
 
 
 @app.get("/api/services/status")
@@ -462,6 +582,72 @@ async def synthesize_tts(text: str, emotion: str = "neutral", save: bool = True)
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# Mapping service_id → tts-router mode.
+# All TTS backend synthesis requests are routed through the router (port 8810)
+# so the router is always the single synthesis entry point in the application.
+_ROUTER_MODES: Dict[str, str] = {
+    "tts-casiopy":   "casiopy",
+    "tts-openvoice": "stream_fast",
+    "tts-cosyvoice": "stream_quality",
+    "tts-qwen3":     "content",
+    "tts-fish":      "content_fish",
+}
+
+_ROUTER_URL = "http://127.0.0.1:8810"
+
+
+@app.post("/api/services/{service_id}/synthesize")
+async def proxy_backend_synthesize(service_id: str, request: Request):
+    """Proxy a synthesis request for a TTS backend.
+
+    For TTS backends managed by tts-router the request is always forwarded
+    to the router (port 8810), keeping it as the single synthesis entry point.
+    Other services are contacted directly on their own port.
+    """
+    svc = SERVICES.get(service_id)
+    if not svc:
+        raise HTTPException(404, detail=f"Service '{service_id}' not found")
+
+    try:
+        body = await request.json()
+    except Exception as e:
+        raise HTTPException(400, detail=f"Invalid JSON body: {e}")
+
+    timeout = 120.0
+
+    router_mode = _ROUTER_MODES.get(service_id)
+    if router_mode:
+        body["mode"] = router_mode
+        target_url = f"{_ROUTER_URL}/synthesize"
+        error_hint = (
+            f"Asegúrate de que el TTS Router esté activo (puerto 8810) "
+            f"antes de sintetizar con '{service_id}'."
+        )
+    else:
+        port = svc.get("port")
+        if not port:
+            raise HTTPException(400, detail=f"Service '{service_id}' has no port configured")
+        target_url = f"http://127.0.0.1:{port}/synthesize"
+        error_hint = f"Verifica que el servicio '{service_id}' esté activo (puerto {port})."
+
+    try:
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            resp = await client.post(target_url, json=body)
+        return Response(
+            content=resp.content,
+            status_code=resp.status_code,
+            media_type=resp.headers.get("content-type", "application/json"),
+        )
+    except httpx.ConnectError:
+        raise HTTPException(503, detail=f"No se pudo conectar al destino de síntesis. {error_hint}")
+    except httpx.TimeoutException:
+        raise HTTPException(504, detail=f"Timeout tras {timeout}s. {error_hint}")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, detail=f"{type(e).__name__}: {e}")
+
+
 @app.post("/api/services/{service_id}/start")
 async def start_service(service_id: str):
     """Start a service."""
@@ -477,6 +663,22 @@ async def start_service(service_id: str):
 
     if not service.get("start_cmd"):
         raise HTTPException(status_code=400, detail=f"Service '{service_id}' has no start command")
+
+    # Check if service is already running
+    try:
+        current_status = await check_service_health(service_id, service)
+        if current_status.status == "online":
+            # Service is already running, no need to start again
+            return {
+                "ok": True,
+                "service": service_id,
+                "message": "Service is already running",
+                "output": "Service was already active",
+                "duration_ms": (time.time() - start_time) * 1000
+            }
+    except Exception:
+        # Service is not running, proceed to start it
+        pass
 
     # Check if service requires other services
     if "requires" in service:
@@ -507,15 +709,16 @@ async def start_service(service_id: str):
             await asyncio.sleep(5)
             result_output = "Service started in background"
         else:
-            # Run command and wait for completion (blocking)
-            result = subprocess.run(
+            # Run command and wait for completion (non-blocking via executor)
+            loop = asyncio.get_running_loop()
+            result = await loop.run_in_executor(None, lambda: subprocess.run(
                 service["start_cmd"],
                 shell=True,
                 cwd=service.get("cwd"),
                 capture_output=True,
                 text=True,
                 timeout=30
-            )
+            ))
             await asyncio.sleep(2)
             result_output = result.stdout[:500] if result.stdout else None
 
@@ -576,27 +779,27 @@ async def stop_service(service_id: str):
         raise HTTPException(status_code=400, detail=f"Service '{service_id}' is not manageable")
 
     try:
-        # For Fish Server, use dedicated stop command
-        if service_id == "fish" and service.get("stop_cmd"):
-            result = subprocess.run(
+        loop = asyncio.get_running_loop()
+        if service.get("stop_cmd"):
+            await loop.run_in_executor(None, lambda: subprocess.run(
                 service["stop_cmd"],
                 shell=True,
                 cwd=service.get("cwd"),
                 capture_output=True,
                 text=True,
                 timeout=15
-            )
+            ))
         else:
-            # For other services, try to kill by port
+            # Fallback: kill by port via PowerShell
             port = service["port"]
-            # Find process by port and kill it (Windows)
-            subprocess.run(
-                f'for /f "tokens=5" %a in (\'netstat -ano ^| findstr :{port}\') do taskkill /PID %a /F',
+            await loop.run_in_executor(None, lambda: subprocess.run(
+                f'powershell -Command "Get-NetTCPConnection -LocalPort {port} -ErrorAction SilentlyContinue | ForEach-Object {{ Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }}"',
                 shell=True,
-                capture_output=True
-            )
+                capture_output=True,
+                timeout=15
+            ))
 
-        await asyncio.sleep(1)
+        await asyncio.sleep(3)
 
         # Check if it stopped
         status = await check_service_health(service_id, service)

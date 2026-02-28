@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeloTTS Fine-tune · casiopy</title>
+<style>
+  :root {
+    --bg:       #0d1117;
+    --surface:  #161b22;
+    --border:   #30363d;
+    --text:     #e6edf3;
+    --muted:    #8b949e;
+    --accent:   #58a6ff;
+    --green:    #3fb950;
+    --yellow:   #d29922;
+    --red:      #f85149;
+    --purple:   #bc8cff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; }
+
+  /* Header */
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 16px; font-weight: 600; }
+  .status-pill { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; letter-spacing: .5px; }
+  .pill-idle    { background: rgba(139,148,158,.15); color: var(--muted); }
+  .pill-running { background: rgba(88,166,255,.15); color: var(--accent); }
+  .pill-done    { background: rgba(63,185,80,.15);  color: var(--green); }
+  .pill-error   { background: rgba(248,81,73,.15);  color: var(--red); }
+
+  /* Layout */
+  .main { display: grid; grid-template-columns: 320px 1fr; gap: 0; height: calc(100vh - 49px); }
+
+  /* Left panel */
+  .sidebar { border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; gap: 0; }
+  .sidebar-section { padding: 16px; border-bottom: 1px solid var(--border); }
+  .sidebar-section h2 { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .8px; text-transform: uppercase; margin-bottom: 12px; }
+
+  /* Steps */
+  .step-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: background .15s; position: relative; }
+  .step-card:hover { background: rgba(255,255,255,.05); }
+  .step-card.active { background: rgba(88,166,255,.08); border: 1px solid rgba(88,166,255,.3); }
+  .step-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .step-pending  .step-icon { background: rgba(139,148,158,.15); color: var(--muted); border: 2px solid var(--border); }
+  .step-running  .step-icon { background: rgba(88,166,255,.2);  color: var(--accent); border: 2px solid var(--accent); animation: pulse 1.5s infinite; }
+  .step-done     .step-icon { background: rgba(63,185,80,.2);   color: var(--green);  border: 2px solid var(--green); }
+  .step-error    .step-icon { background: rgba(248,81,73,.2);   color: var(--red);    border: 2px solid var(--red); }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.5; } }
+  .step-info { flex: 1; }
+  .step-name { font-size: 13px; font-weight: 500; }
+  .step-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .step-reset { opacity: 0; font-size: 10px; color: var(--muted); cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+  .step-card:hover .step-reset { opacity: 1; }
+  .step-reset:hover { color: var(--red); background: rgba(248,81,73,.1); }
+
+  /* Controls */
+  .btn { display: block; width: 100%; padding: 9px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s; margin-bottom: 6px; text-align: center; }
+  .btn:hover:not(:disabled) { background: rgba(255,255,255,.08); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: rgba(88,166,255,.15); border-color: rgba(88,166,255,.4); color: var(--accent); }
+  .btn-primary:hover:not(:disabled) { background: rgba(88,166,255,.25); }
+  .btn-danger  { background: rgba(248,81,73,.12);  border-color: rgba(248,81,73,.4); color: var(--red); }
+  .btn-danger:hover:not(:disabled) { background: rgba(248,81,73,.22); }
+  .btn-green   { background: rgba(63,185,80,.15);  border-color: rgba(63,185,80,.4); color: var(--green); }
+  .btn-green:hover:not(:disabled) { background: rgba(63,185,80,.25); }
+
+  .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+  .btn-row .btn { margin-bottom: 0; }
+
+  /* Config */
+  .field { margin-bottom: 12px; }
+  .field label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .field label strong { color: var(--text); }
+  .field input[type=range] { width: 100%; accent-color: var(--accent); }
+  .field-note { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* Metrics */
+  .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .metric { background: rgba(255,255,255,.04); border-radius: 6px; padding: 8px 10px; }
+  .metric-name  { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .metric-value { font-size: 18px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .metric-empty { font-size: 11px; color: var(--muted); text-align: center; padding: 8px 0; grid-column: 1/-1; }
+
+  /* Checkpoint */
+  .ckpt-tag { font-size: 11px; background: rgba(188,140,255,.1); color: var(--purple); border-radius: 4px; padding: 3px 8px; }
+
+  /* Right panel */
+  .right-panel { display: flex; flex-direction: column; overflow: hidden; }
+
+  /* Log console */
+  .console-header { padding: 10px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .console-header span { font-size: 12px; color: var(--muted); }
+  .console { flex: 1; overflow-y: auto; background: #0d1117; font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; line-height: 1.5; padding: 12px 16px; }
+  .log-line { margin-bottom: 1px; white-space: pre-wrap; word-break: break-all; }
+  .log-ui     { color: var(--accent); }
+  .log-warn   { color: var(--yellow); }
+  .log-error  { color: var(--red); }
+  .log-ok     { color: var(--green); }
+  .log-metric { color: var(--purple); }
+
+  /* Outputs */
+  .outputs-section { border-top: 1px solid var(--border); padding: 12px 16px; max-height: 220px; overflow-y: auto; }
+  .outputs-section h2 { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .8px; text-transform: uppercase; margin-bottom: 10px; }
+  .audio-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .audio-label { font-size: 11px; color: var(--muted); width: 140px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .audio-label.casiopy { color: var(--green); }
+  .audio-label.base    { color: var(--muted); }
+  audio { flex: 1; height: 30px; }
+  .outputs-empty { font-size: 12px; color: var(--muted); }
+
+  /* Scroll custom */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎙 MeloTTS Fine-tune · casiopy</h1>
+  <span id="globalPill" class="status-pill pill-idle">Idle</span>
+  <span id="ckptTag" class="ckpt-tag" style="display:none"></span>
+  <span style="flex:1"></span>
+  <a href="http://localhost:6006" target="_blank" style="font-size:12px;color:var(--muted);text-decoration:none;">📊 TensorBoard</a>
+  <a href="/static/pitch-test.html" style="font-size:12px;color:var(--muted);text-decoration:none;margin-left:12px;">🎚 Pitch Tester</a>
+</header>
+
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Steps -->
+    <div class="sidebar-section">
+      <h2>Pipeline</h2>
+      <div id="step1" class="step-card step-pending" onclick="runStep('1')">
+        <div class="step-icon">1</div>
+        <div class="step-info">
+          <div class="step-name">Preparar dataset</div>
+          <div class="step-desc">Resampleo 24kHz → 44.1kHz</div>
+        </div>
+        <span class="step-reset" onclick="event.stopPropagation(); resetStep('1')" title="Resetear paso">↺</span>
+      </div>
+      <div id="step2" class="step-card step-pending" onclick="runStep('2')">
+        <div class="step-icon">2</div>
+        <div class="step-info">
+          <div class="step-name">Fonemizar</div>
+          <div class="step-desc">Texto → fonemas IPA + config</div>
+        </div>
+        <span class="step-reset" onclick="event.stopPropagation(); resetStep('2')" title="Resetear paso">↺</span>
+      </div>
+      <div id="step3" class="step-card step-pending" onclick="runStep('3')">
+        <div class="step-icon">3</div>
+        <div class="step-info">
+          <div class="step-name">Entrenar</div>
+          <div class="step-desc">Fine-tune desde checkpoint ES</div>
+        </div>
+        <span class="step-reset" onclick="event.stopPropagation(); resetStep('3')" title="Resetear paso">↺</span>
+      </div>
+      <div id="step4" class="step-card step-pending" onclick="runStep('4')">
+        <div class="step-icon">4</div>
+        <div class="step-info">
+          <div class="step-name">Probar</div>
+          <div class="step-desc">Generar audios de muestra</div>
+        </div>
+        <span class="step-reset" onclick="event.stopPropagation(); resetStep('4')" title="Resetear paso">↺</span>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="sidebar-section">
+      <h2>Controles</h2>
+      <button class="btn btn-primary" id="btnRunAll" onclick="runAll()">▶ Ejecutar Todo (Pasos 1–3)</button>
+      <div class="btn-row">
+        <button class="btn btn-green"  id="btnStep3"   onclick="runStep('3')">▶ Entrenar</button>
+        <button class="btn btn-danger" id="btnStop"    onclick="stop()" disabled>⏹ Detener</button>
+      </div>
+      <button class="btn" id="btnStep4" onclick="runStep('4')">🎧 Generar pruebas</button>
+    </div>
+
+    <!-- Config -->
+    <div class="sidebar-section">
+      <h2>Configuración</h2>
+      <div class="field">
+        <label>Batch size <strong id="batchVal">16</strong></label>
+        <input type="range" id="batchSize" min="4" max="32" step="2" value="16"
+               oninput="document.getElementById('batchVal').textContent=this.value"
+               onchange="saveConfig()">
+        <div class="field-note">↑ Mayor = más rápido pero más VRAM</div>
+      </div>
+      <div class="field">
+        <label>Epochs <strong id="epochsVal">200</strong></label>
+        <input type="range" id="epochs" min="50" max="400" step="10" value="200"
+               oninput="document.getElementById('epochsVal').textContent=this.value"
+               onchange="saveConfig()">
+        <div class="field-note">~2-3h con batch=16 / 200 epochs</div>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="sidebar-section">
+      <h2>Métricas (en vivo)</h2>
+      <div id="metricsGrid" class="metric-grid">
+        <div class="metric-empty">Sin datos — inicia el entrenamiento</div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- RIGHT: CONSOLE + OUTPUTS -->
+  <div class="right-panel">
+    <div class="console-header">
+      <span>Log en tiempo real</span>
+      <button onclick="clearLog()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;">✕ Limpiar</button>
+    </div>
+    <div id="console" class="console"></div>
+
+    <div class="outputs-section">
+      <h2>Audios generados <button onclick="loadOutputs()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:10px;margin-left:6px;">↻ Actualizar</button></h2>
+      <div id="outputsList" class="outputs-empty">Sin audios — ejecuta el Paso 4 primero</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = 'http://127.0.0.1:8820';
+let evtSource = null;
+let autoScroll = true;
+
+// ── Log console ──────────────────────────────────────────────────────────────
+function addLog(text, cls = '') {
+  const el = document.getElementById('console');
+  const line = document.createElement('div');
+  line.className = 'log-line' + (cls ? ' ' + cls : '');
+  line.textContent = text;
+  el.appendChild(line);
+  if (el.children.length > 2000) el.removeChild(el.firstChild);
+  if (autoScroll) el.scrollTop = el.scrollHeight;
+}
+
+function classifyLog(line) {
+  if (line.startsWith('[UI]'))        return 'log-ui';
+  if (/\b(error|fail|✗)/i.test(line)) return 'log-error';
+  if (/\b(warn|⚠)/i.test(line))      return 'log-warn';
+  if (/\b(done|✓|ok|completado)/i.test(line)) return 'log-ok';
+  if (/loss[=:]/i.test(line))         return 'log-metric';
+  return '';
+}
+
+function clearLog() {
+  document.getElementById('console').innerHTML = '';
+}
+
+// ── SSE connection ────────────────────────────────────────────────────────────
+function connectLogs() {
+  if (evtSource) evtSource.close();
+  evtSource = new EventSource(`${API}/api/logs`);
+  evtSource.onmessage = e => {
+    if (e.data) addLog(e.data, classifyLog(e.data));
+  };
+  evtSource.onerror = () => {
+    setTimeout(connectLogs, 3000);
+  };
+}
+
+// ── Status polling ────────────────────────────────────────────────────────────
+function updateUI(s) {
+  // Steps
+  for (const [n, status] of Object.entries(s.step_status)) {
+    const el = document.getElementById('step' + n);
+    if (!el) continue;
+    el.className = `step-card step-${status}` + (s.current_step === n ? ' active' : '');
+    const icon = el.querySelector('.step-icon');
+    icon.textContent = status === 'done' ? '✓' : status === 'error' ? '✗' : n;
+  }
+
+  // Global pill
+  const pill = document.getElementById('globalPill');
+  if (s.running) {
+    pill.textContent = `Paso ${s.current_step} · ${{'1':'Preparando','2':'Fonemizando','3':'Entrenando','4':'Probando'}[s.current_step] || '...'}`;
+    pill.className = 'status-pill pill-running';
+  } else if (Object.values(s.step_status).includes('error')) {
+    pill.textContent = 'Error';
+    pill.className = 'status-pill pill-error';
+  } else if (s.step_status['3'] === 'done') {
+    pill.textContent = 'Entrenamiento completo';
+    pill.className = 'status-pill pill-done';
+  } else {
+    pill.textContent = 'Idle';
+    pill.className = 'status-pill pill-idle';
+  }
+
+  // Checkpoint tag
+  const tag = document.getElementById('ckptTag');
+  if (s.last_checkpoint) {
+    tag.textContent = '💾 ' + s.last_checkpoint;
+    tag.style.display = '';
+  } else {
+    tag.style.display = 'none';
+  }
+
+  // Buttons
+  document.getElementById('btnRunAll').disabled = s.running;
+  document.getElementById('btnStep3').disabled  = s.running;
+  document.getElementById('btnStep4').disabled  = s.running;
+  document.getElementById('btnStop').disabled   = !s.running;
+
+  // Metrics
+  const metrics = s.metrics || {};
+  const grid = document.getElementById('metricsGrid');
+  const keys = Object.keys(metrics);
+  if (keys.length === 0) {
+    grid.innerHTML = '<div class="metric-empty">Sin datos — inicia el entrenamiento</div>';
+  } else {
+    grid.innerHTML = keys.slice(0, 8).map(k =>
+      `<div class="metric">
+        <div class="metric-name">${k}</div>
+        <div class="metric-value">${metrics[k].toFixed(3)}</div>
+      </div>`
+    ).join('');
+  }
+
+  // Config sliders sync
+  document.getElementById('batchSize').value = s.config?.batch_size ?? 16;
+  document.getElementById('batchVal').textContent = s.config?.batch_size ?? 16;
+  document.getElementById('epochs').value = s.config?.epochs ?? 200;
+  document.getElementById('epochsVal').textContent = s.config?.epochs ?? 200;
+}
+
+async function pollStatus() {
+  try {
+    const r = await fetch(`${API}/api/status`);
+    if (r.ok) updateUI(await r.json());
+  } catch (e) { /* servidor no disponible */ }
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+async function runAll() {
+  if (!confirm('Ejecutar pasos 1 → 2 → 3 en secuencia?\n(Los pasos ya completados se saltarán automáticamente)')) return;
+  const r = await fetch(`${API}/api/run/all`, { method: 'POST' });
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({}));
+    addLog(`[UI] Error al iniciar pipeline: ${e.detail || r.statusText}`, 'log-error');
+  }
+  pollStatus();
+}
+
+async function runStep(n) {
+  const names = { '1':'Preparar dataset','2':'Fonemizar','3':'Entrenar','4':'Generar pruebas' };
+  if (!confirm(`¿Ejecutar Paso ${n}: ${names[n]}?`)) return;
+  const r = await fetch(`${API}/api/run/${n}`, { method: 'POST' });
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({}));
+    addLog(`[UI] Error: ${e.detail || r.statusText}`, 'log-error');
+  }
+  pollStatus();
+}
+
+async function stop() {
+  if (!confirm('¿Detener el proceso? El checkpoint actual quedará guardado.')) return;
+  await fetch(`${API}/api/stop`, { method: 'POST' });
+  pollStatus();
+}
+
+async function resetStep(n) {
+  event.stopPropagation();
+  if (!confirm(`¿Resetear el estado del Paso ${n} a "pending"?`)) return;
+  await fetch(`${API}/api/reset/${n}`, { method: 'POST' });
+  pollStatus();
+}
+
+async function saveConfig() {
+  const batch = parseInt(document.getElementById('batchSize').value);
+  const ep    = parseInt(document.getElementById('epochs').value);
+  await fetch(`${API}/api/config`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ batch_size: batch, epochs: ep }),
+  });
+}
+
+// ── Outputs ────────────────────────────────────────────────────────────────────
+async function loadOutputs() {
+  const r = await fetch(`${API}/api/outputs`);
+  if (!r.ok) return;
+  const files = await r.json();
+  const el = document.getElementById('outputsList');
+  if (files.length === 0) {
+    el.innerHTML = '<div class="outputs-empty">Sin audios — ejecuta el Paso 4 primero</div>';
+    return;
+  }
+  el.innerHTML = files.map(f => `
+    <div class="audio-item">
+      <span class="audio-label ${f.type}" title="${f.name}">${f.name}</span>
+      <audio controls src="${API}${f.url}"></audio>
+    </div>`).join('');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+connectLogs();
+pollStatus();
+loadOutputs();
+setInterval(pollStatus, 2500);
+setInterval(loadOutputs, 10000);
+
+// Auto-scroll toggle when user scrolls up
+document.getElementById('console').addEventListener('scroll', function() {
+  const el = this;
+  autoScroll = el.scrollTop + el.clientHeight >= el.scrollHeight - 20;
+});
+</script>
+</body>
+</html>

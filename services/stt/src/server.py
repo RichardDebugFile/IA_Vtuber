@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import soundfile as sf
 
-from .config import STT_PORT, HOST, SPEAKER_ID_ENABLED
+from .config import STT_PORT, HOST, SPEAKER_ID_ENABLED, WHISPER_MODEL
 from .transcriber import Transcriber
 from .speaker_identifier import SpeakerIdentifier
 
@@ -71,6 +71,31 @@ class SpeakerIdentificationResponse(BaseModel):
     is_known: bool
 
 
+class ModelInfo(BaseModel):
+    name: str
+    params: str
+    vram: str
+    accuracy: str
+    speed: str
+    current: bool
+
+
+class ModelsResponse(BaseModel):
+    models: list[ModelInfo]
+    current_model: str
+
+
+class ChangeModelRequest(BaseModel):
+    model: str
+
+
+class ChangeModelResponse(BaseModel):
+    ok: bool
+    message: str
+    new_model: str
+    estimated_load_time: str
+
+
 # Startup event
 @app.on_event("startup")
 async def startup_event():
@@ -111,6 +136,11 @@ async def health_check():
 
     # Check if service is fully initialized
     if not service_ready or transcriber is None:
+        # Determine if this is initial load or model change
+        message = f"Cargando modelo Whisper '{WHISPER_MODEL}'... Espera 1-3 minutos"
+        if transcriber is None:
+            message = f"Inicializando servicio con modelo '{WHISPER_MODEL}'..."
+
         return HealthResponse(
             ok=True,  # Service is up, but not ready
             service="stt-service",
@@ -119,7 +149,7 @@ async def health_check():
             model=WHISPER_MODEL,
             device=DEVICE,
             speaker_id_enabled=SPEAKER_ID_ENABLED,
-            message="Loading Whisper model... Please wait 1-2 minutes"
+            message=message
         )
 
     # Service is fully ready
@@ -300,6 +330,138 @@ async def register_speaker_endpoint(
         "ok": False,
         "message": "Speaker registration not yet implemented"
     }
+
+
+# Get available models
+@app.get("/models", response_model=ModelsResponse)
+async def get_available_models():
+    """Get list of available Whisper models."""
+    from .config import WHISPER_MODEL
+
+    models_info = [
+        ModelInfo(
+            name="tiny",
+            params="39M",
+            vram="~1GB",
+            accuracy="60%",
+            speed="Muy rápida",
+            current=(WHISPER_MODEL == "tiny")
+        ),
+        ModelInfo(
+            name="base",
+            params="74M",
+            vram="~1GB",
+            accuracy="75%",
+            speed="Rápida",
+            current=(WHISPER_MODEL == "base")
+        ),
+        ModelInfo(
+            name="small",
+            params="244M",
+            vram="~2GB",
+            accuracy="85%",
+            speed="Media",
+            current=(WHISPER_MODEL == "small")
+        ),
+        ModelInfo(
+            name="medium",
+            params="769M",
+            vram="~5GB",
+            accuracy="92%",
+            speed="Lenta",
+            current=(WHISPER_MODEL == "medium")
+        ),
+        ModelInfo(
+            name="large-v3",
+            params="1550M",
+            vram="~10GB",
+            accuracy="95%",
+            speed="Muy lenta",
+            current=(WHISPER_MODEL == "large-v3")
+        ),
+    ]
+
+    return ModelsResponse(
+        models=models_info,
+        current_model=WHISPER_MODEL
+    )
+
+
+# Change model
+@app.post("/change-model", response_model=ChangeModelResponse)
+async def change_model(request: ChangeModelRequest):
+    """Change the Whisper model (hot-swap without restart)."""
+    global transcriber, service_ready
+
+    # Validate model name
+    valid_models = {"tiny", "base", "small", "medium", "large-v3"}
+    if request.model not in valid_models:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid model. Valid models: {', '.join(valid_models)}"
+        )
+
+    # Check if already using this model
+    from .config import WHISPER_MODEL
+    if request.model == WHISPER_MODEL:
+        return ChangeModelResponse(
+            ok=True,
+            message=f"Ya estás usando el modelo {request.model}",
+            new_model=request.model,
+            estimated_load_time="0 segundos"
+        )
+
+    # Estimate load time based on model
+    load_times = {
+        "tiny": "~10 segundos",
+        "base": "~20 segundos",
+        "small": "~1 minuto",
+        "medium": "~2-3 minutos",
+        "large-v3": "~5 minutos"
+    }
+
+    # Start model change in background
+    import asyncio
+    asyncio.create_task(_change_model_background(request.model))
+
+    return ChangeModelResponse(
+        ok=True,
+        message=f"Cambiando a modelo {request.model}. Monitorea el estado con /health",
+        new_model=request.model,
+        estimated_load_time=load_times.get(request.model, "Variable")
+    )
+
+
+async def _change_model_background(new_model: str):
+    """Background task to change the model."""
+    global transcriber, service_ready
+
+    try:
+        # Mark service as not ready
+        service_ready = False
+        logger.info(f"[Model Change] Starting change to {new_model}...")
+
+        # Update config FIRST (so health check shows correct model during loading)
+        import src.config as config
+        old_model = config.WHISPER_MODEL
+        config.WHISPER_MODEL = new_model
+        logger.info(f"[Model Change] Updated config from {old_model} to {new_model}")
+
+        # Reload transcriber with new model (this is the slow part)
+        logger.info(f"[Model Change] Loading Whisper model {new_model}...")
+        transcriber = Transcriber(model_name=new_model)
+        logger.info(f"[Model Change] Model {new_model} loaded successfully")
+
+        # Mark as ready
+        service_ready = True
+        logger.info(f"[Model Change] Service ready with model {new_model}")
+
+    except Exception as e:
+        service_ready = False
+        logger.error(f"[Model Change] Failed to change model: {e}", exc_info=True)
+        # Revert config on failure
+        import src.config as config
+        # Note: Can't easily revert to old model, service will remain in error state
 
 
 def main():

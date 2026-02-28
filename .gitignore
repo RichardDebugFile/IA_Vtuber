@@ -2,37 +2,28 @@ comandosDePrueba.txt
 .logs
 .pids
 venv/
-services/desktopctl/src/__pycache__
-services/affect/src/__pycache__
-services/asr/src/__pycache__
-services/conversation/src/__pycache__
-services/gateway/src/__pycache__
-apps/desktopctl/src/__pycache__
-apps/desktop-pet-qt/src/__pycache__/
-apps/desktop-pet-qt/src/avatar/__pycache__/
-apps/desktop-pet-qt/src/ipc/__pycache__/
-apps/desktop-pet-qt/src/ui/__pycache__/
+
+# ── Python cache (global) ─────────────────────────────────────────────────────
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
 services/tts/models/
-services/tts/src/__pycache__/
 services/tts/src/vtuber_tts.egg-info/
 services/tts/.run/
-services/tts/src/pyinject/__pycache__/
 services/tts/reference/casiopy/
 services/tts/tests/outputs/
 services/tts/_out/
 
 # Fish Speech vendor (excluir archivos pesados y generados)
 services/tts/vendor/fish-speech/.fs/
-services/tts/vendor/fish-speech/__pycache__/
-services/tts/vendor/fish-speech/**/__pycache__/
 services/tts/vendor/fish-speech/*.log
 services/tts/vendor/fish-speech/.git/
-services/tts/vendor/fish-speech/**/*.pyc
 services/tts/vendor/fish-speech/logs/
 services/tts/vendor/fish-speech/.pytest_cache/
 services/tts/vendor/fish-speech/results/
 services/tts/vendor/fish-speech/checkpoints/
-services/assistant/src/__pycache__/
 services/assistant/_out/audio/
 services/assistant/_out/bests/
 .claude
@@ -55,10 +46,50 @@ services/tts/tools/_out/
 
 # Monitoring service outputs
 services/monitoring-service/outputs/
-services/monitoring-service/src/__pycache__/
 services/monitoring-service/logs/
 services/monitoring-service/test_*.html
 services/monitoring-service/src/static/*_old.html
+
+# TTS backends – repos locales y venvs (grandes, no van a git)
+services/tts-openvoice/repo/
+services/tts-openvoice/venv/
+services/tts-openvoice/outputs/
+services/tts-cosyvoice/repo/
+services/tts-cosyvoice/venv/
+services/tts-cosyvoice/outputs/
+services/tts-qwen3/repo/
+services/tts-qwen3/venv/
+services/tts-qwen3/outputs/
+services/tts-fish/repo/
+services/tts-fish/venv/
+services/tts-fish/outputs/
+services/tts-router/outputs/
+services/tts-casiopy/outputs/
+
+# ── Voz Casiopy — PRIVADO, nunca subir a git ─────────────────────────────────
+# Grabaciones originales de la voz
+casiopy-V2/
+
+# Dataset de entrenamiento — solo los audios son privados, los scripts no
+dataset/**/*.wav
+dataset/**/*.mp3
+dataset/**/*.flac
+dataset/**/*.ogg
+
+# Fine-tune MeloTTS — el .gitignore interno ya cubre data/wavs_44k/ y logs/
+# pero añadimos aquí por redundancia y para el checkpoint de producción
+finetune-melotts/data/wavs_44k/
+finetune-melotts/logs/
+finetune-melotts/output/
+
+# ── Modelos entrenados — grandes y contienen fingerprint de voz ───────────────
+services/tts-casiopy/model/*.pth
+services/tts-casiopy/model/*.bin
+services/tts-casiopy/model/*.ckpt
+
+# Scripts temporales de utilidades
+check_sizes.ps1
+check_space.ps1
 
 # Extras
 ia_docs/
@@ -70,12 +101,5 @@ services/tts/docker-ngc
 optimization-archives/
 temp_test.json
 .github/workflows/tests.yml
-services/face-service-2D-simple/src/__pycache__
 services/face-service-2D-simple/src/assets/avatars/default/bubble/queVaAqui.txt
-services/face-service-2D-simple/src/avatar/__pycache__/
-services/face-service-2D-simple/src/ipc/__pycache__/
-services/face-service-2D-simple/src/native/win/__pycache__/
-services/face-service-2D-simple/src/ui/__pycache__/
-services/tts/src/voices/__pycache__/
-services/tts/tests/__pycache__/
 .coveragerc

@@ -14,8 +14,8 @@ from ipc.ws_client import WSClient
 from ipc.qt_signals import EventBridge   # <--- PUENTE DE SEÑALES
 from health_server import start_health_server
 
-GATEWAY_WS = os.getenv("GATEWAY_WS", "ws://127.0.0.1:8765/ws")
-HEALTH_PORT = int(os.getenv("HEALTH_PORT", "8805"))
+GATEWAY_WS = os.getenv("GATEWAY_WS", "ws://127.0.0.1:8800/ws")
+HEALTH_PORT = int(os.getenv("HEALTH_PORT", "8804"))
 AVATAR_BASE = os.path.join(os.path.dirname(__file__), "assets", "avatars", "default")
 
 BASE_W, BASE_H = 520, 520  # tamaño base para calcular la escala
@@ -229,7 +229,7 @@ def main():
     bridge = EventBridge()
 
     # Blip player para reproducir sonidos sincronizados
-    blip_player = BlipPlayer(blips_service_url="http://127.0.0.1:8804")
+    blip_player = BlipPlayer(blips_service_url="http://127.0.0.1:8805")
 
     # Track current emotion for blips
     current_emotion = {"label": "neutral"}

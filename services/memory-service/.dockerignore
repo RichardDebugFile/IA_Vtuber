@@ -1,0 +1,72 @@
+# ============================================================
+# .dockerignore para Training Container
+# ============================================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+.venv_training/
+venv/
+env/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+
+# Logs
+logs/
+*.log
+
+# Database
+postgres_data/
+*.db
+*.sqlite
+
+# Modelos entrenados (se montan como volumenes)
+models/lora_adapters/
+
+# Docker
+.dockerignore
+Dockerfile*
+docker-compose*.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentacion (no necesaria en container)
+*.md
+!README.md
+
+# Backups
+backups/
+*.bak
+
+# Temporal
+tmp/
+temp/
+.cache/
+
+# Node (si hay)
+node_modules/
+
+# Environment files
+.env
+.env.*

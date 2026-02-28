@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset Generator - IA VTuber</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Dataset Generator</h1>
+            <p class="subtitle">Generador de dataset de voz para IA VTuber</p>
+
+            <div class="service-status">
+                <div class="service-indicator">
+                    <span id="ttsStatus" class="status-dot offline"></span>
+                    <span>TTS Service</span>
+                </div>
+                <div class="service-indicator">
+                    <span id="fishStatus" class="status-dot offline"></span>
+                    <span>Fish Speech</span>
+                </div>
+                <div class="service-indicator">
+                    <span id="wsStatus" class="status-dot offline"></span>
+                    <span>WebSocket</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress Section -->
+        <div class="progress-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Clips</div>
+                    <div class="stat-value" id="totalClips">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completados</div>
+                    <div class="stat-value success" id="completedClips">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Fallidos</div>
+                    <div class="stat-value error" id="failedClips">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Duración Total</div>
+                    <div class="stat-value" id="totalDuration">-</div>
+                </div>
+            </div>
+
+            <div class="progress-bar-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">0%</div>
+            </div>
+
+            <div class="control-buttons">
+                <button class="btn btn-primary" id="initBtn" onclick="initializeDataset()">
+                    Inicializar Dataset
+                </button>
+                <button class="btn btn-success" id="startBtn" onclick="startGeneration()" disabled>
+                    ▶ Iniciar
+                </button>
+                <button class="btn btn-warning" id="pauseBtn" onclick="pauseGeneration()" disabled>
+                    ⏸ Pausar
+                </button>
+                <button class="btn btn-info" id="resumeBtn" onclick="resumeGeneration()" disabled>
+                    ▶ Reanudar
+                </button>
+                <button class="btn btn-danger" id="stopBtn" onclick="stopGeneration()" disabled>
+                    ⏹ Detener
+                </button>
+                <button class="btn btn-secondary" onclick="refreshDashboard()" title="Refrescar estado y entradas">
+                    🔄 Refrescar
+                </button>
+                <button class="btn btn-warning" id="forceCheckBtn" onclick="forcePriorityCheck()" disabled style="margin-left: auto;">
+                    ⚡ Forzar Verificación
+                </button>
+            </div>
+
+            <div style="margin-top: 15px; padding: 10px; background: rgba(33, 150, 243, 0.1); border-left: 4px solid #2196F3; border-radius: 4px; font-size: 13px;">
+                <strong>⭐ Sistema de Batch Mixto Equilibrado:</strong> Cada batch procesa hasta 10 audios (máx. 5 prioritarios + resto regulares).
+                Los audios con "Rehacer" (emoción personalizada) se procesan en cada ciclo junto con los regulares, asegurando que ningún tipo bloquee al otro.
+            </div>
+
+            <div class="advanced-controls" style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #aaa;">Opciones Avanzadas</h3>
+
+                <!-- Sync State Button -->
+                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #333;">
+                    <button class="btn btn-sm btn-primary" onclick="syncState()" id="syncBtn">
+                        🔄 Sincronizar con archivos
+                    </button>
+                    <span style="font-size: 12px; color: #888;">Detecta audios ya generados en el disco</span>
+                    <span id="syncInfo" style="font-size: 12px; color: #888; margin-left: auto;"></span>
+                </div>
+
+                <!-- Reset From ID -->
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <label for="startFromId" style="font-size: 13px;">Generar desde el audio #:</label>
+                    <input type="number" id="startFromId" min="1" max="2000" placeholder="1"
+                           style="width: 100px; padding: 5px 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 4px; color: white;">
+                    <button class="btn btn-sm" onclick="resetFromId()" id="resetFromBtn" disabled>
+                        🔄 Reiniciar desde aquí
+                    </button>
+                    <span id="resetInfo" style="font-size: 12px; color: #888; margin-left: 10px;"></span>
+                </div>
+            </div>
+
+            <div class="status-message" id="statusMessage">
+                Estado: <span id="currentStatus">Idle</span>
+            </div>
+        </div>
+
+        <!-- Real-time Logs Section -->
+        <div class="logs-section">
+            <div class="logs-header">
+                <h2>📋 Registro de Actividad en Tiempo Real</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-sm" onclick="clearLogs()" title="Limpiar logs">🗑️ Limpiar</button>
+                    <button class="btn btn-sm" onclick="toggleAutoScroll()" id="autoScrollBtn" title="Auto-scroll">
+                        📍 Auto-scroll: ON
+                    </button>
+                </div>
+            </div>
+            <div class="logs-container" id="logsContainer">
+                <div class="log-entry log-info">
+                    <span class="log-time">[Esperando...]</span>
+                    <span class="log-message">Sistema listo. Inicia la generación para ver los logs en tiempo real.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio Entries List -->
+        <div class="entries-section">
+            <div class="entries-header">
+                <h2>Audios Generados</h2>
+                <div class="entries-filters">
+                    <select id="statusFilter" onchange="loadEntries()">
+                        <option value="">Todos</option>
+                        <option value="pending">Pendientes</option>
+                        <option value="generating">Generando</option>
+                        <option value="completed">Completados</option>
+                        <option value="error">Con Error</option>
+                    </select>
+                    <button class="btn btn-sm" onclick="loadEntries()">🔄 Actualizar</button>
+                </div>
+            </div>
+
+            <!-- Notification area for off-page updates -->
+            <div id="offPageNotification"></div>
+
+            <div class="entries-list" id="entriesList">
+                <div class="loading">Cargando...</div>
+            </div>
+
+            <div class="pagination">
+                <button class="btn btn-sm" onclick="previousPage()" id="prevBtn" disabled>← Anterior</button>
+                <span id="pageInfo">Página 1</span>
+                <button class="btn btn-sm" onclick="nextPage()" id="nextBtn">Siguiente →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Player Modal -->
+    <div id="audioModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Audio Player</h3>
+                <button class="modal-close" onclick="closeAudioModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <audio id="audioPlayer" controls style="width: 100%;"></audio>
+                <div id="audioInfo" style="margin-top: 15px; color: #666;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

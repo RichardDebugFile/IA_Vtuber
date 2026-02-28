@@ -1,0 +1,17 @@
+{
+  "step_status": {
+    "1": "done",
+    "2": "done",
+    "3": "done",
+    "4": "done"
+  },
+  "current_step": null,
+  "running": false,
+  "config": {
+    "batch_size": 4,
+    "epochs": 200
+  },
+  "metrics": {},
+  "last_checkpoint": "G_24500.pth",
+  "last_error": null
+}

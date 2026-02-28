@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTS Backends - IA VTuber</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* ── Header ── */
+        header {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            padding: 24px 30px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        header h1 { font-size: 1.8em; color: #fff; }
+        header p  { color: #aaa; font-size: 14px; margin-top: 4px; }
+        .back-btn {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 9px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background .2s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.18); }
+
+        /* ── Router status bar ── */
+        .router-bar {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 18px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .router-bar .label { font-size: 15px; font-weight: 600; color: #fff; }
+        .router-bar .sub   { font-size: 12px; color: #aaa; }
+
+        /* ── Status badge ── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .4px;
+        }
+        .badge::before { content: ''; width: 8px; height: 8px; border-radius: 50%; }
+        .badge.online  { background: rgba(76,175,80,.18);  color: #81c784; border: 1px solid rgba(76,175,80,.3); }
+        .badge.online::before  { background: #4caf50; box-shadow: 0 0 6px #4caf50; }
+        .badge.offline { background: rgba(244,67,54,.15); color: #ef9a9a; border: 1px solid rgba(244,67,54,.3); }
+        .badge.offline::before { background: #f44336; }
+        .badge.loading { background: rgba(255,193,7,.15);  color: #ffe082; border: 1px solid rgba(255,193,7,.3); }
+        .badge.loading::before { background: #ffc107; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.3; } }
+
+        /* ── Buttons ── */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 7px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn:disabled { opacity: .5; cursor: not-allowed; }
+        .btn-start   { background: #2e7d32; color: #fff; }
+        .btn-start:hover:not(:disabled)   { background: #388e3c; }
+        .btn-stop    { background: #c62828; color: #fff; }
+        .btn-stop:hover:not(:disabled)    { background: #d32f2f; }
+        .btn-restart { background: #e65100; color: #fff; }
+        .btn-restart:hover:not(:disabled) { background: #f57c00; }
+        .btn-docs    { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,.2); }
+        .btn-docs:hover:not(:disabled)    { background: rgba(255,255,255,0.18); }
+        .btn-stack-start { background: #1565C0; color: #fff; }
+        .btn-stack-start:hover:not(:disabled) { background: #1976D2; }
+        .btn-stack-stop  { background: #4a148c; color: #fff; }
+        .btn-stack-stop:hover:not(:disabled)  { background: #6a1b9a; }
+
+        /* ── Warning modal ── */
+        .modal-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,.65);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #1a1a2e;
+            border: 1px solid rgba(255,200,0,.35);
+            border-radius: 14px;
+            padding: 28px 32px;
+            max-width: 440px;
+            width: 90%;
+            box-shadow: 0 8px 40px rgba(0,0,0,.6);
+        }
+        .modal-box h3 { color: #ffe082; font-size: 1.1em; margin-bottom: 10px; }
+        .modal-box p  { color: #ccc; font-size: 13px; line-height: 1.6; margin-bottom: 20px; }
+        .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+        .modal-actions .btn { font-size: 13px; }
+
+        /* ── Backend grid ── */
+        .backends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(520px, 1fr));
+            gap: 20px;
+        }
+
+        /* ── Backend card ── */
+        .backend-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: border-color .3s;
+        }
+        .backend-card.online   { border-color: rgba(76,175,80,.35); }
+        .backend-card.offline  { border-color: rgba(244,67,54,.25); }
+        .backend-card.loading  { border-color: rgba(255,193,7,.35); }
+
+        .card-header {
+            padding: 18px 22px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+        .card-accent {
+            width: 5px;
+            min-height: 50px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        .card-title   { font-size: 1.1em; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .card-tier    { font-size: 11px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 8px; }
+        .card-meta    { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+        .card-meta span { font-size: 12px; color: #aaa; background: rgba(255,255,255,.06); padding: 3px 8px; border-radius: 5px; }
+        .card-meta strong { color: #ddd; }
+
+        .card-controls {
+            padding: 14px 22px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .card-controls .spacer { flex: 1; }
+
+        /* ── Test section ── */
+        .test-section {
+            padding: 18px 22px;
+        }
+        .test-section.hidden { display: none; }
+        .test-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #90caf9;
+            margin-bottom: 14px;
+            letter-spacing: .3px;
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .form-row textarea,
+        .form-row input,
+        .form-row select {
+            flex: 1;
+            min-width: 160px;
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #e0e0e0;
+            font-size: 13px;
+            font-family: inherit;
+            resize: vertical;
+        }
+        .form-row textarea { min-height: 70px; }
+        .form-row input:focus,
+        .form-row textarea:focus,
+        .form-row select:focus { outline: none; border-color: rgba(255,255,255,.35); }
+
+        .speed-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #aaa;
+        }
+        .speed-row input[type=range] { flex: 1; accent-color: #42a5f5; }
+        .speed-val { color: #fff; font-weight: 600; min-width: 30px; }
+
+        .generate-btn {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(90deg, #1565C0, #1976D2);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity .2s;
+            margin-bottom: 14px;
+        }
+        .generate-btn:disabled { opacity: .5; cursor: not-allowed; }
+        .generate-btn:hover:not(:disabled) { opacity: .9; }
+
+        /* ── Audio player ── */
+        .audio-result {
+            display: none;
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 10px;
+            padding: 14px;
+        }
+        .audio-result.active { display: block; }
+        .audio-result audio  { width: 100%; margin-bottom: 12px; }
+        .audio-stats {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .stat-chip {
+            flex: 1;
+            min-width: 80px;
+            background: rgba(255,255,255,.06);
+            border-radius: 8px;
+            padding: 8px 10px;
+            text-align: center;
+        }
+        .stat-chip .lbl { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: .4px; }
+        .stat-chip .val { font-size: 15px; font-weight: 700; color: #90caf9; margin-top: 2px; }
+
+        /* ── Status message ── */
+        .status-msg {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: none;
+        }
+        .status-msg.active   { display: block; }
+        .status-msg.error    { background: rgba(244,67,54,.15); color: #ef9a9a; }
+        .status-msg.info     { background: rgba(33,150,243,.15); color: #90caf9; }
+        .status-msg.success  { background: rgba(76,175,80,.15);  color: #a5d6a7; }
+
+        /* ── Router status inline ── */
+        .rtr-status {
+            font-size: 13px;
+            padding: 5px 12px;
+            border-radius: 7px;
+            display: none;
+        }
+        .rtr-status.show  { display: inline-block; }
+        .rtr-status.info  { background: rgba(33,150,243,.18); color: #90caf9; }
+        .rtr-status.ok    { background: rgba(76,175,80,.18);  color: #a5d6a7; }
+        .rtr-status.error { background: rgba(244,67,54,.15);  color: #ef9a9a; }
+        .rtr-status.warn  { background: rgba(255,152,0,.15);  color: #ffcc80; }
+
+        /* ── Global toast ── */
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #333;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s;
+            z-index: 9999;
+            max-width: 350px;
+        }
+        #toast.show { opacity: 1; }
+
+        /* ── Spinner ── */
+        .spinner {
+            display: inline-block;
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .6s linear infinite;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Progress bar (startup) ── */
+        .progress-wrap {
+            padding: 0 22px 14px;
+            display: none;
+        }
+        .progress-wrap.active { display: block; }
+        .progress-track {
+            background: rgba(255,255,255,0.08);
+            border-radius: 6px;
+            height: 7px;
+            overflow: hidden;
+            margin-bottom: 7px;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #ffc107 0%, #ff9800 100%);
+            transition: width 0.8s ease;
+            position: relative;
+        }
+        .progress-fill.done {
+            background: linear-gradient(90deg, #43A047 0%, #66BB6A 100%);
+        }
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            right: 0; top: 0; bottom: 0;
+            width: 30px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+            animation: shimmer 1.2s infinite;
+        }
+        .progress-fill.done::after { display: none; }
+        @keyframes shimmer { 0% { opacity:0; } 50% { opacity:1; } 100% { opacity:0; } }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #aaa;
+        }
+        .progress-phase { flex: 1; }
+        .progress-time  { color: #ddd; font-weight: 600; margin-left: 8px; white-space: nowrap; }
+
+        @media (max-width: 600px) {
+            .backends-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── Auditoría ── */
+        .audit-section {
+            border-top: 1px solid rgba(255,255,255,0.07);
+            padding: 14px 22px 18px;
+        }
+        .audit-section.hidden { display: none; }
+        .audit-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .audit-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #90caf9;
+            letter-spacing: .4px;
+            flex: 1;
+        }
+        .btn-audit {
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,.15);
+            background: rgba(255,255,255,.07);
+            color: #ccc;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background .2s;
+        }
+        .btn-audit:hover { background: rgba(255,255,255,.14); }
+        .btn-audit.danger { border-color: rgba(244,67,54,.4); color: #ef9a9a; }
+        .btn-audit.danger:hover { background: rgba(244,67,54,.15); }
+
+        .audit-log {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+        .audit-meta {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 6px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .audit-meta span { color: #888; }
+        .audit-meta strong { color: #aaa; }
+
+        .arow {
+            display: grid;
+            grid-template-columns: 60px 20px 1fr auto;
+            gap: 6px 10px;
+            align-items: start;
+            padding: 8px 10px;
+            border-radius: 7px;
+            font-size: 11px;
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.06);
+        }
+        .arow.fail { border-color: rgba(244,67,54,.25); background: rgba(244,67,54,.06); }
+        .arow.ok   { border-color: rgba(76,175,80,.15); }
+
+        .atime  { color: #777; font-size: 10px; }
+        .astatus { font-size: 13px; line-height: 1; }
+        .amain  { display: flex; flex-direction: column; gap: 3px; }
+        .amain-top { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .avoice { color: #90caf9; font-weight: 600; }
+        .atau   { color: #ce93d8; }
+        .ase    { color: #aaa; font-size: 10px; }
+        .ase .cache  { color: #ffcc80; }
+        .ase .fresh  { color: #a5d6a7; }
+        .atimes { color: #ddd; font-size: 10px; font-family: monospace; }
+        .artf   { color: #ffe082; font-size: 10px; font-weight: 700; white-space: nowrap; }
+        .atext  { color: #888; font-size: 10px; font-style: italic; grid-column: 3 / -1; }
+        .aerror { color: #ef9a9a; font-size: 10px; grid-column: 1 / -1;
+                  background: rgba(244,67,54,.1); padding: 4px 8px; border-radius: 4px; }
+
+        .audit-empty { color: #555; font-size: 12px; text-align: center; padding: 16px 0; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <header>
+        <div>
+            <h1>TTS Backends</h1>
+            <p>Control y prueba de los servicios de síntesis de voz</p>
+        </div>
+        <a href="/monitoring" class="back-btn">← Monitoring</a>
+    </header>
+
+    <!-- Router status bar -->
+    <div class="router-bar">
+        <div>
+            <div class="label">TTS Router &nbsp;<span id="routerBadge" class="badge offline">offline</span></div>
+            <div class="sub">Puerto 8810 · Enruta peticiones al backend activo</div>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+            <span id="rtr-status" class="rtr-status"></span>
+            <button id="rtr-start"   class="btn btn-start"   onclick="controlRouter('start')">  ▶ Iniciar Router</button>
+            <button id="rtr-stop"    class="btn btn-stop"    onclick="controlRouter('stop')">   ⏹ Detener Router</button>
+            <button id="rtr-restart" class="btn btn-restart" onclick="controlRouter('restart')">🔄 Reiniciar</button>
+            <a href="http://127.0.0.1:8810/docs" target="_blank" class="btn btn-docs">📄 Docs Router</a>
+            <div style="width:1px; height:28px; background:rgba(255,255,255,.15); margin:0 4px;"></div>
+            <button class="btn btn-stack-start" onclick="startStack()" title="Inicia el Router y el backend DEFAULT (Casiopy)">⚡ Start Stack</button>
+            <button class="btn btn-stack-stop"  onclick="stopStack()"  title="Detiene todos los backends TTS y el Router">⏹ Stop Stack</button>
+        </div>
+    </div>
+
+    <!-- Backends grid -->
+    <div class="backends-grid" id="backendsGrid">
+        <!-- Generadas por JS -->
+    </div>
+
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Warning modal: router offline when starting a backend -->
+<div id="routerWarningModal" class="modal-overlay">
+    <div class="modal-box">
+        <h3>⚠️ TTS Router no está activo</h3>
+        <p id="routerWarningMsg">Las peticiones de síntesis siempre pasan por el TTS Router (puerto 8810).
+        Sin él, el backend cargará en GPU pero no podrá recibir peticiones del sistema.<br><br>
+        ¿Qué quieres hacer?</p>
+        <div class="modal-actions">
+            <button class="btn btn-stack-start" id="modalBtnRouterFirst">▶ Iniciar Router + Backend</button>
+            <button class="btn btn-start"        id="modalBtnJustBackend">Solo el Backend</button>
+            <button class="btn btn-docs"         id="modalBtnCancel">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ── Configuración de backends ────────────────────────────────────────────────
+const BACKENDS = [
+    {
+        id:    'tts-casiopy',
+        name:  'Casiopy FT ★ DEFAULT',
+        port:  8815,
+        tier:  'Voz Principal',
+        tierColor: '#E91E8C',
+        rtf:   '~1.5',
+        vram:  '~3 GB',
+        color: '#E91E8C',
+        desc:  'MeloTTS fine-tuneado (G_24500.pth). Voz principal del proyecto. Sin ToneColorConverter.',
+        hasNativeUI: false,
+        expectedLoadS: 25,
+        params: ['speed', 'pitch', 'brightness', 'noise'],
+        hasAudit: false,
+        sampleText: '¡Hola! Soy Casiopy, la voz principal del proyecto.',
+        routerMode: 'casiopy',
+        isDefault: true,
+    },
+    {
+        id:    'tts-openvoice',
+        name:  'OpenVoice V2',
+        port:  8811,
+        tier:  'Streaming Rápido',
+        tierColor: '#43A047',
+        rtf:   '~0.2',
+        vram:  '~2.5 GB',
+        color: '#43A047',
+        desc:  'MeloTTS ES + ToneColorConverter. Ideal para streaming en tiempo real.',
+        hasNativeUI: true,
+        expectedLoadS: 20,
+        // Parámetros extra que acepta /synthesize
+        params: ['speed', 'tau', 'noise', 'pitch', 'brightness', 'intensity'],
+        hasAudit: true,   // expone GET /logs y POST /cache/clear
+        routerMode: 'stream_fast',
+    },
+    {
+        id:    'tts-cosyvoice',
+        name:  'CosyVoice3',
+        port:  8812,
+        tier:  'Streaming Calidad',
+        tierColor: '#00897B',
+        rtf:   '~1.4',
+        vram:  '~4 GB',
+        color: '#00897B',
+        desc:  'Fun-CosyVoice3-0.5B · Zero-shot / Cross-lingual. Mejor calidad expresiva.',
+        hasNativeUI: true,
+        expectedLoadS: 40,
+        params: ['speed'],
+        hasAudit: false,
+        routerMode: 'stream_quality',
+    },
+    {
+        id:    'tts-qwen3',
+        name:  'Qwen3-TTS',
+        port:  8813,
+        tier:  'Creación de Contenido',
+        tierColor: '#9C27B0',
+        rtf:   '~5.0',
+        vram:  '~3.5 GB',
+        color: '#7B1FA2',
+        desc:  'Qwen3-TTS-12Hz-0.6B · AR LLM. Alta calidad para datasets.',
+        hasNativeUI: true,
+        expectedLoadS: 40,
+        params: ['speed'],
+        hasAudit: false,
+        routerMode: 'content',
+    },
+    {
+        id:    'tts-fish',
+        name:  'Fish Speech (Local)',
+        port:  8814,
+        tier:  'Creación de Contenido',
+        tierColor: '#1565C0',
+        rtf:   '~2.2',
+        vram:  '~7.5 GB',
+        color: '#1565C0',
+        desc:  'openaudio-s1-mini · Llama + VQ-GAN. Alta naturalidad sin transcript.',
+        hasNativeUI: false,
+        expectedLoadS: 50,
+        params: ['speed', 'temperature', 'top_p'],
+        hasAudit: false,
+        routerMode: 'content_fish',
+    },
+];
+
+// Estado en memoria
+const state = {};
+BACKENDS.forEach(b => {
+    state[b.id] = {
+        status:   'unknown',
+        busy:     false,
+        starting: false,   // true mientras waitForModelLoad está corriendo
+        stopped:  false,   // true justo después de detener (evita falso 'loading' zombie)
+    };
+});
+let routerStatus = 'unknown';
+
+// ── Utilidades ─────────────────────────────────────────────────────────────────
+
+function showToast(msg, color = '#333') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.style.background = color;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function setStatusMsg(id, type, msg) {
+    const el = document.getElementById(`msg-${id}`);
+    if (!el) return;
+    el.className = `status-msg ${type} active`;
+    el.textContent = msg;
+    if (type === 'success') setTimeout(() => el.classList.remove('active'), 3500);
+}
+
+function b64ToBlob(b64, mime='audio/wav') {
+    const bytes = atob(b64);
+    const arr   = new Uint8Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+}
+
+// ── Sliders de parámetros por backend ─────────────────────────────────────────
+
+function renderParamSliders(b) {
+    const p = new Set(b.params || ['speed']);
+    const rows = [];
+
+    if (p.has('speed'))
+        rows.push(`
+            <div class="speed-row">
+                <span>Velocidad</span>
+                <input type="range" id="speed-${b.id}" min="0.5" max="2.0" step="0.1" value="1.0"
+                       oninput="document.getElementById('spval-${b.id}').textContent=this.value">
+                <span class="speed-val" id="spval-${b.id}">1.0</span>
+            </div>`);
+
+    if (p.has('tau'))
+        rows.push(`
+            <div class="speed-row">
+                <span title="Temperatura del ToneColorConverter · 0=determinista · 1=variable">τ (tau)</span>
+                <input type="range" id="tau-${b.id}" min="0.0" max="1.0" step="0.01" value="0.07"
+                       oninput="document.getElementById('tauval-${b.id}').textContent=parseFloat(this.value).toFixed(2)">
+                <span class="speed-val" id="tauval-${b.id}">0.07</span>
+            </div>`);
+
+    if (p.has('noise'))
+        rows.push(`
+            <div class="speed-row">
+                <span title="Ruido en síntesis MeloTTS · 0=estable · 1=variado (default modelo: 0.667)">noise</span>
+                <input type="range" id="noise-${b.id}" min="0.0" max="1.0" step="0.05" value="0.3"
+                       oninput="document.getElementById('noiseval-${b.id}').textContent=parseFloat(this.value).toFixed(2)">
+                <span class="speed-val" id="noiseval-${b.id}">0.30</span>
+            </div>`);
+
+    if (p.has('pitch'))
+        rows.push(`
+            <div class="speed-row">
+                <span title="Semitonos de ajuste de tono (WORLD vocoder — sin artefactos de fase)">pitch (st)</span>
+                <input type="range" id="pitch-${b.id}" min="-6" max="6" step="0.5" value="0"
+                       oninput="document.getElementById('pitchval-${b.id}').textContent=(parseFloat(this.value)>0?'+':'')+parseFloat(this.value).toFixed(1)">
+                <span class="speed-val" id="pitchval-${b.id}">0.0</span>
+            </div>`);
+
+    if (p.has('brightness'))
+        rows.push(`
+            <div class="speed-row">
+                <span title="Presence shelf a 3 kHz · Realce de voz sin artefactos · Mantener ≤6 dB">bright (dB)</span>
+                <input type="range" id="bright-${b.id}" min="0" max="8" step="0.5" value="0"
+                       oninput="document.getElementById('brightval-${b.id}').textContent=(parseFloat(this.value)>0?'+':'')+parseFloat(this.value).toFixed(1)">
+                <span class="speed-val" id="brightval-${b.id}">0.0</span>
+            </div>`);
+
+    if (p.has('intensity'))
+        rows.push(`
+            <div class="speed-row">
+                <span title="Intensidad de conversión de voz · 1.0=normal · >1.0=más agresiva (extrapolación de embeddings) · Rango recomendado: 1.0–2.0">intensity</span>
+                <input type="range" id="intensity-${b.id}" min="0.5" max="2.5" step="0.1" value="1.0"
+                       oninput="document.getElementById('intensityval-${b.id}').textContent=parseFloat(this.value).toFixed(1)">
+                <span class="speed-val" id="intensityval-${b.id}">1.0</span>
+            </div>`);
+
+    if (p.has('temperature'))
+        rows.push(`
+            <div class="speed-row">
+                <span title="Temperatura de muestreo del LLM · Valores bajos = más estable">temp</span>
+                <input type="range" id="temp-${b.id}" min="0.1" max="1.5" step="0.05" value="0.8"
+                       oninput="document.getElementById('tempval-${b.id}').textContent=parseFloat(this.value).toFixed(2)">
+                <span class="speed-val" id="tempval-${b.id}">0.80</span>
+            </div>`);
+
+    if (p.has('top_p'))
+        rows.push(`
+            <div class="speed-row">
+                <span title="Top-p (nucleus sampling) · 1.0 = sin filtrado">top_p</span>
+                <input type="range" id="topp-${b.id}" min="0.1" max="1.0" step="0.05" value="0.8"
+                       oninput="document.getElementById('toppval-${b.id}').textContent=parseFloat(this.value).toFixed(2)">
+                <span class="speed-val" id="toppval-${b.id}">0.80</span>
+            </div>`);
+
+    return rows.join('');
+}
+
+// ── Renderizar cards ───────────────────────────────────────────────────────────
+
+function renderCard(b) {
+    return `
+    <div class="backend-card" id="card-${b.id}">
+        <div class="card-header">
+            <div class="card-accent" style="background:${b.color};"></div>
+            <div style="flex:1;">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <span class="card-title">${b.name}</span>
+                    <span id="badge-${b.id}" class="badge offline">offline</span>
+                </div>
+                <div class="card-tier" style="color:${b.tierColor};">${b.tier}</div>
+                <div style="font-size:12px; color:#aaa; margin-bottom:6px;">${b.desc}</div>
+                <div class="card-meta">
+                    <span>Puerto <strong>${b.port}</strong></span>
+                    <span>RTF <strong>${b.rtf}</strong></span>
+                    <span>VRAM <strong>${b.vram}</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-controls">
+            <button class="btn btn-start"   id="btn-start-${b.id}"   onclick="controlBackend('${b.id}','start')">▶ Iniciar</button>
+            <button class="btn btn-stop"    id="btn-stop-${b.id}"    onclick="controlBackend('${b.id}','stop')">⏹ Detener</button>
+            <button class="btn btn-restart" id="btn-restart-${b.id}" onclick="controlBackend('${b.id}','restart')">🔄</button>
+            <span class="spacer"></span>
+            <a href="http://127.0.0.1:${b.port}/docs" target="_blank" class="btn btn-docs" title="Abrir documentación API">📄 API Docs</a>
+            ${b.hasNativeUI ? `<a href="http://127.0.0.1:${b.port}" target="_blank" class="btn btn-docs" title="Abrir interfaz nativa">🌐 UI</a>` : ''}
+        </div>
+
+        <div class="progress-wrap" id="prog-${b.id}">
+            <div class="progress-track">
+                <div class="progress-fill" id="progfill-${b.id}" style="width:0%"></div>
+            </div>
+            <div class="progress-info">
+                <span class="progress-phase" id="progtext-${b.id}">Iniciando…</span>
+                <span class="progress-time"  id="progtime-${b.id}"></span>
+            </div>
+        </div>
+
+        <div class="test-section hidden" id="test-${b.id}">
+            <div class="test-title">Probar síntesis</div>
+            <div class="status-msg" id="msg-${b.id}"></div>
+            <div class="form-row">
+                <textarea id="text-${b.id}" placeholder="Escribe el texto a sintetizar..."
+                >${b.sampleText || '¡Hola! Esta es una prueba del sistema TTS de ' + b.id + '.'}</textarea>
+            </div>
+            <div class="form-row">
+                <input type="text" id="voice-${b.id}" value="casiopy" placeholder="Voz de referencia"
+                       title="Nombre de la carpeta en services/tts/reference/" style="flex:1;">
+            </div>
+            ${renderParamSliders(b)}
+            <button class="generate-btn" id="genbtn-${b.id}" onclick="testBackend('${b.id}', ${b.port})">
+                🎵 Generar Audio
+            </button>
+            <div class="audio-result" id="result-${b.id}">
+                <audio id="audio-${b.id}" controls style="width:100%; margin-bottom:12px;"></audio>
+                <div class="audio-stats">
+                    <div class="stat-chip"><div class="lbl">Duración</div><div class="val" id="dur-${b.id}">--</div></div>
+                    <div class="stat-chip"><div class="lbl">Generación</div><div class="val" id="gen-${b.id}">--</div></div>
+                    <div class="stat-chip"><div class="lbl">RTF real</div><div class="val" id="rtf-${b.id}">--</div></div>
+                    <div class="stat-chip"><div class="lbl">Sample rate</div><div class="val" id="sr-${b.id}">--</div></div>
+                </div>
+            </div>
+        </div>
+
+        ${b.hasAudit ? `
+        <div class="audit-section hidden" id="audit-${b.id}">
+            <div class="audit-header">
+                <span class="audit-title">📊 Auditoría de síntesis</span>
+                <button class="btn-audit" onclick="fetchLogs('${b.id}', ${b.port})">⟳ Actualizar</button>
+                <button class="btn-audit danger" onclick="clearSECache('${b.id}', ${b.port})" title="Fuerza re-extracción del speaker embedding en la próxima síntesis">🗑 Limpiar caché SE</button>
+            </div>
+            <div id="audit-log-${b.id}" class="audit-log">
+                <div class="audit-empty">Sin datos — genera audio primero</div>
+            </div>
+        </div>` : ''}
+    </div>`;
+}
+
+function initGrid() {
+    document.getElementById('backendsGrid').innerHTML = BACKENDS.map(renderCard).join('');
+}
+
+// ── Actualizar estado visual ───────────────────────────────────────────────────
+
+function updateBadge(id, status) {
+    const badge = document.getElementById(`badge-${id}`);
+    const card  = document.getElementById(`card-${id}`);
+    const test  = document.getElementById(`test-${id}`);
+    if (!badge) return;
+
+    badge.className = `badge ${status}`;
+    if (status === 'loading') {
+        badge.textContent = 'cargando modelo…';
+    } else if (status === 'starting') {
+        badge.textContent = 'iniciando…';
+        badge.className = 'badge loading';
+    } else {
+        badge.textContent = status;
+    }
+
+    if (card) {
+        card.className = `backend-card ${status}`;
+    }
+    if (test) {
+        if (status === 'online') test.classList.remove('hidden');
+        else                     test.classList.add('hidden');
+    }
+    const backend = BACKENDS.find(x => x.id === id);
+    const audit   = document.getElementById(`audit-${id}`);
+    if (audit && backend?.hasAudit) {
+        if (status === 'online') {
+            audit.classList.remove('hidden');
+            fetchLogs(id, backend.port);
+        } else {
+            audit.classList.add('hidden');
+        }
+    }
+}
+
+function updateRouterBadge(status) {
+    routerStatus = status;
+    const el = document.getElementById('routerBadge');
+    if (!el) return;
+    el.className = `badge ${status}`;
+    el.textContent = status === 'loading' ? 'cargando…' : status;
+}
+
+// ── Barra de progreso de arranque ──────────────────────────────────────────────
+
+function updateProgress(id, pct, phase = '', elapsedS = 0, expectedS = 0) {
+    const wrap = document.getElementById(`prog-${id}`);
+    const fill = document.getElementById(`progfill-${id}`);
+    const txt  = document.getElementById(`progtext-${id}`);
+    const time = document.getElementById(`progtime-${id}`);
+    if (!wrap) return;
+
+    if (pct < 0) {                       // ocultar
+        wrap.classList.remove('active');
+        return;
+    }
+    wrap.classList.add('active');
+    fill.style.width = Math.min(pct, 100) + '%';
+    fill.classList.toggle('done', pct >= 100);
+    if (txt) txt.textContent = phase;
+    if (time) {
+        time.textContent = elapsedS > 0
+            ? (expectedS > 0
+                ? `${elapsedS}s / ~${expectedS}s`
+                : `${elapsedS}s`)
+            : '';
+    }
+}
+
+// ── Polling de estado ──────────────────────────────────────────────────────────
+
+async function getBackendModelState(b) {
+    // Direct health check to see if the model is loaded (not just the process).
+    // Returns 'online' | 'loading' | 'offline' | 'error' | null (unreachable).
+    try {
+        const resp = await fetch(`http://127.0.0.1:${b.port}/health`, {
+            signal: AbortSignal.timeout(4000)   // 4s — modelos pesados pueden tardar en responder al inicio
+        });
+        if (!resp.ok) return 'offline';
+        const data = await resp.json();
+        if (data.error)        return 'error';
+        if (data.model_loaded) return 'online';
+        return 'loading';  // process up but model not loaded yet
+    } catch {
+        return null;  // Cannot reach directly — process may still be starting
+    }
+}
+
+async function pollStatus() {
+    try {
+        const resp = await fetch('/api/services/status');
+        if (!resp.ok) return;
+        const data = await resp.json();
+
+        // Router
+        const router = data['tts-router'];
+        if (router) updateRouterBadge(router.status === 'online' ? 'online' : 'offline');
+
+        // Backends
+        for (const b of BACKENDS) {
+            const svc = data[b.id];
+            if (!svc) continue;
+
+            const st = state[b.id];
+            let cur;
+
+            if (st.stopped) {
+                // ── Bug #2 fix: proceso recién detenido ─────────────────────
+                // Ignorar respuestas transitorias "online" de procesos zombie.
+                // Forzar offline hasta que el monitoring confirme que el puerto cayó.
+                cur = 'offline';
+                if (svc.status === 'offline') st.stopped = false;  // proceso muerto confirmado
+
+            } else if (svc.status === 'online') {
+                // Proceso vivo: verificar directamente en el puerto
+                const modelState = await getBackendModelState(b);
+                if (modelState !== null) {
+                    cur = modelState;  // resultado directo del health check (más fiable)
+                } else if (st.starting) {
+                    cur = 'loading';  // arrancando — el servidor HTTP aún no levantó
+                } else {
+                    // Puerto no responde pero monitoring aún no actualizó su estado.
+                    // Ocurre cuando el servicio acaba de morir: evita mostrar 'online' de forma falsa.
+                    cur = 'offline';
+                }
+
+            } else if (st.starting) {
+                // ── Bug #1 fix: proceso arrancando, HTTP aún no disponible ──
+                // El monitoring dice offline porque el puerto no responde todavía,
+                // pero sabemos que el proceso fue iniciado hace poco. Mostrar loading.
+                cur = 'loading';
+
+            } else {
+                cur = 'offline';
+            }
+
+            st.status = cur;
+            if (!st.busy) updateBadge(b.id, cur);
+        }
+    } catch (_) {}
+}
+
+// ── Esperar a que el modelo esté listo ─────────────────────────────────────────
+
+async function waitForModelLoad(b, maxWaitMs = 300000) {
+    // Activar flag de arranque: pollStatus no mostrará 'offline' mientras este flag esté activo.
+    // Se ejecuta síncronamente antes del primer await → no hay race condition con 'finally'.
+    state[b.id].starting = true;
+
+    const t0 = Date.now();
+    const expectedS = b.expectedLoadS || 60;
+    let seenAlive = false;  // true en cuanto el puerto responde al menos una vez
+
+    // Mostrar barra de progreso desde el inicio
+    updateProgress(b.id, 0, 'Iniciando servidor Python…', 0, expectedS);
+
+    while (Date.now() - t0 < maxWaitMs) {
+        await new Promise(r => setTimeout(r, 5000));
+
+        // ── Check #1: detenido durante el sleep ────────────────────────────
+        if (state[b.id].stopped) {
+            state[b.id].starting = false;
+            updateProgress(b.id, -1);
+            return;
+        }
+
+        const elapsed    = Math.round((Date.now() - t0) / 1000);
+        const pct        = Math.min((elapsed / expectedS) * 95, 95);
+        const modelState = await getBackendModelState(b);
+
+        // ── Check #2: detenido durante el health-check (race condition fix) ─
+        if (state[b.id].stopped) {
+            state[b.id].starting = false;
+            updateProgress(b.id, -1);
+            return;
+        }
+
+        // Marcar si el puerto alguna vez respondió
+        if (modelState !== null) seenAlive = true;
+
+        if (modelState === 'online') {
+            // ── Éxito ────────────────────────────────────────────────────────
+            state[b.id].starting = false;
+            updateProgress(b.id, 100, 'Modelo cargado en GPU', elapsed, expectedS);
+            setTimeout(() => updateProgress(b.id, -1), 2500);
+            updateBadge(b.id, 'online');
+            state[b.id].status = 'online';
+            setStatusMsg(b.id, 'success', `✅ ${b.name} listo — modelo cargado en GPU (${elapsed}s)`);
+            showToast(`${b.name}: modelo cargado`, '#2e7d32');
+            return;
+
+        } else if (modelState === 'error' || modelState === 'offline') {
+            // ── Error real (puerto responde pero falla) ───────────────────────
+            state[b.id].starting = false;
+            updateProgress(b.id, -1);
+            updateBadge(b.id, 'offline');
+            state[b.id].status = 'offline';
+            setStatusMsg(b.id, 'error', 'Error al cargar el modelo — revisa los logs del proceso');
+            return;
+
+        } else if (modelState === null && seenAlive) {
+            // ── Puerto estaba vivo y ahora no responde → proceso se detuvo ───
+            state[b.id].starting = false;
+            updateProgress(b.id, -1);
+            updateBadge(b.id, 'offline');
+            state[b.id].status = 'offline';
+            setStatusMsg(b.id, 'info', '⏹ Servicio detenido');
+            return;
+        }
+
+        // ── Todavía cargando ─────────────────────────────────────────────────
+        // modelState es null (puerto no listo aún) o 'loading' (modelo cargando)
+        const phase = modelState === null
+            ? 'Iniciando servidor Python…'
+            : 'Cargando modelo en GPU…';
+        updateProgress(b.id, pct, phase, elapsed, expectedS);
+        setStatusMsg(b.id, 'info', `⏳ ${phase} ${elapsed}s`);
+        updateBadge(b.id, 'loading');
+    }
+
+    // ── Timeout ───────────────────────────────────────────────────────────────
+    state[b.id].starting = false;
+    updateProgress(b.id, -1);
+    setStatusMsg(b.id, 'info', '⚠️ Tiempo de espera agotado — el modelo puede seguir cargando. Espera y recarga la página.');
+}
+
+// ── Control de servicios ───────────────────────────────────────────────────────
+
+function setRouterButtons(disabled) {
+    ['rtr-start', 'rtr-stop', 'rtr-restart'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.disabled = disabled;
+    });
+}
+
+function setRouterStatus(msg, type = '') {
+    const el = document.getElementById('rtr-status');
+    if (!el) return;
+    if (!msg) { el.className = 'rtr-status'; el.textContent = ''; return; }
+    el.className = `rtr-status show ${type}`;
+    el.textContent = msg;
+}
+
+async function waitForRouterOnline(maxWaitS = 35) {
+    const t0 = Date.now();
+    while (Date.now() - t0 < maxWaitS * 1000) {
+        await new Promise(r => setTimeout(r, 1500));
+        const elapsed = Math.round((Date.now() - t0) / 1000);
+        setRouterStatus(`⏳ Esperando router… ${elapsed}s`, 'info');
+        try {
+            const resp = await fetch('http://127.0.0.1:8810/health', {
+                signal: AbortSignal.timeout(2000)
+            });
+            if (resp.ok) return true;
+        } catch {}
+    }
+    return false;
+}
+
+async function controlRouter(action) {
+    setRouterButtons(true);
+    updateRouterBadge('loading');
+
+    const labels = { start: '⏳ Iniciando router…', stop: '⏳ Deteniendo router…', restart: '⏳ Reiniciando router…' };
+    setRouterStatus(labels[action] || '⏳ Procesando…', 'info');
+
+    try {
+        const resp = await fetch(`/api/services/tts-router/${action}`, { method: 'POST' });
+        if (!resp.ok) {
+            const err = await resp.json().catch(() => ({}));
+            throw new Error(err.detail || `HTTP ${resp.status}`);
+        }
+        await resp.json();   // consume body
+
+        if (action === 'stop') {
+            setRouterStatus('⏹ Router detenido', 'ok');
+            showToast('TTS Router detenido', '#c62828');
+        } else {
+            // Para start y restart: esperar activamente hasta que el puerto responda
+            setRouterStatus('⏳ Esperando que el router esté disponible…', 'info');
+            const online = await waitForRouterOnline(35);
+            if (online) {
+                setRouterStatus('✅ Router en línea', 'ok');
+                showToast('TTS Router iniciado correctamente', '#2e7d32');
+            } else {
+                setRouterStatus('⚠ No responde — puede seguir cargando', 'warn');
+                showToast('Router iniciado pero tardando en responder', '#e65100');
+            }
+        }
+    } catch (e) {
+        setRouterStatus('❌ ' + e.message, 'error');
+        showToast('Error: ' + e.message, '#c62828');
+    } finally {
+        setRouterButtons(false);
+        await pollStatus();
+        setTimeout(() => setRouterStatus(''), 6000);
+    }
+}
+
+// ── Router warning modal ───────────────────────────────────────────────────────
+
+/**
+ * Muestra el modal de advertencia cuando se intenta iniciar un backend sin el router.
+ * Devuelve una Promise que resuelve con:
+ *   'router_first' → iniciar router y luego el backend
+ *   'just_backend'  → iniciar solo el backend
+ *   'cancel'        → cancelar
+ */
+function showRouterWarning(backendName) {
+    return new Promise(resolve => {
+        document.getElementById('routerWarningModal').classList.add('active');
+        const cleanup = (result) => {
+            document.getElementById('routerWarningModal').classList.remove('active');
+            document.getElementById('modalBtnRouterFirst').onclick = null;
+            document.getElementById('modalBtnJustBackend').onclick  = null;
+            document.getElementById('modalBtnCancel').onclick       = null;
+            resolve(result);
+        };
+        document.getElementById('modalBtnRouterFirst').onclick = () => cleanup('router_first');
+        document.getElementById('modalBtnJustBackend').onclick  = () => cleanup('just_backend');
+        document.getElementById('modalBtnCancel').onclick       = () => cleanup('cancel');
+    });
+}
+
+// ── Stack controls ─────────────────────────────────────────────────────────────
+
+/** Inicia el router y luego el backend DEFAULT (Casiopy). */
+async function startStack() {
+    setRouterStatus('⏳ Iniciando Stack TTS…', 'info');
+    try {
+        // 1. Iniciar router si no está online
+        if (routerStatus !== 'online') {
+            const resp = await fetch('/api/services/tts-router/start', { method: 'POST' });
+            if (!resp.ok) throw new Error((await resp.json()).detail || `HTTP ${resp.status}`);
+            showToast('TTS Router iniciando…', '#1565C0');
+            const online = await waitForRouterOnline(90);
+            if (!online) throw new Error('El Router no respondió tras 90 segundos');
+            routerStatus = 'online';   // actualizar estado cacheado
+            updateRouterBadge('online');
+        }
+        // 2. Iniciar backend DEFAULT
+        const def = BACKENDS.find(b => b.isDefault);
+        if (def && state[def.id]?.status !== 'online') {
+            await controlBackend(def.id, 'start');
+        }
+        setRouterStatus('✅ Stack iniciado', 'success');
+    } catch (e) {
+        setRouterStatus('❌ ' + e.message, 'error');
+        showToast('Error iniciando stack: ' + e.message, '#c62828');
+    } finally {
+        await pollStatus();
+        setTimeout(() => setRouterStatus(''), 5000);
+    }
+}
+
+/** Detiene todos los backends TTS y luego el router. */
+async function stopStack() {
+    setRouterStatus('⏳ Deteniendo Stack TTS…', 'info');
+    // Detener todos los backends
+    const stops = BACKENDS.map(b => fetch(`/api/services/${b.id}/stop`, { method: 'POST' }).catch(() => {}));
+    await Promise.allSettled(stops);
+    BACKENDS.forEach(b => {
+        state[b.id].stopped  = true;
+        state[b.id].starting = false;
+        updateBadge(b.id, 'offline');
+    });
+    // Detener router
+    try {
+        await fetch('/api/services/tts-router/stop', { method: 'POST' });
+        showToast('Stack TTS detenido', '#2e7d32');
+        setRouterStatus('⏹ Stack detenido', 'success');
+    } catch (e) {
+        setRouterStatus('❌ ' + e.message, 'error');
+    } finally {
+        await pollStatus();
+        setTimeout(() => setRouterStatus(''), 5000);
+    }
+}
+
+// ── Control de backend individual ──────────────────────────────────────────────
+
+async function controlBackend(id, action) {
+    const b = BACKENDS.find(x => x.id === id);
+
+    // ── Warning si se intenta iniciar un backend con router offline ──────────
+    if (action === 'start' && b.routerMode && routerStatus !== 'online') {
+        const choice = await showRouterWarning(b.name);
+        if (choice === 'cancel') return;
+        if (choice === 'router_first') {
+            // Iniciar router primero, luego continuar con el backend
+            setRouterStatus('⏳ Iniciando Router…', 'info');
+            try {
+                const resp = await fetch('/api/services/tts-router/start', { method: 'POST' });
+                if (!resp.ok) throw new Error((await resp.json()).detail || `HTTP ${resp.status}`);
+                showToast('TTS Router iniciando…', '#1565C0');
+                const online = await waitForRouterOnline(90);
+                if (!online) throw new Error('El Router no respondió tras 90 segundos');
+                routerStatus = 'online';   // actualizar estado cacheado antes de continuar
+                updateRouterBadge('online');
+            } catch (e) {
+                setRouterStatus('❌ ' + e.message, 'error');
+                showToast('Error iniciando router: ' + e.message, '#c62828');
+                return;
+            }
+        }
+        // choice === 'just_backend' → continuar sin router (modo debug)
+    }
+
+    state[id].busy = true;
+    updateBadge(id, 'loading');
+    setStatusMsg(id, 'info', `${action === 'start' ? 'Iniciando' : action === 'stop' ? 'Deteniendo' : 'Reiniciando'} ${b.name}…`);
+
+    // Deshabilitar botones durante la llamada HTTP
+    ['start','stop','restart'].forEach(a => {
+        const btn = document.getElementById(`btn-${a}-${id}`);
+        if (btn) btn.disabled = true;
+    });
+
+    try {
+        const resp = await fetch(`/api/services/${id}/${action}`, { method: 'POST' });
+        const data = await resp.json();
+
+        if (data.ok || data.status !== undefined) {
+            if (action === 'stop') {
+                // ── Detener ───────────────────────────────────────────────────
+                // Marcar como detenido: pollStatus ignorará respuestas zombie
+                state[id].starting = false;
+                state[id].stopped  = true;
+                updateProgress(id, -1);           // ocultar barra de progreso
+                showToast(`${b.name}: detenido`, '#2e7d32');
+                setStatusMsg(id, 'success', `⏹ ${b.name} detenido`);
+                updateBadge(id, 'offline');
+                state[id].status = 'offline';
+
+            } else {
+                // ── Iniciar / Reiniciar ──────────────────────────────────────
+                // Limpiar flag de stop y arrancar el ciclo de espera de carga.
+                // waitForModelLoad() activa state[id].starting = true de forma síncrona
+                // (antes del primer await), así que el flag ya está activo cuando
+                // el bloque finally restaure busy=false.
+                state[id].stopped = false;
+                showToast(`${b.name}: proceso iniciado — cargando modelo…`, '#1565C0');
+                updateBadge(id, 'loading');
+                state[id].status = 'loading';
+                waitForModelLoad(b);  // ← sin await: corre en background, starting=true ya activo
+            }
+        } else {
+            throw new Error(data.detail || 'Error desconocido');
+        }
+    } catch (e) {
+        state[id].starting = false;
+        updateProgress(id, -1);
+        showToast(`${b.name} ${action}: ${e.message}`, '#c62828');
+        setStatusMsg(id, 'error', e.message);
+        await pollStatus();
+    } finally {
+        state[id].busy = false;
+        // Los botones se re-habilitan inmediatamente — el progreso lo controla waitForModelLoad
+        ['start','stop','restart'].forEach(a => {
+            const btn = document.getElementById(`btn-${a}-${id}`);
+            if (btn) btn.disabled = false;
+        });
+    }
+}
+
+// ── Test de síntesis ───────────────────────────────────────────────────────────
+
+async function testBackend(id, port) {
+    const b     = BACKENDS.find(x => x.id === id);
+    const p     = new Set(b?.params || ['speed']);
+    const text  = document.getElementById(`text-${id}`).value.trim();
+    const voice = document.getElementById(`voice-${id}`)?.value.trim() || 'casiopy';
+    const speed = p.has('speed') ? parseFloat(document.getElementById(`speed-${id}`).value) : 1.0;
+
+    if (!text) { setStatusMsg(id, 'error', 'Escribe un texto antes de generar.'); return; }
+
+    // Construir body con solo los parámetros que acepta este backend
+    const body = { text, voice, speed, emotion: null };
+    if (p.has('tau'))         body.tau         = parseFloat(document.getElementById(`tau-${id}`)?.value       ?? '0.07');
+    if (p.has('noise'))       body.noise_scale = parseFloat(document.getElementById(`noise-${id}`)?.value     ?? '0.3');
+    if (p.has('pitch'))       body.pitch_shift = parseFloat(document.getElementById(`pitch-${id}`)?.value     ?? '0');
+    if (p.has('brightness'))  body.brightness  = parseFloat(document.getElementById(`bright-${id}`)?.value   ?? '0');
+    if (p.has('intensity'))   body.intensity   = parseFloat(document.getElementById(`intensity-${id}`)?.value ?? '1.0');
+    if (p.has('temperature')) body.temperature = parseFloat(document.getElementById(`temp-${id}`)?.value      ?? '0.8');
+    if (p.has('top_p'))       body.top_p       = parseFloat(document.getElementById(`topp-${id}`)?.value      ?? '0.8');
+
+    const btn    = document.getElementById(`genbtn-${id}`);
+    const result = document.getElementById(`result-${id}`);
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Generando…';
+    result.classList.remove('active');
+    setStatusMsg(id, 'info', 'Enviando petición al backend…');
+
+    const t0 = Date.now();
+    try {
+        // Usa el proxy del monitoring service para evitar restricciones de CORS
+        // entre puertos distintos en el browser (port 8900 → backend port).
+        const resp = await fetch(`/api/services/${id}/synthesize`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+
+        if (!resp.ok) {
+            const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+            throw new Error(err.detail || `HTTP ${resp.status}`);
+        }
+
+        const data = await resp.json();
+        const elapsed = Date.now() - t0;
+
+        // Reproducir
+        const blob = b64ToBlob(data.audio_b64);
+        const url  = URL.createObjectURL(blob);
+        const audio = document.getElementById(`audio-${id}`);
+        audio.src = url;
+        audio.play();
+
+        // Stats
+        document.getElementById(`dur-${id}`).textContent = data.duration_s ? `${data.duration_s.toFixed(1)}s` : '--';
+        document.getElementById(`gen-${id}`).textContent = `${elapsed}ms`;
+        document.getElementById(`rtf-${id}`).textContent = data.rtf !== undefined ? data.rtf.toFixed(2) : '--';
+        document.getElementById(`sr-${id}`).textContent  = data.sample_rate ? `${data.sample_rate}Hz` : '--';
+
+        result.classList.add('active');
+        setStatusMsg(id, 'success', `✅ Audio generado en ${elapsed}ms · RTF ${data.rtf?.toFixed(2) ?? '?'}`);
+        // Refrescar panel de auditoría tras la síntesis
+        fetchLogs(id, port);
+
+    } catch (e) {
+        setStatusMsg(id, 'error', 'Error: ' + e.message);
+        fetchLogs(id, port);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🎵 Generar Audio';
+    }
+}
+
+// ── Auditoría ──────────────────────────────────────────────────────────────────
+
+function relTime(isoStr) {
+    const diff = Math.floor((Date.now() - new Date(isoStr)) / 1000);
+    if (diff < 5)   return 'ahora';
+    if (diff < 60)  return `${diff}s`;
+    if (diff < 3600) return `${Math.floor(diff/60)}m ${diff%60}s`;
+    return `${Math.floor(diff/3600)}h`;
+}
+
+function renderAuditLog(id, data) {
+    const el = document.getElementById(`audit-log-${id}`);
+    if (!el) return;
+
+    if (!data.logs || data.logs.length === 0) {
+        el.innerHTML = '<div class="audit-empty">Sin síntesis registradas aún</div>';
+        return;
+    }
+
+    const cacheKeys = data.se_cache_keys?.length
+        ? data.se_cache_keys.join(', ')
+        : '(vacío)';
+
+    const rows = data.logs.map(e => {
+        const seSegs  = e.se_segments != null ? ` ${e.se_segments}seg` : '';
+        const seIcon  = e.se_from_cache
+            ? '<span class="cache">📦 caché</span>'
+            : `<span class="fresh">🔍 extraído (${e.t_se_ms}ms${seSegs})</span>`;
+        const seNorm  = e.se_norm     != null ? `tgt=${e.se_norm}`     : '';
+        const srcNorm = e.src_se_norm != null ? ` src=${e.src_se_norm}` : '';
+
+        // cos_sim: semáforo de calidad de conversión
+        let cosSimStr = '';
+        if (e.cos_sim != null) {
+            const cs = e.cos_sim;
+            const color = cs > 0.9 ? '#ef9a9a' : cs > 0.7 ? '#ffe082' : '#a5d6a7';
+            const warn  = cs > 0.9 ? ' ⚠ muy similar — poca conversión' : cs > 0.7 ? ' ⚠ moderado' : '';
+            cosSimStr = ` · <span style="color:${color}">cos_sim=${cs.toFixed(3)}${warn}</span>`;
+        }
+
+        // Algoritmos de pitch: colores y etiquetas por nombre
+        const algoLabel = { psola: 'PSOLA', rubberband: 'RubberBand', librosa: 'librosa' };
+        const algoColor = { psola: '#a5d6a7', rubberband: '#ffe082', librosa: '#ef9a9a' };
+        const pitchStr = e.pitch_shift != null && e.pitch_shift !== 0
+            ? (() => {
+                const algo  = e.pitch_algo || '';
+                const label = algoLabel[algo] || algo;
+                const color = algoColor[algo] || '#b39ddb';
+                const ms    = e.t_pitch_ms ? ` ${e.t_pitch_ms}ms` : '';
+                return ` · <span style="color:#b39ddb">pitch=${e.pitch_shift > 0 ? '+' : ''}${e.pitch_shift}st</span>`
+                     + (label ? ` <span style="color:${color};font-size:10px">[${label}${ms}]</span>` : '');
+              })()
+            : '';
+        const brightStr = e.brightness != null && e.brightness !== 0
+            ? ` · <span style="color:#80cbc4">bright=${e.brightness > 0 ? '+' : ''}${e.brightness}dB</span>`
+            : '';
+        const intensityStr = e.intensity != null && e.intensity !== 1.0
+            ? ` · <span style="color:#ce93d8">intensity=${e.intensity.toFixed(1)}</span>`
+            : '';
+        const params  = `τ=${e.tau} · noise=${e.noise_scale ?? '?'}${pitchStr}${brightStr}${intensityStr}`;
+        const timings = `Melo: <b>${e.t_melo_ms}ms</b> · Conv: <b>${e.t_convert_ms}ms</b> · Total: <b>${e.t_total_ms}ms</b>`;
+        const rtf     = e.rtf != null ? e.rtf.toFixed(2) : '?';
+        const status  = e.success ? '✅' : '❌';
+
+        return `
+        <div class="arow ${e.success ? 'ok' : 'fail'}">
+            <span class="atime">${relTime(e.ts)}</span>
+            <span class="astatus">${status}</span>
+            <div class="amain">
+                <div class="amain-top">
+                    <span class="avoice">${e.voice}</span>
+                    <span class="atau">${params}</span>
+                    <span class="ase">${seIcon} ${seNorm}${srcNorm}${cosSimStr}</span>
+                </div>
+                <span class="atimes">${timings}</span>
+                <span class="atext">"${(e.text_preview || '').substring(0, 50)}${e.text_len > 50 ? '…' : ''}"</span>
+                ${e.error ? `<span class="aerror">⚠ ${e.error}</span>` : ''}
+            </div>
+            <span class="artf">RTF ${rtf}</span>
+        </div>`;
+    }).join('');
+
+    el.innerHTML = `
+        <div class="audit-meta">
+            <span>Caché SE activo: <strong>${cacheKeys}</strong></span>
+            <span>Device: <strong>${data.device || '?'}</strong></span>
+            <span>Total llamadas sesión: <strong>${data.total_calls ?? '?'}</strong></span>
+        </div>
+        ${rows}`;
+}
+
+async function fetchLogs(id, port) {
+    if (!port) return;
+    try {
+        const resp = await fetch(`http://127.0.0.1:${port}/logs`, {
+            signal: AbortSignal.timeout(3000)
+        });
+        if (!resp.ok) return;
+        const data = await resp.json();
+        renderAuditLog(id, data);
+    } catch (_) {}
+}
+
+async function clearSECache(id, port) {
+    if (!port) return;
+    try {
+        const resp = await fetch(`http://127.0.0.1:${port}/cache/clear`, {
+            method: 'POST',
+            signal: AbortSignal.timeout(3000)
+        });
+        const data = await resp.json();
+        if (data.ok) {
+            showToast(`Caché SE limpiado (voces: ${data.cleared_keys?.join(', ') || 'ninguna'})`, '#1565C0');
+            await fetchLogs(id, port);
+        }
+    } catch (e) {
+        showToast('Error al limpiar caché: ' + e.message, '#c62828');
+    }
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+
+initGrid();
+pollStatus();
+setInterval(pollStatus, 6000);
+</script>
+</body>
+</html>

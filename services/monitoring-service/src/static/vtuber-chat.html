@@ -500,6 +500,21 @@
                     </div>
                 </div>
 
+                <div class="control-group" style="margin-top: 25px; border-top: 1px solid #e0e0e0; padding-top: 20px;">
+                    <label for="sttModelSelect" style="margin-bottom: 10px; display: block; font-weight: 600; color: #333;">
+                        🎯 Modelo STT (Precisión vs Velocidad)
+                    </label>
+                    <select id="sttModelSelect" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 14px; background: white; cursor: pointer;">
+                        <option value="">Cargando modelos...</option>
+                    </select>
+                    <div id="modelInfo" style="margin-top: 10px; font-size: 12px; color: #666; line-height: 1.6; background: #f5f5f5; padding: 10px; border-radius: 5px;">
+                        Selecciona un modelo para ver detalles
+                    </div>
+                    <button id="changeModelBtn" onclick="changeSTTModel()" style="margin-top: 10px; width: 100%; padding: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s;" disabled>
+                        Cambiar Modelo
+                    </button>
+                </div>
+
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="label">Mensajes Enviados</div>
@@ -535,10 +550,10 @@
     <script>
         const BASE_HOST = window.location.hostname;
         const CONVERSATION_URL = `http://${BASE_HOST}:8801`;
-        const GATEWAY_URL = `http://${BASE_HOST}:8765`;
-        const BLIPS_URL = `http://${BASE_HOST}:8804`;
-        const FACE_URL = `http://${BASE_HOST}:8805`;
-        const STT_URL = `http://${BASE_HOST}:8806`;
+        const GATEWAY_URL = `http://${BASE_HOST}:8800`;
+        const BLIPS_URL = `http://${BASE_HOST}:8805`;
+        const FACE_URL = `http://${BASE_HOST}:8804`;
+        const STT_URL = `http://${BASE_HOST}:8803`;
 
         let messagesSent = 0;
         let messagesReceived = 0;
@@ -593,11 +608,84 @@
             try {
                 const resp = await fetch(`${STT_URL}/health`);
                 if (resp.ok) {
-                    document.getElementById('sttStatus').textContent = 'STT: Online';
-                    document.getElementById('sttStatus').className = 'status-indicator online';
+                    const data = await resp.json();
+                    const sttElement = document.getElementById('sttStatus');
+
+                    // Check if state changed from initializing to ready
+                    const wasNotReady = !sttReady;
+
+                    if (data.ready) {
+                        // Fully ready
+                        sttElement.textContent = 'STT: Ready';
+                        sttElement.className = 'status-indicator online';
+                        sttElement.title = data.message || 'Ready to transcribe';
+                        sttElement.style.opacity = '1';
+                        sttReady = true;
+
+                        // Enable voice button if in voice mode
+                        const voiceButton = document.getElementById('voiceButton');
+                        const voiceStatus = document.getElementById('voiceStatus');
+                        const voiceModeBtn = document.getElementById('voiceModeBtn');
+                        if (voiceModeBtn.classList.contains('active')) {
+                            voiceButton.disabled = false;
+                            if (!isRecording) {
+                                // Show success message if it just became ready
+                                if (wasNotReady) {
+                                    console.log('[Voice] STT is now ready!');
+                                    voiceStatus.textContent = '✅ Listo! Mantén presionado el botón para grabar';
+                                    voiceStatus.style.fontSize = '16px';
+                                    voiceStatus.style.fontWeight = 'bold';
+                                    voiceStatus.style.color = '#4caf50';
+
+                                    // After 3 seconds, return to normal message
+                                    setTimeout(() => {
+                                        if (!isRecording && voiceStatus) {
+                                            voiceStatus.textContent = 'Mantén presionado el botón para grabar';
+                                            voiceStatus.style.fontSize = '14px';
+                                            voiceStatus.style.fontWeight = 'normal';
+                                            voiceStatus.style.color = '#666';
+                                        }
+                                    }, 3000);
+                                } else {
+                                    // Already ready, just maintain normal state
+                                    voiceStatus.textContent = 'Mantén presionado el botón para grabar';
+                                    voiceStatus.style.fontSize = '14px';
+                                    voiceStatus.style.fontWeight = 'normal';
+                                    voiceStatus.style.color = '#666';
+                                }
+                            }
+                        }
+                    } else {
+                        // Initializing (loading model)
+                        sttElement.textContent = 'STT: Initializing...';
+                        sttElement.className = 'status-indicator online';
+                        sttElement.style.opacity = '0.7';
+                        sttElement.title = data.message || 'Loading model, please wait';
+                        sttReady = false;
+
+                        // Disable voice button and show prominent message
+                        const voiceButton = document.getElementById('voiceButton');
+                        const voiceStatus = document.getElementById('voiceStatus');
+                        voiceButton.disabled = true;
+                        const voiceModeBtn = document.getElementById('voiceModeBtn');
+                        if (voiceModeBtn.classList.contains('active')) {
+                            console.log('[Voice] STT is still loading...');
+                            voiceStatus.textContent = '⏳ Cargando modelo Whisper MEDIUM... Espera 2-3 minutos';
+                            voiceStatus.style.fontSize = '16px';
+                            voiceStatus.style.fontWeight = 'bold';
+                            voiceStatus.style.color = '#ff9800';
+                        }
+                    }
                 }
             } catch (e) {
-                document.getElementById('sttStatus').className = 'status-indicator offline';
+                const sttElement = document.getElementById('sttStatus');
+                sttElement.className = 'status-indicator offline';
+                sttElement.style.opacity = '1';
+                sttReady = false;
+
+                // Disable voice button
+                const voiceButton = document.getElementById('voiceButton');
+                voiceButton.disabled = true;
             }
         }
 
@@ -738,12 +826,15 @@
         let mediaRecorder = null;
         let audioChunks = [];
         let isRecording = false;
+        let sttReady = false;  // Track if STT is ready
 
-        function switchInputMode(mode) {
+        async function switchInputMode(mode) {
             const textContainer = document.getElementById('textInputContainer');
             const voiceContainer = document.getElementById('voiceInputContainer');
             const textBtn = document.getElementById('textModeBtn');
             const voiceBtn = document.getElementById('voiceModeBtn');
+            const voiceButton = document.getElementById('voiceButton');
+            const voiceStatus = document.getElementById('voiceStatus');
 
             if (mode === 'text') {
                 textContainer.style.display = 'flex';
@@ -755,39 +846,98 @@
                 voiceContainer.style.display = 'flex';
                 textBtn.classList.remove('active');
                 voiceBtn.classList.add('active');
+
+                // Force immediate STT status check when switching to voice mode
+                console.log('[Voice] Switching to voice mode, checking STT status...');
+                voiceButton.disabled = true;
+                voiceStatus.textContent = '🔍 Verificando estado del STT...';
+                voiceStatus.style.fontSize = '14px';
+                voiceStatus.style.fontWeight = 'normal';
+                voiceStatus.style.color = '#666';
+
+                try {
+                    const resp = await fetch(`${STT_URL}/health`);
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        console.log('[Voice] STT status:', data);
+
+                        if (data.ready) {
+                            sttReady = true;
+                            voiceButton.disabled = false;
+                            voiceStatus.textContent = 'Mantén presionado el botón para grabar';
+                            voiceStatus.style.color = '#666';
+                        } else {
+                            sttReady = false;
+                            voiceButton.disabled = true;
+                            voiceStatus.textContent = '⏳ Cargando modelo Whisper MEDIUM... Espera 2-3 minutos';
+                            voiceStatus.style.fontSize = '16px';
+                            voiceStatus.style.fontWeight = 'bold';
+                            voiceStatus.style.color = '#ff9800';
+                        }
+                    } else {
+                        throw new Error('STT service not responding');
+                    }
+                } catch (e) {
+                    console.error('[Voice] STT check failed:', e);
+                    sttReady = false;
+                    voiceButton.disabled = true;
+                    voiceStatus.textContent = '❌ STT no disponible. Inicia el servicio primero.';
+                    voiceStatus.style.color = '#f44336';
+                }
             }
         }
 
         async function startRecording() {
             if (isRecording) return;
 
+            // Safety check: don't allow recording if STT is not ready
+            if (!sttReady) {
+                console.log('[Voice] Recording blocked: STT not ready');
+                const voiceStatus = document.getElementById('voiceStatus');
+                voiceStatus.textContent = '❌ STT no está listo. Espera a que termine de cargar.';
+                voiceStatus.style.color = '#f44336';
+                setTimeout(() => {
+                    voiceStatus.textContent = '⏳ Cargando modelo Whisper MEDIUM... Espera 2-3 minutos';
+                    voiceStatus.style.color = '#ff9800';
+                }, 2000);
+                return;
+            }
+
             try {
+                console.log('[Voice] Requesting microphone access...');
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                console.log('[Voice] Microphone access granted');
 
                 // Try to use WebM format (most compatible)
                 let options = { mimeType: 'audio/webm' };
                 if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
                     options = { mimeType: 'audio/webm;codecs=opus' };
                 }
+                console.log('[Voice] Using MIME type:', options.mimeType);
 
                 mediaRecorder = new MediaRecorder(stream, options);
                 audioChunks = [];
 
                 mediaRecorder.ondataavailable = (event) => {
+                    console.log('[Voice] Data chunk received:', event.data.size, 'bytes');
                     audioChunks.push(event.data);
                 };
 
                 mediaRecorder.onstop = async () => {
+                    console.log('[Voice] Recording stopped, total chunks:', audioChunks.length);
                     // Use the actual format from MediaRecorder
                     const audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType });
+                    console.log('[Voice] Created audio blob:', audioBlob.size, 'bytes, type:', audioBlob.type);
                     await transcribeAndSend(audioBlob);
 
                     // Stop all tracks to release microphone
                     stream.getTracks().forEach(track => track.stop());
+                    console.log('[Voice] Microphone released');
                 };
 
                 mediaRecorder.start();
                 isRecording = true;
+                console.log('[Voice] Recording started');
 
                 const voiceButton = document.getElementById('voiceButton');
                 const voiceStatus = document.getElementById('voiceStatus');
@@ -795,7 +945,7 @@
                 voiceStatus.textContent = '🔴 Grabando... Suelta para enviar';
 
             } catch (error) {
-                console.error('Error accessing microphone:', error);
+                console.error('[Voice] Error accessing microphone:', error);
                 alert('Error al acceder al micrófono. Verifica los permisos.');
             }
         }
@@ -803,6 +953,7 @@
         function stopRecording() {
             if (!isRecording || !mediaRecorder) return;
 
+            console.log('[Voice] Stopping recording...');
             mediaRecorder.stop();
             isRecording = false;
 
@@ -816,19 +967,37 @@
             const voiceStatus = document.getElementById('voiceStatus');
 
             try {
-                voiceStatus.textContent = '📝 Transcribiendo...';
+                // Debug: log audio blob info
+                console.log('[Voice] Audio blob:', {
+                    size: audioBlob.size,
+                    type: audioBlob.type
+                });
+
+                // Check if audio is too short
+                if (audioBlob.size < 1000) {
+                    console.log('[Voice] Audio too short, aborting');
+                    voiceStatus.textContent = '⚠️ Audio muy corto. Habla más tiempo.';
+                    setTimeout(() => {
+                        voiceStatus.textContent = 'Mantén presionado el botón para grabar';
+                    }, 3000);
+                    return;
+                }
+
+                voiceStatus.textContent = `📝 Transcribiendo... (${(audioBlob.size / 1024).toFixed(1)} KB)`;
 
                 // Determine file extension from MIME type
                 let extension = '.webm';
                 if (audioBlob.type.includes('wav')) extension = '.wav';
                 else if (audioBlob.type.includes('ogg')) extension = '.ogg';
                 else if (audioBlob.type.includes('mp4')) extension = '.mp4';
+                console.log('[Voice] File extension:', extension);
 
                 // Create form data with audio file
                 const formData = new FormData();
                 formData.append('file', audioBlob, `recording${extension}`);
                 formData.append('language', 'es');
                 formData.append('include_timestamps', 'false');
+                console.log('[Voice] FormData created, sending to STT service...');
 
                 // Transcribe with STT service
                 const response = await fetch(`${STT_URL}/transcribe`, {
@@ -836,12 +1005,17 @@
                     body: formData
                 });
 
+                console.log('[Voice] STT response status:', response.status);
+
                 if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('[Voice] STT error response:', errorText);
                     throw new Error(`STT service error: ${response.status}`);
                 }
 
                 const data = await response.json();
                 const transcribedText = data.text;
+                console.log('[Voice] Transcription received:', transcribedText);
 
                 voiceStatus.textContent = `✅ "${transcribedText}"`;
 
@@ -919,9 +1093,192 @@
             stopRecording();
         });
 
+        // Load available STT models
+        async function loadSTTModels() {
+            try {
+                const response = await fetch(`${STT_URL}/models`);
+                if (!response.ok) {
+                    console.log('[STT Models] Failed to load models');
+                    return;
+                }
+
+                const data = await response.json();
+                const select = document.getElementById('sttModelSelect');
+                select.innerHTML = '';
+
+                data.models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.name;
+                    option.textContent = `${model.name} (${model.params}) - ${model.accuracy} precisión`;
+                    if (model.current) {
+                        option.selected = true;
+                        option.textContent += ' ⭐ ACTUAL';
+                    }
+                    option.dataset.params = model.params;
+                    option.dataset.vram = model.vram;
+                    option.dataset.accuracy = model.accuracy;
+                    option.dataset.speed = model.speed;
+                    select.appendChild(option);
+                });
+
+                // Update model info when selection changes
+                select.addEventListener('change', () => {
+                    const selectedOption = select.options[select.selectedIndex];
+                    const modelInfo = document.getElementById('modelInfo');
+                    const changeBtn = document.getElementById('changeModelBtn');
+
+                    if (selectedOption.value === data.current_model) {
+                        modelInfo.innerHTML = '<strong>Este es el modelo actualmente cargado</strong>';
+                        changeBtn.disabled = true;
+                        changeBtn.style.opacity = '0.5';
+                        changeBtn.style.cursor = 'not-allowed';
+                    } else {
+                        modelInfo.innerHTML = `
+                            <strong>${selectedOption.value}</strong><br>
+                            📦 Parámetros: ${selectedOption.dataset.params}<br>
+                            💾 VRAM: ${selectedOption.dataset.vram}<br>
+                            🎯 Precisión: ${selectedOption.dataset.accuracy}<br>
+                            ⚡ Velocidad: ${selectedOption.dataset.speed}
+                        `;
+                        changeBtn.disabled = false;
+                        changeBtn.style.opacity = '1';
+                        changeBtn.style.cursor = 'pointer';
+                    }
+                });
+
+                // Trigger initial info display
+                select.dispatchEvent(new Event('change'));
+
+            } catch (error) {
+                console.error('[STT Models] Error loading models:', error);
+            }
+        }
+
+        // Change STT model
+        async function changeSTTModel() {
+            const select = document.getElementById('sttModelSelect');
+            const selectedModel = select.value;
+            const changeBtn = document.getElementById('changeModelBtn');
+            const modelInfo = document.getElementById('modelInfo');
+
+            if (!selectedModel) return;
+
+            try {
+                changeBtn.disabled = true;
+                changeBtn.textContent = 'Iniciando cambio...';
+                modelInfo.innerHTML = '⏳ Solicitando cambio de modelo...';
+
+                console.log('[Model Change] Requesting change to:', selectedModel);
+
+                const response = await fetch(`${STT_URL}/change-model`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model: selectedModel })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Error al cambiar modelo');
+                }
+
+                const data = await response.json();
+                console.log('[Model Change] Response:', data);
+
+                modelInfo.innerHTML = `
+                    <strong style="color: #ff9800;">⏳ Cargando modelo ${selectedModel}...</strong><br>
+                    Tiempo estimado: ${data.estimated_load_time}<br>
+                    <small>Monitoreando estado automáticamente...</small>
+                `;
+                changeBtn.textContent = 'Cargando modelo...';
+
+                // Start monitoring model change progress
+                monitorModelChange(selectedModel);
+
+            } catch (error) {
+                console.error('[STT] Error changing model:', error);
+                modelInfo.innerHTML = `<strong style="color: #f44336;">❌ Error: ${error.message}</strong>`;
+                changeBtn.disabled = false;
+                changeBtn.textContent = 'Cambiar Modelo';
+            }
+        }
+
+        // Monitor model change progress
+        async function monitorModelChange(targetModel) {
+            const modelInfo = document.getElementById('modelInfo');
+            const changeBtn = document.getElementById('changeModelBtn');
+            let checkCount = 0;
+            const maxChecks = 60; // 5 minutes max (5 seconds interval)
+
+            const checkInterval = setInterval(async () => {
+                checkCount++;
+                console.log(`[Model Change] Check ${checkCount}/${maxChecks} - Waiting for ${targetModel} to be ready...`);
+
+                try {
+                    const response = await fetch(`${STT_URL}/health`);
+                    if (!response.ok) {
+                        throw new Error('Health check failed');
+                    }
+
+                    const healthData = await response.json();
+                    console.log('[Model Change] Health status:', healthData);
+
+                    // Update progress message
+                    if (!healthData.ready) {
+                        modelInfo.innerHTML = `
+                            <strong style="color: #ff9800;">⏳ ${healthData.message}</strong><br>
+                            Modelo objetivo: ${targetModel}<br>
+                            <small>Check ${checkCount}/${maxChecks}</small>
+                        `;
+                    } else if (healthData.model === targetModel) {
+                        // Success! Model changed and ready
+                        clearInterval(checkInterval);
+                        console.log('[Model Change] Success! Model ready:', targetModel);
+
+                        modelInfo.innerHTML = `
+                            <strong style="color: #4caf50;">✅ Modelo cambiado exitosamente</strong><br>
+                            Ahora usando: <strong>${targetModel}</strong><br>
+                            Estado: ${healthData.message}
+                        `;
+                        changeBtn.textContent = 'Cambiar Modelo';
+
+                        // Reload models list to update current selection
+                        setTimeout(() => {
+                            loadSTTModels();
+                        }, 1500);
+                    } else {
+                        // Model ready but different model (shouldn't happen)
+                        clearInterval(checkInterval);
+                        console.warn('[Model Change] Unexpected model:', healthData.model);
+                        modelInfo.innerHTML = `
+                            <strong style="color: #ff9800;">⚠️ Modelo cargado: ${healthData.model}</strong><br>
+                            Esperabas: ${targetModel}
+                        `;
+                        changeBtn.disabled = false;
+                        changeBtn.textContent = 'Cambiar Modelo';
+                        loadSTTModels();
+                    }
+
+                } catch (error) {
+                    console.error('[Model Change] Error during monitoring:', error);
+
+                    if (checkCount >= maxChecks) {
+                        clearInterval(checkInterval);
+                        modelInfo.innerHTML = `
+                            <strong style="color: #f44336;">❌ Timeout esperando cambio de modelo</strong><br>
+                            Verifica los logs del servicio STT
+                        `;
+                        changeBtn.disabled = false;
+                        changeBtn.textContent = 'Cambiar Modelo';
+                    }
+                }
+
+            }, 5000); // Check every 5 seconds
+        }
+
         // Initialize
         checkServiceStatus();
         setInterval(checkServiceStatus, 5000);
+        loadSTTModels(); // Load available models on startup
         document.getElementById('messageInput').focus();
     </script>
 </body>

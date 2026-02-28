@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pitch Tester · casiopy</title>
+<style>
+  :root {
+    --bg:      #0d1117;
+    --surface: #161b22;
+    --border:  #30363d;
+    --text:    #e6edf3;
+    --muted:   #8b949e;
+    --accent:  #58a6ff;
+    --green:   #3fb950;
+    --yellow:  #d29922;
+    --red:     #f85149;
+    --purple:  #bc8cff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; min-height: 100vh; }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; gap: 16px; }
+  header h1 { font-size: 16px; font-weight: 600; }
+  header a  { margin-left: auto; font-size: 12px; color: var(--muted); text-decoration: none; }
+  header a:hover { color: var(--accent); }
+
+  .layout { display: grid; grid-template-columns: 360px 1fr; gap: 0; height: calc(100vh - 49px); }
+
+  /* ── Left panel ── */
+  .panel { border-right: 1px solid var(--border); overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; }
+
+  .section-title { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .8px; text-transform: uppercase; margin-bottom: 12px; }
+
+  .field { margin-bottom: 14px; }
+  .field label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+  .field label strong { color: var(--text); font-size: 13px; }
+  .field label .val { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; min-width: 40px; text-align: right; }
+  input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
+  textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 13px; padding: 10px 12px; resize: vertical; font-family: inherit; line-height: 1.5; }
+  textarea:focus { outline: none; border-color: var(--accent); }
+  .field-note { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .pitch-display { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 6px 0 10px; }
+  .pitch-badge { font-size: 28px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 80px; text-align: center; }
+  .pitch-semitone { font-size: 12px; color: var(--muted); }
+
+  .btn { display: block; width: 100%; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s; text-align: center; }
+  .btn:hover:not(:disabled) { background: rgba(255,255,255,.08); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: rgba(88,166,255,.15); border-color: rgba(88,166,255,.4); color: var(--accent); }
+  .btn-primary:hover:not(:disabled) { background: rgba(88,166,255,.25); }
+  .btn-green   { background: rgba(63,185,80,.15);  border-color: rgba(63,185,80,.4); color: var(--green); }
+  .btn-green:hover:not(:disabled) { background: rgba(63,185,80,.25); }
+  .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .btn-row .btn { margin: 0; }
+
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(88,166,255,.3); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Right panel ── */
+  .results { overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+  .result-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .result-card.pinned { border-color: rgba(63,185,80,.4); }
+  .result-header { padding: 10px 14px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+  .result-pitch { font-size: 20px; font-weight: 700; color: var(--accent); min-width: 60px; font-variant-numeric: tabular-nums; }
+  .result-pitch.positive { color: var(--green); }
+  .result-pitch.negative { color: var(--red); }
+  .result-pitch.zero     { color: var(--muted); }
+  .result-meta { flex: 1; font-size: 11px; color: var(--muted); line-height: 1.6; }
+  .result-meta span { margin-right: 10px; }
+  .result-algo { font-size: 10px; background: rgba(188,140,255,.1); color: var(--purple); border-radius: 4px; padding: 2px 6px; }
+  .result-actions { display: flex; gap: 6px; }
+  .icon-btn { background: none; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); cursor: pointer; font-size: 12px; padding: 3px 8px; transition: all .15s; }
+  .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .icon-btn.pinned { border-color: rgba(63,185,80,.5); color: var(--green); }
+  .result-body { padding: 10px 14px; }
+  .result-text { font-size: 12px; color: var(--muted); margin-bottom: 8px; white-space: pre-wrap; }
+  audio { width: 100%; height: 32px; }
+
+  .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--muted); gap: 8px; }
+  .empty-state .icon { font-size: 40px; opacity: .3; }
+  .empty-state p { font-size: 13px; }
+
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+  .badge-blue   { background: rgba(88,166,255,.12); color: var(--accent); }
+  .badge-green  { background: rgba(63,185,80,.12);  color: var(--green); }
+  .badge-purple { background: rgba(188,140,255,.12); color: var(--purple); }
+  .badge-yellow { background: rgba(210,153,34,.12);  color: var(--yellow); }
+
+  .compare-bar { display: flex; gap: 8px; align-items: center; padding: 8px 0 4px; font-size: 11px; color: var(--muted); }
+  .compare-bar strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Pitch Tester</h1>
+  <span style="font-size:12px;color:var(--muted);">casiopy · G_<span id="ckptLabel">?</span>.pth</span>
+  <a href="/">&#8592; Volver al pipeline</a>
+</header>
+
+<div class="layout">
+
+  <!-- ── Left panel ── -->
+  <div class="panel">
+
+    <div>
+      <div class="section-title">Texto</div>
+      <textarea id="txtInput" rows="4" placeholder="Escribe el texto a sintetizar...">Hola a todos, soy casiopy y bienvenidos al stream de hoy.</textarea>
+    </div>
+
+    <div>
+      <div class="section-title">Pitch</div>
+      <div class="pitch-display">
+        <button class="icon-btn" onclick="stepPitch(-0.5)" title="-0.5 st">&#9660;</button>
+        <div>
+          <div class="pitch-badge" id="pitchBadge">0.0</div>
+          <div class="pitch-semitone" style="text-align:center">semitonos</div>
+        </div>
+        <button class="icon-btn" onclick="stepPitch(+0.5)" title="+0.5 st">&#9650;</button>
+      </div>
+      <div class="field">
+        <label><span>Rango fino</span><span class="val" id="pitchVal">0.0 st</span></label>
+        <input type="range" id="pitchSlider" min="-8" max="8" step="0.5" value="0">
+      </div>
+      <div class="badge-row" id="quickPitch">
+        <span class="badge badge-blue"  style="cursor:pointer" onclick="setPitch(0)">0 st</span>
+        <span class="badge badge-blue"  style="cursor:pointer" onclick="setPitch(1)">+1</span>
+        <span class="badge badge-blue"  style="cursor:pointer" onclick="setPitch(2)">+2</span>
+        <span class="badge badge-blue"  style="cursor:pointer" onclick="setPitch(3)">+3</span>
+        <span class="badge badge-blue"  style="cursor:pointer" onclick="setPitch(4)">+4</span>
+        <span class="badge badge-yellow" style="cursor:pointer" onclick="setPitch(-1)">-1</span>
+        <span class="badge badge-yellow" style="cursor:pointer" onclick="setPitch(-2)">-2</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title">Parámetros adicionales</div>
+      <div class="field">
+        <label><strong>Velocidad</strong><span class="val" id="speedVal">1.0×</span></label>
+        <input type="range" id="speedSlider" min="0.7" max="1.5" step="0.05" value="1.0">
+      </div>
+      <div class="field">
+        <label><strong>Brillo</strong><span class="val" id="brightVal">0.0 dB</span></label>
+        <input type="range" id="brightSlider" min="-4" max="6" step="0.5" value="0">
+        <div class="field-note">Boost en altas frecuencias (≥3 kHz)</div>
+      </div>
+      <div class="field">
+        <label><strong>Noise scale</strong><span class="val" id="noiseVal">0.30</span></label>
+        <input type="range" id="noiseSlider" min="0.1" max="0.9" step="0.05" value="0.3">
+        <div class="field-note">Variación de síntesis (más bajo = más consistente)</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn btn-primary" id="btnGen" onclick="generate()">
+        Generar audio
+      </button>
+      <div class="btn-row">
+        <button class="btn" onclick="generateBase()">Base ES (ref)</button>
+        <button class="btn" id="btnClear" onclick="clearResults()">Limpiar</button>
+      </div>
+    </div>
+
+    <div id="statusBox" style="font-size:12px;color:var(--muted);min-height:18px;"></div>
+
+  </div>
+
+  <!-- ── Right panel ── -->
+  <div class="results" id="results">
+    <div class="empty-state" id="emptyState">
+      <div class="icon">&#127925;</div>
+      <p>Genera un audio para comparar distintos valores de pitch</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const TTS_URL  = '/api/synthesize';
+const STATE_URL = '/api/state';
+
+let resultCount = 0;
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+(async () => {
+  try {
+    const r = await fetch(STATE_URL);
+    const d = await r.json();
+    const ckpt = (d.last_checkpoint || '').replace('G_','').replace('.pth','');
+    document.getElementById('ckptLabel').textContent = ckpt || '?';
+  } catch {}
+})();
+
+// ── Sliders ───────────────────────────────────────────────────────────────────
+const pitchSlider  = document.getElementById('pitchSlider');
+const speedSlider  = document.getElementById('speedSlider');
+const brightSlider = document.getElementById('brightSlider');
+const noiseSlider  = document.getElementById('noiseSlider');
+
+pitchSlider.addEventListener('input',  () => syncPitch(parseFloat(pitchSlider.value)));
+speedSlider.addEventListener('input',  () => { document.getElementById('speedVal').textContent  = parseFloat(speedSlider.value).toFixed(2) + '×'; });
+brightSlider.addEventListener('input', () => { document.getElementById('brightVal').textContent = (parseFloat(brightSlider.value) >= 0 ? '+' : '') + parseFloat(brightSlider.value).toFixed(1) + ' dB'; });
+noiseSlider.addEventListener('input',  () => { document.getElementById('noiseVal').textContent  = parseFloat(noiseSlider.value).toFixed(2); });
+
+function syncPitch(v) {
+  pitchSlider.value = v;
+  const sign = v > 0 ? '+' : '';
+  document.getElementById('pitchBadge').textContent = sign + v.toFixed(1);
+  document.getElementById('pitchVal').textContent   = sign + v.toFixed(1) + ' st';
+}
+function setPitch(v)    { syncPitch(v); }
+function stepPitch(d)   { syncPitch(Math.max(-8, Math.min(8, parseFloat(pitchSlider.value) + d))); }
+
+// ── Generate ──────────────────────────────────────────────────────────────────
+function getParams(overrides = {}) {
+  return {
+    text:        document.getElementById('txtInput').value.trim(),
+    voice:       'casiopy',
+    pitch_shift: parseFloat(pitchSlider.value),
+    speed:       parseFloat(speedSlider.value),
+    brightness:  parseFloat(brightSlider.value),
+    noise_scale: parseFloat(noiseSlider.value),
+    ...overrides,
+  };
+}
+
+async function generate(overrides = {}) {
+  const params = getParams(overrides);
+  if (!params.text) { setStatus('Escribe algo primero.', 'red'); return; }
+  await doGenerate(params);
+}
+
+async function generateBase() {
+  const params = getParams({ voice: 'ES', pitch_shift: 0.0 });
+  if (!params.text) { setStatus('Escribe algo primero.', 'red'); return; }
+  await doGenerate(params, true);
+}
+
+async function doGenerate(params, isBase = false) {
+  const btn = document.getElementById('btnGen');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Generando…';
+  setStatus('Llamando al servidor TTS…', 'muted');
+
+  const t0 = Date.now();
+  try {
+    const resp = await fetch(TTS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+      throw new Error(err.detail || resp.statusText);
+    }
+    const data = await resp.json();
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(2);
+    addResult(data, params, isBase, elapsed);
+    if (data.checkpoint) {
+      const ckpt = data.checkpoint.replace('G_','').replace('.pth','');
+      document.getElementById('ckptLabel').textContent = ckpt;
+    }
+    setStatus(`Listo en ${elapsed}s · RTF ${data.rtf?.toFixed(2) ?? '?'}`, 'green');
+  } catch (e) {
+    setStatus('Error: ' + e.message, 'red');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Generar audio';
+  }
+}
+
+// ── Result card ───────────────────────────────────────────────────────────────
+function addResult(data, params, isBase, elapsed) {
+  document.getElementById('emptyState')?.remove();
+
+  const id = ++resultCount;
+  const pitch = params.pitch_shift ?? 0;
+  const pitchStr = (pitch > 0 ? '+' : '') + pitch.toFixed(1) + ' st';
+  const pitchClass = pitch > 0 ? 'positive' : pitch < 0 ? 'negative' : 'zero';
+  const label = isBase ? 'Base ES (sin fine-tune)' : `casiopy · pitch ${pitchStr}`;
+
+  // Build audio blob URL
+  const bytes = Uint8Array.from(atob(data.audio_b64), c => c.charCodeAt(0));
+  const blob  = new Blob([bytes], { type: 'audio/wav' });
+  const url   = URL.createObjectURL(blob);
+
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  card.id = `card-${id}`;
+  card.innerHTML = `
+    <div class="result-header">
+      <div class="result-pitch ${isBase ? 'zero' : pitchClass}">
+        ${isBase ? '— st' : pitchStr}
+      </div>
+      <div class="result-meta">
+        <strong>${label}</strong><br>
+        <span>dur: ${data.duration_s?.toFixed(2) ?? '?'}s</span>
+        <span>gen: ${elapsed}s</span>
+        <span>RTF: ${data.rtf?.toFixed(2) ?? '?'}</span>
+        ${data.pitch_algo ? `<span class="result-algo">${data.pitch_algo}</span>` : ''}
+      </div>
+      <div class="result-actions">
+        <button class="icon-btn" onclick="pinCard(${id})" id="pin-${id}" title="Anclar para comparar">&#128204;</button>
+        <button class="icon-btn" onclick="downloadResult('${url}', ${id}, ${pitch})" title="Descargar WAV">&#8595;</button>
+        <button class="icon-btn" onclick="removeCard(${id})" title="Eliminar">&#10005;</button>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="result-text">${escHtml(params.text)}</div>
+      <audio controls src="${url}"></audio>
+      <div class="badge-row">
+        <span class="badge badge-blue">speed ${params.speed?.toFixed(2)}×</span>
+        <span class="badge badge-purple">noise ${params.noise_scale?.toFixed(2)}</span>
+        ${params.brightness ? `<span class="badge badge-yellow">bright ${params.brightness > 0 ? '+' : ''}${params.brightness?.toFixed(1)} dB</span>` : ''}
+        ${isBase ? '<span class="badge badge-yellow">base ES</span>' : '<span class="badge badge-green">fine-tuned</span>'}
+      </div>
+    </div>
+  `;
+
+  const container = document.getElementById('results');
+  container.insertBefore(card, container.firstChild);
+}
+
+function pinCard(id) {
+  const card = document.getElementById(`card-${id}`);
+  const btn  = document.getElementById(`pin-${id}`);
+  const p = card.classList.toggle('pinned');
+  btn.classList.toggle('pinned', p);
+}
+
+function removeCard(id) {
+  document.getElementById(`card-${id}`)?.remove();
+  if (!document.querySelector('.result-card')) showEmpty();
+}
+
+function downloadResult(url, id, pitch) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `casiopy_pitch${pitch >= 0 ? '+' : ''}${pitch.toFixed(1)}st_${id}.wav`;
+  a.click();
+}
+
+function clearResults() {
+  const cards = document.querySelectorAll('.result-card:not(.pinned)');
+  cards.forEach(c => c.remove());
+  if (!document.querySelector('.result-card')) showEmpty();
+}
+
+function showEmpty() {
+  const r = document.getElementById('results');
+  if (!document.getElementById('emptyState')) {
+    const d = document.createElement('div');
+    d.className = 'empty-state';
+    d.id = 'emptyState';
+    d.innerHTML = '<div class="icon">&#127925;</div><p>Genera un audio para comparar distintos valores de pitch</p>';
+    r.appendChild(d);
+  }
+}
+
+// ── Utils ─────────────────────────────────────────────────────────────────────
+function setStatus(msg, color = 'muted') {
+  const el = document.getElementById('statusBox');
+  const map = { muted: 'var(--muted)', green: 'var(--green)', red: 'var(--red)', blue: 'var(--accent)' };
+  el.style.color = map[color] ?? color;
+  el.textContent = msg;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>

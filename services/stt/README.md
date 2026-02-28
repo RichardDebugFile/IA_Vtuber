@@ -15,7 +15,7 @@ Este servicio proporciona:
 
 ```
 ┌─────────────────────────────────────────┐
-│         STT Service (Port 8806)         │
+│         STT Service (Port 8803)         │
 │                                         │
 │  ┌────────────────┐  ┌───────────────┐ │
 │  │  Whisper STT   │  │   Speaker     │ │
@@ -76,10 +76,10 @@ pip install -e ".[dev]"
 
 ```bash
 # Desde la raíz del proyecto
-python -m uvicorn services.stt.src.server:app --host 127.0.0.1 --port 8806
+python -m uvicorn services.stt.src.server:app --host 127.0.0.1 --port 8803
 
 # O usando el venv del proyecto
-../../venv/Scripts/python.exe -m uvicorn src.server:app --host 127.0.0.1 --port 8806
+../../venv/Scripts/python.exe -m uvicorn src.server:app --host 127.0.0.1 --port 8803
 ```
 
 ### Variables de Entorno
@@ -95,7 +95,7 @@ export DEVICE="auto"
 export LANGUAGE="es"
 
 # Puerto del servicio
-export STT_PORT=8806
+export STT_PORT=8803
 ```
 
 ## API Endpoints

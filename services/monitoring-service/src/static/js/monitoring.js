@@ -74,11 +74,26 @@ function updateDashboard(data) {
     fetchDockerStats();
 }
 
+// IDs de backends TTS que se gestionan desde /tts-backends y NO deben aparecer aquí
+const TTS_BACKEND_IDS = new Set(['tts-casiopy', 'tts-openvoice', 'tts-cosyvoice', 'tts-qwen3', 'tts-fish']);
+
 function updateServicesList(services, metrics) {
     const container = document.getElementById('servicesList');
     container.innerHTML = '';
 
     console.log('Updating services list:', services);
+
+    // Show TTS Backends button when tts-router is online
+    const ttsBackendsLink = document.getElementById('ttsBackendsLink');
+    const routerOnline = services['tts-router'] && services['tts-router'].status === 'online';
+    if (ttsBackendsLink) {
+        if (routerOnline) {
+            ttsBackendsLink.style.display = 'inline-block';
+            ttsBackendsLink.title = 'TTS Router activo — gestionar backends TTS';
+        } else {
+            ttsBackendsLink.style.display = 'none';
+        }
+    }
 
     // Check if BOTH TTS and Fish services are online and show/hide TTS Testing link
     const ttsTestLink = document.getElementById('ttsTestLink');
@@ -138,6 +153,7 @@ function updateServicesList(services, metrics) {
     }
 
     for (const [serviceId, service] of Object.entries(services)) {
+        if (TTS_BACKEND_IDS.has(serviceId)) continue;   // gestionados desde /tts-backends
         console.log(`Processing service: ${serviceId}`, service);
         const metric = metrics ? metrics[serviceId] : null;
 
@@ -214,8 +230,10 @@ function updateActiveServicesList(services) {
     const container = document.getElementById('activeServicesList');
     container.innerHTML = '';
 
-    // Filter only online services
-    const onlineServices = Object.entries(services).filter(([id, svc]) => svc.status === 'online');
+    // Filter only online services (excluir backends TTS, se muestran en /tts-backends)
+    const onlineServices = Object.entries(services).filter(([id, svc]) =>
+        svc.status === 'online' && !TTS_BACKEND_IDS.has(id)
+    );
 
     if (onlineServices.length === 0) {
         container.innerHTML = '<div class="no-data">No active services</div>';

@@ -14,7 +14,7 @@ from src.llm_ollama import chat, list_models
 from src.emotion import classify
 from src.ollama_manager import OllamaManager
 
-GATEWAY_HTTP = os.getenv("GATEWAY_HTTP", "http://127.0.0.1:8765")
+GATEWAY_HTTP = os.getenv("GATEWAY_HTTP", "http://127.0.0.1:8800")
 OLLAMA_HOST  = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3")  # pon aquí tu modelo exacto (ej. gemma2:latest / gemma3:instruct)
 

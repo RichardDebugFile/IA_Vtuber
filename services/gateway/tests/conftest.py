@@ -19,8 +19,8 @@ def client():
 
 @pytest.fixture
 def sample_topics():
-    """List of valid topics for pub/sub."""
-    return ["utterance", "emotion", "avatar-action", "audio"]
+    """Lista de tópicos válidos del pub/sub (v2: añade service-status)."""
+    return ["utterance", "emotion", "avatar-action", "audio", "service-status"]
 
 
 @pytest.fixture

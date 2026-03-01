@@ -44,6 +44,10 @@
                            style="padding: 8px 16px; background: #9C27B0; color: white; text-decoration: none; border-radius: 5px; font-size: 14px; transition: opacity 0.3s;">
                             📊 Logs & Auditoría
                         </a>
+                        <a href="/memory"
+                           style="padding: 8px 16px; background: linear-gradient(135deg, #0f3460 0%, #16213e 100%); color: white; text-decoration: none; border-radius: 5px; font-size: 14px; transition: opacity 0.3s;">
+                            🧠 Memoria
+                        </a>
                     </div>
                 </div>
             </div>
@@ -155,6 +159,19 @@
                     <div class="no-data">No data yet</div>
                 </div>
             </div>
+
+            <!-- Entrenamiento Episódico -->
+            <div class="card" id="trainingStatusCard">
+                <h2>🎓 Entrenamiento Episódico</h2>
+                <div id="trainingStatusWidget">
+                    <div class="no-data">Cargando...</div>
+                </div>
+                <div style="margin-top:14px;text-align:right;">
+                    <a href="/memory" style="font-size:13px;color:#667eea;text-decoration:none;">
+                        Ver panel completo →
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -172,5 +189,63 @@
     </div>
 
     <script src="/static/js/monitoring.js"></script>
+    <script>
+        // ── Widget de Entrenamiento Episódico ─────────────────────────────────────
+        // Llama directamente al memory-service (CORS abierto en localhost)
+        const _MEMORY_SVC = 'http://127.0.0.1:8820';
+
+        function _escHtml(s) {
+            return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+
+        function _fmtDate(iso) {
+            if (!iso) return '—';
+            try {
+                const d = new Date(iso);
+                return isNaN(d) ? iso : d.toLocaleString('es-ES', {
+                    day:'2-digit', month:'2-digit', year:'numeric',
+                    hour:'2-digit', minute:'2-digit',
+                });
+            } catch(e) { return iso; }
+        }
+
+        async function loadTrainingStatus() {
+            const el = document.getElementById('trainingStatusWidget');
+            try {
+                const r = await fetch(`${_MEMORY_SVC}/pipeline/status`,
+                    { signal: AbortSignal.timeout(4000) });
+                if (!r.ok) throw new Error('status ' + r.status);
+                const d = await r.json();
+
+                const st = d.last_run ? d.last_run.status : null;
+                const icons = { success:'✅', failed:'❌', skipped:'⏭', partial:'🔵' };
+                const colors = { success:'#4CAF50', failed:'#f44336', skipped:'#FF9800', partial:'#2196F3' };
+
+                el.innerHTML = `
+                    <div style="display:grid;gap:10px;font-size:14px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <span style="color:#888">Modelo activo</span>
+                            <strong id="monTrainModel">${_escHtml(d.current_model || '—')}</strong>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <span style="color:#888">Próximo run</span>
+                            <span id="monTrainNextRun">${_fmtDate(d.next_run)}</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <span style="color:#888">Último run</span>
+                            <span id="monTrainLastStatus" style="color:${colors[st] || '#888'};font-weight:600">
+                                ${st ? (icons[st] || '❓') + ' ' + st : '— sin runs'}
+                            </span>
+                        </div>
+                        ${d.last_run ? `<div style="font-size:12px;color:#aaa;text-align:right">
+                            ${_fmtDate(d.last_run.started_at)}</div>` : ''}
+                    </div>`;
+            } catch(e) {
+                el.innerHTML = '<div style="color:#aaa;font-size:13px" id="monTrainOffline">memory-service no disponible</div>';
+            }
+        }
+
+        loadTrainingStatus();
+    </script>
 </body>
 </html>

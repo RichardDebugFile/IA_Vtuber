@@ -143,6 +143,80 @@ def validate_dataset(dataset_path: str):
     return True
 
 
+def validate_dataset_flexible(dataset_path: str, min_count: int = 50) -> dict:
+    """
+    Valida un dataset episódico en formato ChatML, aceptando tanto
+    el formato completo (system+user+assistant) como el episódico (user+assistant).
+
+    Args:
+        dataset_path: Path al archivo .jsonl
+        min_count: Mínimo de ejemplos requeridos (default 50)
+
+    Returns:
+        Dict con: status ("success"|"failed"), count, reason, errors
+    """
+    path = Path(dataset_path)
+    if not path.exists():
+        return {"status": "failed", "count": 0, "reason": "archivo no encontrado", "errors": []}
+
+    dataset = []
+    try:
+        with path.open("r", encoding="utf-8") as f:
+            for i, line in enumerate(f, 1):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    dataset.append(json.loads(line))
+                except json.JSONDecodeError as e:
+                    return {
+                        "status": "failed",
+                        "count": 0,
+                        "reason": f"JSON inválido en línea {i}: {e}",
+                        "errors": [],
+                    }
+    except Exception as e:
+        return {"status": "failed", "count": 0, "reason": str(e), "errors": []}
+
+    if not dataset:
+        return {"status": "failed", "count": 0, "reason": "archivo vacío", "errors": []}
+
+    valid_sequences = [
+        ["system", "user", "assistant"],
+        ["user", "assistant"],
+    ]
+    errors = []
+    for i, entry in enumerate(dataset, 1):
+        if "messages" not in entry:
+            errors.append(f"Entrada {i}: falta 'messages'")
+            continue
+        roles = [m.get("role") for m in entry["messages"]]
+        if roles not in valid_sequences:
+            errors.append(f"Entrada {i}: roles inválidos {roles}")
+            continue
+        for j, msg in enumerate(entry["messages"]):
+            if not msg.get("content", "").strip():
+                errors.append(f"Entrada {i}, mensaje {j}: contenido vacío")
+
+    if errors:
+        return {
+            "status": "failed",
+            "count": len(dataset),
+            "reason": f"{len(errors)} error(es) de estructura",
+            "errors": errors[:10],
+        }
+
+    if len(dataset) < min_count:
+        return {
+            "status": "failed",
+            "count": len(dataset),
+            "reason": f"ejemplos insuficientes: {len(dataset)} < {min_count} mínimo requerido",
+            "errors": [],
+        }
+
+    return {"status": "success", "count": len(dataset), "reason": None, "errors": []}
+
+
 if __name__ == "__main__":
     import sys
 

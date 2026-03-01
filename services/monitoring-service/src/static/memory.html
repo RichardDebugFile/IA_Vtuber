@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memoria & Feedback — Casiopy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            color: #1a1a2e;
+            font-size: 26px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #0f3460;
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .nav-links a:hover {
+            background: #f0f0f0;
+        }
+
+        .nav-links a.active {
+            background: #0f3460;
+            color: white;
+        }
+
+        /* Metrics strip */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 18px 22px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .metric-card h3 {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 30px;
+            font-weight: bold;
+            color: #0f3460;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 4px;
+        }
+
+        /* Controls */
+        .main-content {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .controls label {
+            font-size: 13px;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 9px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #0f3460;
+            color: white;
+        }
+
+        .btn-primary:hover { background: #0a2540; }
+
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn-success:hover { background: #43A047; }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn-danger:hover { background: #e53935; }
+
+        .btn-edit {
+            background: #FF9800;
+            color: white;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn-edit:hover { background: #FB8C00; }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        /* Status indicator */
+        .memory-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #666;
+            margin-left: auto;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+
+        .status-dot.online { background: #4CAF50; }
+        .status-dot.offline { background: #f44336; }
+
+        /* Table */
+        .interactions-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .interactions-table th {
+            background: #f8f9fa;
+            padding: 11px 14px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #444;
+            border-bottom: 2px solid #e0e0e0;
+            white-space: nowrap;
+        }
+
+        .interactions-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+            font-size: 13px;
+        }
+
+        .interactions-table tr:hover { background: #fafafa; }
+
+        .text-cell {
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .text-cell:hover { text-decoration: underline; }
+
+        .emotion-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        /* Quality score bar */
+        .quality-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 110px;
+        }
+
+        .quality-bar {
+            flex: 1;
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .quality-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.4s;
+        }
+
+        .quality-label {
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 30px;
+            text-align: right;
+        }
+
+        .q-high   { background: #4CAF50; color: #2E7D32; }
+        .q-medium { background: #FF9800; color: #E65100; }
+        .q-low    { background: #f44336; color: #c62828; }
+
+        .training-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .training-badge.ready { background: #e8f5e9; color: #2E7D32; }
+        .training-badge.not-ready { background: #fce4ec; color: #880E4F; }
+
+        .feedback-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .feedback-actions button[disabled] {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .latency {
+            color: #0f3460;
+            font-weight: 500;
+        }
+
+        .empty-state, .loading-state, .error-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #999;
+        }
+
+        .error-state { color: #f44336; }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 12px 22px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.show { opacity: 1; }
+        .toast.success { background: #4CAF50; }
+        .toast.error   { background: #f44336; }
+        .toast.info    { background: #0f3460; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: white;
+            border-radius: 14px;
+            padding: 28px;
+            width: 640px;
+            max-width: 95vw;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal h2 {
+            color: #1a1a2e;
+            font-size: 18px;
+            margin-bottom: 18px;
+        }
+
+        .modal-field {
+            margin-bottom: 16px;
+        }
+
+        .modal-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .modal-field .text-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #333;
+            line-height: 1.5;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .modal-field textarea {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .modal-field textarea:focus {
+            outline: none;
+            border-color: #0f3460;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            background: #f0f0f0;
+            color: #333;
+            padding: 9px 18px;
+        }
+
+        .btn-cancel:hover { background: #e0e0e0; }
+
+        /* Full text tooltip modal */
+        .text-modal {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 600px;
+            max-width: 95vw;
+        }
+
+        .text-modal h3 { font-size: 15px; color: #333; margin-bottom: 10px; }
+        .text-modal p  { font-size: 14px; color: #444; line-height: 1.6; white-space: pre-wrap; }
+        /* ── Sección de entrenamiento episódico ─────────────────────────── */
+        .training-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border-left: 4px solid #667eea;
+        }
+        .training-section h2 {
+            margin: 0 0 16px 0;
+            font-size: 17px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .training-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+        @media (max-width: 900px) { .training-grid { grid-template-columns: repeat(2,1fr); } }
+        .training-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px 14px;
+            text-align: center;
+        }
+        .training-card h3 {
+            font-size: 11px;
+            color: #888;
+            margin: 0 0 6px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .training-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            word-break: break-all;
+        }
+        .training-label {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 4px;
+        }
+        .train-status-success { color: #4CAF50; }
+        .train-status-failed  { color: #f44336; }
+        .train-status-skipped { color: #FF9800; }
+        .train-status-partial { color: #2196F3; }
+        .train-ready-ok   { color: #4CAF50; }
+        .train-ready-warn { color: #FF9800; }
+        #trainingHistoryDetails {
+            margin-top: 10px;
+        }
+        #trainingHistoryDetails summary {
+            cursor: pointer;
+            font-size: 13px;
+            color: #667eea;
+            padding: 4px 0;
+            list-style: none;
+            user-select: none;
+        }
+        #trainingHistoryDetails summary::-webkit-details-marker { display: none; }
+        .train-history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        .train-history-table th {
+            background: #f0f0f0;
+            padding: 7px 10px;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+        }
+        .train-history-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+        .train-history-table tr:last-child td { border-bottom: none; }
+
+        /* ── Sección de personalidad ─────────────────────────────────────── */
+        .personality-traits {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .personality-trait {
+            display: grid;
+            grid-template-columns: 160px 1fr 44px;
+            align-items: center;
+            gap: 10px;
+        }
+        .personality-trait-name {
+            font-size: 13px;
+            color: #555;
+            font-weight: 500;
+        }
+        .personality-trait-value {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: right;
+            color: #e91e63;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧠 Memoria & Feedback</h1>
+            <div class="nav-links">
+                <a href="/monitoring">Dashboard</a>
+                <a href="/logs">Logs</a>
+                <a href="/tts">TTS</a>
+                <a href="/memory" class="active">Memoria</a>
+            </div>
+        </header>
+
+        <!-- Métricas -->
+        <div class="metrics-grid" id="metricsGrid">
+            <div class="metric-card">
+                <h3>Total interacciones</h3>
+                <div class="metric-value" id="metricTotal">—</div>
+                <div class="metric-label">almacenadas en BD</div>
+            </div>
+            <div class="metric-card">
+                <h3>Calidad promedio</h3>
+                <div class="metric-value" id="metricAvgQuality">—</div>
+                <div class="metric-label">score 0.0 – 1.0</div>
+            </div>
+            <div class="metric-card">
+                <h3>Listas para entrenar</h3>
+                <div class="metric-value" id="metricTrainingReady" style="color:#4CAF50">—</div>
+                <div class="metric-label">quality ≥ 0.6</div>
+            </div>
+            <div class="metric-card">
+                <h3>Esta semana</h3>
+                <div class="metric-value" id="metricWeek">—</div>
+                <div class="metric-label">últimos 7 días</div>
+            </div>
+        </div>
+
+        <!-- Ciclo de Aprendizaje Episódico -->
+        <div class="training-section" id="trainingSection">
+            <h2>🎓 Ciclo de Aprendizaje Episódico</h2>
+            <div class="training-grid">
+                <div class="training-card">
+                    <h3>Modelo Activo</h3>
+                    <div class="training-value" id="trainModelActive">—</div>
+                    <div class="training-label">en producción</div>
+                </div>
+                <div class="training-card">
+                    <h3>Próximo Entrenamiento</h3>
+                    <div class="training-value" id="trainNextRun">—</div>
+                    <div class="training-label">domingo 23:00</div>
+                </div>
+                <div class="training-card">
+                    <h3>Listas esta semana</h3>
+                    <div class="training-value" id="trainWeekReady">—</div>
+                    <div class="training-label" id="trainWeekLabel">necesita 50 para entrenar</div>
+                </div>
+                <div class="training-card">
+                    <h3>Último Run</h3>
+                    <div class="training-value" id="trainLastStatus">—</div>
+                    <div class="training-label" id="trainLastDate">sin runs anteriores</div>
+                </div>
+            </div>
+            <details id="trainingHistoryDetails">
+                <summary>📋 Ver historial de runs (últimos 20)</summary>
+                <div id="trainHistoryContainer">
+                    <p style="color:#aaa;font-size:13px;padding:8px 0">Cargando historial...</p>
+                </div>
+            </details>
+        </div>
+
+        <!-- Guía rápida de uso -->
+        <details class="training-section" style="border-left-color:#9c27b0;">
+            <summary style="cursor:pointer;user-select:none;font-size:1.1em;font-weight:600;">
+                📖 Guía rápida — Cómo usar este panel
+            </summary>
+
+            <div style="margin-top:14px;display:grid;gap:18px;">
+
+                <!-- 1. Búsqueda semántica -->
+                <div style="background:#f3e5f5;border-radius:8px;padding:14px 16px;">
+                    <h3 style="margin:0 0 8px;font-size:0.95em;color:#6a1b9a;">
+                        🔍 Búsqueda semántica (automática)
+                    </h3>
+                    <p style="margin:0 0 6px;font-size:0.88em;line-height:1.5;">
+                        Cada vez que el usuario escribe un mensaje, el sistema busca automáticamente interacciones
+                        pasadas similares y las inyecta como contexto en el prompt de Casiopy.<br>
+                        <strong>No requiere ninguna acción manual.</strong>
+                    </p>
+                    <ul style="margin:4px 0 0 16px;font-size:0.85em;line-height:1.7;">
+                        <li>Umbral de similitud: ≥ 75% (coseno)</li>
+                        <li>Máximo 3 recuerdos por turno, ventana de 90 días</li>
+                        <li>Los embeddings se generan en background al guardar cada interacción</li>
+                        <li>Puedes probar el endpoint manualmente: <code>GET /search?q=tu+pregunta</code></li>
+                    </ul>
+                </div>
+
+                <!-- 2. Personalidad -->
+                <div style="background:#e8f5e9;border-radius:8px;padding:14px 16px;">
+                    <h3 style="margin:0 0 8px;font-size:0.95em;color:#1b5e20;">
+                        🎭 Evolución de Personalidad (manual)
+                    </h3>
+                    <p style="margin:0 0 6px;font-size:0.88em;line-height:1.5;">
+                        El sistema calcula métricas de personalidad a partir de las últimas interacciones,
+                        ponderadas por su <em>quality score</em>. Este análisis es <strong>manual</strong>:
+                        solo se ejecuta cuando tú lo decides, para que puedas revisarlo antes de que afecte
+                        al dataset de entrenamiento.
+                    </p>
+                    <p style="margin:4px 0;font-size:0.88em;font-weight:600;">Pasos:</p>
+                    <ol style="margin:0 0 0 16px;font-size:0.85em;line-height:1.9;">
+                        <li>Revisa las interacciones recientes en la tabla inferior. Usa ✅/❌ para dar feedback y ajustar quality scores.</li>
+                        <li>Cuando tengas ≥ 10 interacciones con quality score registrado, pulsa el botón
+                            <strong>"Calcular ahora"</strong> del panel de personalidad.</li>
+                        <li>Revisa las 5 métricas: <em>Verbosidad, Humor, Simpatía, Sarcasmo, Profundidad técnica</em>.
+                            Cada barra refleja el promedio ponderado de los últimos 7 días.</li>
+                        <li>Si los valores son coherentes con la personalidad deseada de Casiopy,
+                            puedes usar esos datos como referencia para el próximo ciclo de entrenamiento.</li>
+                    </ol>
+                    <p style="margin:8px 0 0;font-size:0.82em;color:#555;">
+                        <strong>API directa:</strong>
+                        <code>POST /personality/compute?days=7</code> — retorna 201 con métricas o 422 si hay menos de 10 muestras.<br>
+                        <code>GET /personality/metrics/latest</code> — última medición guardada.
+                    </p>
+                </div>
+
+                <!-- 3. Eliminar interacciones -->
+                <div style="background:#fff3e0;border-radius:8px;padding:14px 16px;">
+                    <h3 style="margin:0 0 8px;font-size:0.95em;color:#e65100;">
+                        🗑 Eliminar interacciones
+                    </h3>
+                    <p style="margin:0 0 6px;font-size:0.88em;line-height:1.5;">
+                        El botón 🗑 de cada fila <strong>elimina permanentemente</strong> la interacción
+                        y todo su feedback asociado de la base de datos.
+                        Úsalo para limpiar datos que contaminarían el entrenamiento:
+                        respuestas erróneas que pasaron el quality score, datos de prueba, etc.
+                    </p>
+                    <ul style="margin:4px 0 0 16px;font-size:0.85em;line-height:1.7;">
+                        <li><strong>Irreversible.</strong> El sistema pedirá confirmación antes de borrar.</li>
+                        <li>También elimina el embedding asociado (la búsqueda semántica ya no lo encontrará).</li>
+                        <li>Alternativa más suave: puntúa con ❌ (quality 0.2) para excluirlo del training sin borrarlo.</li>
+                    </ul>
+                    <p style="margin:8px 0 0;font-size:0.82em;color:#555;">
+                        <strong>API directa:</strong> <code>DELETE /interactions/{id}</code>
+                    </p>
+                </div>
+
+                <!-- 4. Quality scores -->
+                <div style="background:#e3f2fd;border-radius:8px;padding:14px 16px;">
+                    <h3 style="margin:0 0 8px;font-size:0.95em;color:#0d47a1;">
+                        ⭐ Quality scores y entrenamiento
+                    </h3>
+                    <table style="width:100%;font-size:0.83em;border-collapse:collapse;">
+                        <tr style="background:#1565c0;color:#fff;">
+                            <th style="padding:5px 8px;text-align:left;border-radius:4px 0 0 0;">Acción</th>
+                            <th style="padding:5px 8px;text-align:left;">Quality</th>
+                            <th style="padding:5px 8px;text-align:left;border-radius:0 4px 0 0;">Peso en export</th>
+                        </tr>
+                        <tr style="background:#e3f2fd;">
+                            <td style="padding:5px 8px;">✅ Feedback positivo</td>
+                            <td style="padding:5px 8px;">0.85</td>
+                            <td style="padding:5px 8px;">1× (entrenable)</td>
+                        </tr>
+                        <tr style="background:#fff;">
+                            <td style="padding:5px 8px;">✏️ Corrección humana</td>
+                            <td style="padding:5px 8px;">0.95</td>
+                            <td style="padding:5px 8px;">2× (alta prioridad)</td>
+                        </tr>
+                        <tr style="background:#e3f2fd;">
+                            <td style="padding:5px 8px;">Sin feedback (auto)</td>
+                            <td style="padding:5px 8px;">varía (IA)</td>
+                            <td style="padding:5px 8px;">1× si ≥ 0.6</td>
+                        </tr>
+                        <tr style="background:#fff;">
+                            <td style="padding:5px 8px;">❌ Feedback negativo</td>
+                            <td style="padding:5px 8px;">0.20</td>
+                            <td style="padding:5px 8px;">excluido del training</td>
+                        </tr>
+                    </table>
+                    <p style="margin:8px 0 0;font-size:0.82em;color:#555;">
+                        El pipeline semanal exporta solo interacciones con quality ≥ 0.6.
+                        Las correcciones humanas (0.95) se incluyen 2 veces para darles mayor peso.
+                    </p>
+                </div>
+
+            </div>
+        </details>
+
+        <!-- Panel de Evolución de Personalidad -->
+        <div class="training-section" id="personalitySection" style="border-left-color:#e91e63;">
+            <h2 style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                🎭 Evolución de Personalidad
+                <span id="personalityTs" style="font-size:12px;color:#888;font-weight:400;"></span>
+                <button id="btnComputePersonality" class="btn btn-sm"
+                    style="font-size:12px;padding:4px 12px;background:#e91e63;color:#fff;border:none;border-radius:4px;cursor:pointer;"
+                    onclick="computePersonality()"
+                    title="Calcula y guarda métricas de personalidad de los últimos 7 días">
+                    ⚙️ Calcular ahora
+                </button>
+            </h2>
+            <div id="personalityContent">
+                <div class="loading-state">Cargando métricas de personalidad…</div>
+            </div>
+        </div>
+
+        <!-- Tabla principal -->
+        <div class="main-content">
+            <div class="controls">
+                <label>
+                    Período:
+                    <select id="daysFilter" onchange="loadInteractions()">
+                        <option value="7">7 días</option>
+                        <option value="14">14 días</option>
+                        <option value="30">30 días</option>
+                        <option value="90">90 días</option>
+                    </select>
+                </label>
+                <label>
+                    Mostrar:
+                    <select id="limitFilter" onchange="loadInteractions()">
+                        <option value="20">20</option>
+                        <option value="50" selected>50</option>
+                        <option value="100">100</option>
+                        <option value="200">200</option>
+                    </select>
+                </label>
+                <label>
+                    Calidad mín.:
+                    <select id="qualityFilter" onchange="filterTable()">
+                        <option value="0">Todas</option>
+                        <option value="0.6">≥ 0.6 (entrenables)</option>
+                        <option value="0.8">≥ 0.8 (buenas)</option>
+                        <option value="-1">< 0.6 (descartar)</option>
+                    </select>
+                </label>
+                <button class="btn btn-primary" onclick="loadAll()">🔄 Actualizar</button>
+                <div class="memory-status">
+                    <div class="status-dot" id="memoryStatusDot"></div>
+                    <span id="memoryStatusText">Conectando...</span>
+                </div>
+            </div>
+
+            <div id="tableContainer">
+                <div class="loading-state">Cargando interacciones...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Modal de corrección -->
+    <div class="modal-overlay" id="correctionModal">
+        <div class="modal">
+            <h2>✏️ Corregir respuesta</h2>
+            <div class="modal-field">
+                <label>Input del usuario</label>
+                <div class="text-box" id="modalInputText">—</div>
+            </div>
+            <div class="modal-field">
+                <label>Respuesta original de Casiopy</label>
+                <div class="text-box" id="modalOutputText">—</div>
+            </div>
+            <div class="modal-field">
+                <label>Respuesta corregida <span style="color:#f44336">*</span></label>
+                <textarea id="correctedResponse" placeholder="Escribe cómo debería haber respondido Casiopy..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="submitCorrection()">Guardar corrección</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de texto completo -->
+    <div class="modal-overlay" id="textModal">
+        <div class="text-modal">
+            <h3 id="textModalTitle">—</h3>
+            <p id="textModalContent">—</p>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeTextModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const MEMORY_URL = 'http://127.0.0.1:8820';
+
+        // Estado global
+        let _interactions = [];   // todos los cargados
+        let _currentId   = null;  // ID de la interacción en edición
+        let _feedbackDone = {};   // { id: 'positive'|'negative'|'correction' }
+
+        // ── Arranque ─────────────────────────────────────────────────────────────
+        async function loadAll() {
+            await Promise.all([
+                loadStats(),
+                loadInteractions(),
+                loadPipelineStatus(),
+                loadPipelineHistory(),
+                loadPersonalityMetrics(),
+            ]);
+        }
+
+        // ── Stats / métricas ─────────────────────────────────────────────────────
+        async function loadStats() {
+            try {
+                const r = await fetch(`${MEMORY_URL}/stats`);
+                if (!r.ok) throw new Error();
+                const data = await r.json();
+
+                const stats = data.interactions || {};
+                document.getElementById('metricTotal').textContent =
+                    (stats.total_interactions ?? '—').toLocaleString();
+                document.getElementById('metricAvgQuality').textContent =
+                    stats.avg_quality_score != null
+                        ? stats.avg_quality_score.toFixed(2)
+                        : '—';
+                document.getElementById('metricTrainingReady').textContent =
+                    (stats.training_ready_count ?? '—').toLocaleString();
+
+                setMemoryStatus(true);
+            } catch {
+                setMemoryStatus(false);
+            }
+        }
+
+        // ── Cargar interacciones ─────────────────────────────────────────────────
+        async function loadInteractions() {
+            const days  = document.getElementById('daysFilter').value;
+            const limit = document.getElementById('limitFilter').value;
+
+            document.getElementById('tableContainer').innerHTML =
+                '<div class="loading-state">Cargando interacciones...</div>';
+
+            try {
+                const r = await fetch(`${MEMORY_URL}/interactions/recent?days=${days}&limit=${limit}`);
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                const data = await r.json();
+
+                _interactions = data.interactions || [];
+                document.getElementById('metricWeek').textContent =
+                    (_interactions.filter(i => {
+                        const d = new Date(i.timestamp);
+                        return (Date.now() - d) < 7 * 86400000;
+                    }).length).toLocaleString();
+
+                renderTable(_interactions);
+                setMemoryStatus(true);
+            } catch (e) {
+                document.getElementById('tableContainer').innerHTML =
+                    `<div class="error-state">⚠️ No se pudo conectar con memory-service (${MEMORY_URL})<br><small>${e.message}</small></div>`;
+                setMemoryStatus(false);
+            }
+        }
+
+        // ── Filtro de calidad (local) ─────────────────────────────────────────────
+        function filterTable() {
+            const minQ = parseFloat(document.getElementById('qualityFilter').value);
+            let filtered;
+            if (minQ === -1) {
+                filtered = _interactions.filter(i => (i.quality_score ?? 0.5) < 0.6);
+            } else {
+                filtered = _interactions.filter(i => (i.quality_score ?? 0.5) >= minQ);
+            }
+            renderTable(filtered);
+        }
+
+        // ── Renderizar tabla ──────────────────────────────────────────────────────
+        function renderTable(rows) {
+            const container = document.getElementById('tableContainer');
+
+            if (!rows || rows.length === 0) {
+                container.innerHTML = '<div class="empty-state">No hay interacciones en el período seleccionado</div>';
+                return;
+            }
+
+            let html = `
+                <table class="interactions-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha / Turno</th>
+                            <th>Input del usuario</th>
+                            <th>Respuesta Casiopy</th>
+                            <th>Emoción</th>
+                            <th style="min-width:130px">Calidad</th>
+                            <th>Latencia</th>
+                            <th>Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            rows.forEach(item => {
+                const id          = item.id;
+                const ts          = new Date(item.timestamp).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
+                const turn        = item.conversation_turn ?? '—';
+                const inputText   = item.input_text  || '';
+                const outputText  = item.output_text || '';
+                const inEmo       = item.input_emotion  || '';
+                const outEmo      = item.output_emotion || '';
+                const quality     = item.quality_score ?? 0.5;
+                const isReady     = item.is_training_ready;
+                const latency     = item.latency_ms != null ? `${item.latency_ms} ms` : '—';
+
+                const qClass    = quality >= 0.8 ? 'q-high' : quality >= 0.6 ? 'q-medium' : 'q-low';
+                const qPct      = (quality * 100).toFixed(0);
+                const fbDone    = _feedbackDone[id];
+
+                const emoLabel = outEmo || inEmo || '—';
+
+                html += `
+                    <tr id="row-${id}">
+                        <td style="white-space:nowrap;color:#666;font-size:12px">${ts}<br><span style="color:#aaa">turno ${turn}</span></td>
+                        <td>
+                            <div class="text-cell" onclick="showText('Input', ${JSON.stringify(inputText)})"
+                                 title="${inputText.replace(/"/g,'&quot;')}">
+                                ${escapeHtml(truncate(inputText, 60))}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-cell" onclick="showText('Respuesta Casiopy', ${JSON.stringify(outputText)})"
+                                 title="${outputText.replace(/"/g,'&quot;')}">
+                                ${escapeHtml(truncate(outputText, 60))}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="emotion-badge">${escapeHtml(emoLabel)}</span>
+                        </td>
+                        <td>
+                            <div class="quality-wrap">
+                                <div class="quality-bar">
+                                    <div class="quality-fill ${qClass}" style="width:${qPct}%"></div>
+                                </div>
+                                <span class="quality-label ${qClass}">${qPct}%</span>
+                            </div>
+                            <div style="margin-top:4px">
+                                <span class="training-badge ${isReady ? 'ready' : 'not-ready'}">
+                                    ${isReady ? '✓ Entrenable' : '✗ No apto'}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="latency">${latency}</td>
+                        <td>
+                            <div class="feedback-actions">
+                                <button class="btn btn-success btn-sm"
+                                    onclick="sendFeedback('${id}', 'positive')"
+                                    ${fbDone ? 'disabled' : ''}
+                                    title="Buena respuesta">✅</button>
+                                <button class="btn btn-danger btn-sm"
+                                    onclick="sendFeedback('${id}', 'negative')"
+                                    ${fbDone ? 'disabled' : ''}
+                                    title="Mala respuesta">❌</button>
+                                <button class="btn btn-edit btn-sm"
+                                    onclick="openCorrection('${id}', ${JSON.stringify(inputText)}, ${JSON.stringify(outputText)})"
+                                    ${fbDone === 'correction' ? 'disabled' : ''}
+                                    title="Corregir respuesta">✏️</button>
+                                <button class="btn btn-danger btn-sm"
+                                    onclick="deleteInteraction('${id}')"
+                                    title="Eliminar interacción">🗑</button>
+                            </div>
+                        </td>
+                    </tr>`;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // ── Feedback: positivo / negativo ────────────────────────────────────────
+        async function sendFeedback(interactionId, type) {
+            const qualityMap = { positive: 0.85, negative: 0.2 };
+            const newQuality = qualityMap[type];
+
+            try {
+                // 1. Registrar feedback
+                const fbRes = await fetch(`${MEMORY_URL}/feedback`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        interaction_id: interactionId,
+                        feedback_type:  type,
+                        user_reaction:  type === 'positive' ? 'liked' : 'disliked',
+                    })
+                });
+                if (!fbRes.ok) throw new Error(`feedback: ${fbRes.status}`);
+
+                // 2. Actualizar quality score
+                await fetch(`${MEMORY_URL}/interactions/${interactionId}/quality`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ quality_score: newQuality })
+                });
+
+                // Actualizar en memoria local
+                const idx = _interactions.findIndex(i => i.id === interactionId);
+                if (idx !== -1) {
+                    _interactions[idx].quality_score = newQuality;
+                    _interactions[idx].is_training_ready = newQuality >= 0.6;
+                }
+                _feedbackDone[interactionId] = type;
+
+                // Refrescar fila
+                updateRow(interactionId);
+                toast(type === 'positive' ? '✅ Marcada como buena' : '❌ Marcada como mala', type === 'positive' ? 'success' : 'error');
+
+            } catch (e) {
+                toast(`Error al enviar feedback: ${e.message}`, 'error');
+            }
+        }
+
+        // ── Eliminar interacción ──────────────────────────────────────────────────
+        async function deleteInteraction(interactionId) {
+            if (!confirm('¿Eliminar esta interacción permanentemente? Esta acción no se puede deshacer.')) return;
+            try {
+                const res = await fetch(`${MEMORY_URL}/interactions/${interactionId}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error(`${res.status}`);
+                // Eliminar de la lista local y re-renderizar
+                _interactions = _interactions.filter(i => i.id !== interactionId);
+                renderInteractions(_interactions);
+                toast('🗑 Interacción eliminada', 'success');
+            } catch (e) {
+                toast(`Error al eliminar: ${e.message}`, 'error');
+            }
+        }
+
+        // ── Corrección ────────────────────────────────────────────────────────────
+        function openCorrection(id, inputText, outputText) {
+            _currentId = id;
+            document.getElementById('modalInputText').textContent  = inputText;
+            document.getElementById('modalOutputText').textContent = outputText;
+            document.getElementById('correctedResponse').value = '';
+            document.getElementById('correctionModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('correctionModal').classList.remove('show');
+            _currentId = null;
+        }
+
+        async function submitCorrection() {
+            const corrected = document.getElementById('correctedResponse').value.trim();
+            if (!corrected) {
+                toast('Escribe la respuesta corregida primero', 'error');
+                return;
+            }
+
+            const id = _currentId;
+            try {
+                // 1. Registrar corrección
+                const fbRes = await fetch(`${MEMORY_URL}/feedback`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        interaction_id:     id,
+                        feedback_type:      'correction',
+                        user_reaction:      'neutral',
+                        corrected_response: corrected,
+                    })
+                });
+                if (!fbRes.ok) throw new Error(`feedback: ${fbRes.status}`);
+
+                // 2. Subir quality (corrección humana = alta calidad)
+                await fetch(`${MEMORY_URL}/interactions/${id}/quality`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ quality_score: 0.90 })
+                });
+
+                const idx = _interactions.findIndex(i => i.id === id);
+                if (idx !== -1) {
+                    _interactions[idx].quality_score    = 0.90;
+                    _interactions[idx].is_training_ready = true;
+                }
+                _feedbackDone[id] = 'correction';
+                updateRow(id);
+
+                closeModal();
+                toast('✏️ Corrección guardada (quality → 90%)', 'success');
+
+            } catch (e) {
+                toast(`Error al guardar corrección: ${e.message}`, 'error');
+            }
+        }
+
+        // ── Refrescar una fila sin re-renderizar la tabla entera ──────────────────
+        function updateRow(id) {
+            const item = _interactions.find(i => i.id === id);
+            if (!item) return;
+            const row = document.getElementById(`row-${id}`);
+            if (!row) return;
+
+            const quality  = item.quality_score;
+            const isReady  = item.is_training_ready;
+            const qClass   = quality >= 0.8 ? 'q-high' : quality >= 0.6 ? 'q-medium' : 'q-low';
+            const qPct     = (quality * 100).toFixed(0);
+            const fbDone   = _feedbackDone[id];
+
+            // Celda de calidad (columna 5, índice 4)
+            row.cells[4].innerHTML = `
+                <div class="quality-wrap">
+                    <div class="quality-bar">
+                        <div class="quality-fill ${qClass}" style="width:${qPct}%"></div>
+                    </div>
+                    <span class="quality-label ${qClass}">${qPct}%</span>
+                </div>
+                <div style="margin-top:4px">
+                    <span class="training-badge ${isReady ? 'ready' : 'not-ready'}">
+                        ${isReady ? '✓ Entrenable' : '✗ No apto'}
+                    </span>
+                </div>`;
+
+            // Celda de feedback (columna 7, índice 6)
+            row.cells[6].innerHTML = `
+                <div class="feedback-actions">
+                    <button class="btn btn-success btn-sm" disabled title="Enviado">✅</button>
+                    <button class="btn btn-danger btn-sm"  disabled title="Enviado">❌</button>
+                    <button class="btn btn-edit btn-sm"    ${fbDone === 'correction' ? 'disabled' : `onclick="openCorrection('${id}', ${JSON.stringify(item.input_text)}, ${JSON.stringify(item.output_text)})"`} title="Corregir">✏️</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteInteraction('${id}')" title="Eliminar interacción">🗑</button>
+                </div>`;
+        }
+
+        // ── Modal texto completo ──────────────────────────────────────────────────
+        function showText(title, text) {
+            document.getElementById('textModalTitle').textContent   = title;
+            document.getElementById('textModalContent').textContent = text;
+            document.getElementById('textModal').classList.add('show');
+        }
+
+        function closeTextModal() {
+            document.getElementById('textModal').classList.remove('show');
+        }
+
+        // Click en overlay cierra modal
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', e => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('show');
+                    _currentId = null;
+                }
+            });
+        });
+
+        // ── Estado del memory-service ─────────────────────────────────────────────
+        function setMemoryStatus(online) {
+            const dot  = document.getElementById('memoryStatusDot');
+            const text = document.getElementById('memoryStatusText');
+            dot.className  = `status-dot ${online ? 'online' : 'offline'}`;
+            text.textContent = online ? 'memory-service online' : 'memory-service offline';
+        }
+
+        // ── Toast ─────────────────────────────────────────────────────────────────
+        let _toastTimer = null;
+        function toast(msg, type = 'info') {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.className   = `toast ${type} show`;
+            if (_toastTimer) clearTimeout(_toastTimer);
+            _toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        // ── Ciclo de Aprendizaje — Pipeline status ───────────────────────────────
+
+        async function loadPipelineStatus() {
+            try {
+                const r = await fetch(`${MEMORY_URL}/pipeline/status`);
+                if (!r.ok) throw new Error();
+                const d = await r.json();
+
+                document.getElementById('trainModelActive').textContent =
+                    d.current_model || '—';
+
+                document.getElementById('trainNextRun').textContent =
+                    d.next_run ? formatPipelineDate(d.next_run) : '—';
+
+                if (d.last_run) {
+                    const st = d.last_run.status || 'unknown';
+                    const icons = { success: '✅', failed: '❌', skipped: '⏭', partial: '🔵', already_running: '🔄' };
+                    const el = document.getElementById('trainLastStatus');
+                    el.textContent = `${icons[st] || '❓'} ${st}`;
+                    el.className = 'training-value train-status-' + st;
+                    document.getElementById('trainLastDate').textContent =
+                        formatPipelineDate(d.last_run.started_at);
+                }
+
+                // Contar training-ready de los últimos 7 días
+                loadWeeklyReadyCount();
+            } catch(e) {
+                // silencioso — memory-service puede no estar disponible
+            }
+        }
+
+        async function loadWeeklyReadyCount() {
+            try {
+                const r = await fetch(`${MEMORY_URL}/interactions/recent?days=7&limit=10000`);
+                if (!r.ok) throw new Error();
+                const data = await r.json();
+                const readyCount = (data.interactions || []).filter(i => i.is_training_ready).length;
+                const el = document.getElementById('trainWeekReady');
+                const labelEl = document.getElementById('trainWeekLabel');
+                el.textContent = readyCount;
+                if (readyCount >= 50) {
+                    el.className = 'training-value train-ready-ok';
+                    labelEl.textContent = '✅ suficientes para entrenar (≥50)';
+                } else {
+                    el.className = 'training-value train-ready-warn';
+                    labelEl.textContent = `⚠️ faltan ${50 - readyCount} para entrenar`;
+                }
+            } catch(e) {}
+        }
+
+        async function loadPipelineHistory() {
+            try {
+                const r = await fetch(`${MEMORY_URL}/pipeline/history`);
+                if (!r.ok) throw new Error();
+                const d = await r.json();
+                renderPipelineHistory(d.history || []);
+            } catch(e) {
+                document.getElementById('trainHistoryContainer').innerHTML =
+                    '<p style="color:#aaa;font-size:13px;">No se pudo cargar el historial.</p>';
+            }
+        }
+
+        function renderPipelineHistory(runs) {
+            const el = document.getElementById('trainHistoryContainer');
+            if (!runs.length) {
+                el.innerHTML = '<p style="color:#aaa;font-size:13px;padding:8px 0">Sin historial de runs todavía.</p>';
+                return;
+            }
+            const icons = { success: '✅', failed: '❌', skipped: '⏭', partial: '🔵', already_running: '🔄' };
+            const rows = runs.slice().reverse().map(run => {
+                const stClass = 'train-status-' + (run.status || '');
+                const steps = Object.keys(run.steps || {}).join(' → ') || '—';
+                return `<tr>
+                    <td>${formatPipelineDate(run.started_at)}</td>
+                    <td>Semana ${run.week_number ?? '—'}</td>
+                    <td class="${stClass}">${icons[run.status] || '❓'} ${run.status || '—'}</td>
+                    <td style="color:#888;font-size:12px">${escapeHtml(run.error || '—')}</td>
+                    <td style="font-size:12px;color:#666">${steps}</td>
+                </tr>`;
+            }).join('');
+            el.innerHTML = `<table class="train-history-table">
+                <thead><tr>
+                    <th>Fecha inicio</th>
+                    <th>Semana</th>
+                    <th>Estado</th>
+                    <th>Motivo</th>
+                    <th>Pasos ejecutados</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table>`;
+        }
+
+        function formatPipelineDate(isoStr) {
+            if (!isoStr) return '—';
+            try {
+                const d = new Date(isoStr);
+                if (isNaN(d.getTime())) return isoStr;
+                return d.toLocaleString('es-ES', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit',
+                });
+            } catch(e) { return isoStr; }
+        }
+
+        // ── Helpers ───────────────────────────────────────────────────────────────
+        function truncate(str, n) {
+            return str.length > n ? str.slice(0, n) + '…' : str;
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+
+        // ── Personalidad ──────────────────────────────────────────────────────────
+        const _PERSONALITY_TRAITS = [
+            { key: 'sarcasm_level',   label: '😏 Sarcasmo',          color: '#9c27b0' },
+            { key: 'friendliness',    label: '😊 Amabilidad',         color: '#4CAF50' },
+            { key: 'verbosity',       label: '📝 Verbosidad',         color: '#2196F3' },
+            { key: 'technical_depth', label: '🔧 Profundidad técnica', color: '#FF9800' },
+            { key: 'humor_frequency', label: '😄 Frecuencia humor',    color: '#e91e63' },
+        ];
+
+        async function loadPersonalityMetrics() {
+            const contentEl = document.getElementById('personalityContent');
+            const tsEl      = document.getElementById('personalityTs');
+            try {
+                const r = await fetch(`${MEMORY_URL}/personality/metrics/latest`);
+                if (r.status === 404) {
+                    contentEl.innerHTML = '<div class="empty-state" style="padding:20px 0;font-size:13px;color:#aaa">Sin métricas todavía — pulsa <strong>⚙️ Calcular ahora</strong> para generar las primeras métricas (requiere ≥ 10 interacciones con quality score).</div>';
+                    return;
+                }
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                const d = await r.json();
+
+                if (d.timestamp) {
+                    const ts = new Date(d.timestamp);
+                    tsEl.textContent = isNaN(ts) ? d.timestamp : `(calculado ${ts.toLocaleString('es-ES', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})})`;
+                }
+
+                const traitsHtml = _PERSONALITY_TRAITS.map(t => {
+                    const val  = d[t.key] ?? 0;
+                    const pct  = (val * 100).toFixed(1);
+                    return `
+                        <div class="personality-trait">
+                            <span class="personality-trait-name">${t.label}</span>
+                            <div class="quality-bar" style="height:8px;">
+                                <div class="quality-fill" style="width:${pct}%;background:${t.color};border-radius:4px;"></div>
+                            </div>
+                            <span class="personality-trait-value" style="color:${t.color}">${pct}%</span>
+                        </div>`;
+                }).join('');
+
+                const sampleNote = d.sample_size
+                    ? `<p style="font-size:12px;color:#aaa;margin-top:12px;">Basado en ${d.sample_size.toLocaleString()} interacciones de los últimos ${d.days_analyzed ?? 7} días</p>`
+                    : '';
+
+                contentEl.innerHTML = `<div class="personality-traits">${traitsHtml}</div>${sampleNote}`;
+
+            } catch(e) {
+                contentEl.innerHTML = `<div class="error-state" style="padding:20px 0;">⚠️ Error al cargar personalidad<br><small>${e.message}</small></div>`;
+            }
+        }
+
+        // Calcular personalidad manualmente
+        async function computePersonality(days = 7) {
+            const btn = document.getElementById('btnComputePersonality');
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ Calculando…'; }
+            try {
+                const r = await fetch(`${MEMORY_URL}/personality/compute?days=${days}`, { method: 'POST' });
+                if (r.status === 422) {
+                    toast('⚠️ Insuficientes datos (mínimo 10 interacciones con quality score)', 'error');
+                } else if (!r.ok) {
+                    throw new Error(`${r.status}`);
+                } else {
+                    toast('✅ Métricas de personalidad calculadas y guardadas', 'success');
+                    await loadPersonalityMetrics();
+                }
+            } catch (e) {
+                toast(`Error al calcular personalidad: ${e.message}`, 'error');
+            } finally {
+                if (btn) { btn.disabled = false; btn.textContent = '⚙️ Calcular ahora'; }
+            }
+        }
+
+        // Refrescar personalidad cada 5 minutos
+        setInterval(loadPersonalityMetrics, 5 * 60 * 1000);
+
+        // ── Init ──────────────────────────────────────────────────────────────────
+        loadAll();
+    </script>
+</body>
+</html>

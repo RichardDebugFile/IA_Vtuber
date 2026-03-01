@@ -1,4 +1,4 @@
-# IA_Vtuber — Casiopy
+# IA_Assistant — Casiopy
 
 Asistente virtual VTuber modular con síntesis de voz personalizada (fine-tune MeloTTS), conversación por IA (Ollama) y avatar 2D animado. Cada componente corre como microservicio independiente y se gestiona desde un dashboard web centralizado.
 

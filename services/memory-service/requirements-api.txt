@@ -19,3 +19,7 @@ pydantic-settings==2.1.0
 loguru==0.7.2
 httpx==0.26.0
 aiofiles==23.2.1
+apscheduler==3.10.4
+
+# Embeddings semánticos (Fase 3)
+sentence-transformers==2.3.1

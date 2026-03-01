@@ -57,6 +57,122 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
+# ── VRAM Guard ────────────────────────────────────────────────────────────────
+# Services the guard may stop when VRAM pressure is critical.
+# "Critical" services (gateway, conversation, memory-api) are never touched.
+VRAM_NON_CRITICAL = ["tts-casiopy", "tts-router", "tts-blips", "stt"]
+
+vram_guard_state: Dict = {
+    "enabled":        True,
+    "warn_pct":       80.0,      # % VRAM → broadcast warning
+    "critical_pct":   90.0,      # % VRAM → auto-stop non-critical services
+    "recovery_pct":   70.0,      # % VRAM after which paused services can be restarted
+    "paused_services": [],       # service IDs stopped by the guard
+    "last_vram":      None,      # last GPU stats dict
+    "last_action":    None,      # "warn" | "pause" | "recover" | None
+    "last_action_time": None,
+}
+
+
+async def _vram_guard_check() -> None:
+    """Read VRAM and act: warn / auto-stop / recovery-notify."""
+    stats = await DockerMonitor.get_gpu_stats()
+    vram_guard_state["last_vram"] = stats
+
+    if stats.get("error") or stats.get("memory_percent") is None:
+        return  # No GPU / nvidia-smi unavailable — skip silently
+
+    pct: float = stats["memory_percent"]
+    critical_pct: float = vram_guard_state["critical_pct"]
+    warn_pct: float = vram_guard_state["warn_pct"]
+    recovery_pct: float = vram_guard_state["recovery_pct"]
+
+    if pct >= critical_pct:
+        # Auto-stop any non-critical service that is still online
+        stopped: List[str] = []
+        loop = asyncio.get_running_loop()
+        for svc_id in VRAM_NON_CRITICAL:
+            if svc_id in vram_guard_state["paused_services"]:
+                continue  # already paused
+            svc = SERVICES.get(svc_id)
+            if not svc or not svc.get("manageable") or not svc.get("stop_cmd"):
+                continue
+            try:
+                health = await check_service_health(svc_id, svc)
+                if health.status == "online":
+                    stop_cmd = svc["stop_cmd"]
+                    cwd = svc.get("cwd")
+                    await loop.run_in_executor(
+                        None,
+                        lambda c=stop_cmd, w=cwd: subprocess.run(
+                            c, shell=True, cwd=w,
+                            capture_output=True, timeout=15
+                        ),
+                    )
+                    vram_guard_state["paused_services"].append(svc_id)
+                    stopped.append(svc_id)
+            except Exception:
+                pass
+
+        vram_guard_state["last_action"] = "pause"
+        vram_guard_state["last_action_time"] = datetime.now().isoformat()
+        names = ", ".join(stopped) if stopped else "(ninguno nuevo)"
+        await manager.broadcast({
+            "type":             "vram_alert",
+            "level":            "critical",
+            "vram_pct":         pct,
+            "stopped_services": stopped,
+            "message": (
+                f"VRAM al {pct:.0f}% — servicios pausados: {names}"
+            ),
+        })
+
+    elif warn_pct <= pct < critical_pct:
+        vram_guard_state["last_action"] = "warn"
+        vram_guard_state["last_action_time"] = datetime.now().isoformat()
+        await manager.broadcast({
+            "type":     "vram_alert",
+            "level":    "warn",
+            "vram_pct": pct,
+            "message":  f"VRAM al {pct:.0f}% — presión alta. Considera cerrar TTS/STT.",
+        })
+
+    elif pct < recovery_pct and vram_guard_state["paused_services"]:
+        # VRAM dropped below recovery threshold — notify (no auto-restart)
+        recovered = list(vram_guard_state["paused_services"])
+        vram_guard_state["paused_services"] = []
+        vram_guard_state["last_action"] = "recover"
+        vram_guard_state["last_action_time"] = datetime.now().isoformat()
+        await manager.broadcast({
+            "type":               "vram_alert",
+            "level":              "info",
+            "vram_pct":           pct,
+            "recovered_services": recovered,
+            "message": (
+                f"VRAM al {pct:.0f}% — presión reducida. "
+                "Puedes reiniciar los servicios pausados."
+            ),
+        })
+
+
+async def _vram_guard_loop() -> None:
+    """Background task: poll VRAM every 30 s and act on pressure."""
+    await asyncio.sleep(30)  # let services settle on startup
+    while True:
+        try:
+            if vram_guard_state["enabled"]:
+                await _vram_guard_check()
+        except Exception:
+            pass  # never crash the monitoring loop
+        await asyncio.sleep(30)
+
+
+@app.on_event("startup")
+async def _startup() -> None:
+    asyncio.create_task(_vram_guard_loop())
+
+# ── End VRAM Guard ────────────────────────────────────────────────────────────
+
 # Mount static files
 STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
@@ -94,7 +210,7 @@ SERVICES = {
         "color": "#2196F3",
         "manageable": True,
         "ui_path": "/conversation-test",
-        "requires": ["ollama"]  # Requiere Ollama corriendo
+        "requires": ["ollama"],  # memory-api opcional: degradación graceful sin él (sin búsqueda semántica)
     },
     "assistant": {
         "name": "Assistant",
@@ -290,7 +406,7 @@ SERVICES = {
         "color": "#4DB6AC",
         "manageable": True,
         "requires": ["memory-postgres"],
-        "description": "API de memoria a largo plazo (FastAPI). Gestiona sesiones, interacciones y Core Memory de Casiopy."
+        "description": "API de memoria a largo plazo (FastAPI). Gestiona sesiones, interacciones, Core Memory y búsqueda semántica (pgvector). Fase 3: embeddings, /search, /personality/compute."
     },
 
     # ── Externos ────────────────────────────────────────────────────────────────
@@ -311,6 +427,20 @@ SERVICES = {
         "color": "#00BCD4",
         "manageable": False,
         "managed_by": "docker"
+    },
+
+    # ── Frontend ─────────────────────────────────────────────────────────────
+    "casiopy-app": {
+        "name": "Casiopy App (Chat UI)",
+        "port": 8830,
+        "health_url": "http://127.0.0.1:8830/health",
+        "start_cmd": f'start /B cmd /c "cd /D casiopy-app && "{VENV_PYTHON}" -m uvicorn server:app --host 127.0.0.1 --port 8830"',
+        "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8830 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
+        "cwd": str(PROJECT_ROOT),
+        "color": "#e91e63",
+        "manageable": True,
+        "requires": ["gateway"],
+        "ui_path": "http://127.0.0.1:8830"
     },
 }
 
@@ -475,6 +605,12 @@ async def monitoring_page():
 async def logs_page():
     """Serve the logs and audit page."""
     return FileResponse(STATIC_DIR / "logs.html")
+
+
+@app.get("/memory")
+async def memory_page():
+    """Serve the memory & feedback panel."""
+    return FileResponse(STATIC_DIR / "memory.html")
 
 
 @app.get("/api/services/status")
@@ -1008,6 +1144,44 @@ async def get_logs_summary():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/vram/status")
+async def get_vram_status():
+    """Current VRAM usage and VRAM guard configuration."""
+    stats = await DockerMonitor.get_gpu_stats()
+    vram_guard_state["last_vram"] = stats
+    return {
+        "ok":  True,
+        "gpu": stats,
+        "guard": {
+            "enabled":          vram_guard_state["enabled"],
+            "warn_pct":         vram_guard_state["warn_pct"],
+            "critical_pct":     vram_guard_state["critical_pct"],
+            "recovery_pct":     vram_guard_state["recovery_pct"],
+            "paused_services":  vram_guard_state["paused_services"],
+            "last_action":      vram_guard_state["last_action"],
+            "last_action_time": vram_guard_state["last_action_time"],
+        },
+    }
+
+
+class VramGuardConfig(BaseModel):
+    enabled:      Optional[bool]  = None
+    warn_pct:     Optional[float] = None
+    critical_pct: Optional[float] = None
+    recovery_pct: Optional[float] = None
+
+
+@app.post("/api/vram/guard")
+async def configure_vram_guard(config: VramGuardConfig):
+    """Update VRAM guard thresholds or enable/disable it."""
+    if config.enabled      is not None: vram_guard_state["enabled"]      = config.enabled
+    if config.warn_pct     is not None: vram_guard_state["warn_pct"]     = config.warn_pct
+    if config.critical_pct is not None: vram_guard_state["critical_pct"] = config.critical_pct
+    if config.recovery_pct is not None: vram_guard_state["recovery_pct"] = config.recovery_pct
+    return {"ok": True, "guard": {k: vram_guard_state[k] for k in
+        ("enabled", "warn_pct", "critical_pct", "recovery_pct", "paused_services")}}
 
 
 @app.get("/health")

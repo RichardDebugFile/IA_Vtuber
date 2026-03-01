@@ -13,6 +13,7 @@ from typing import List, Dict, Any
 # Agregar path del proyecto
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from dotenv import load_dotenv
 from loguru import logger
@@ -32,12 +33,12 @@ DATABASE_URL = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTG
 
 async def get_core_memory_prompt(db: AsyncSession) -> str:
     """Obtener el system prompt de core memory"""
-    query = """
+    query = text("""
     SELECT category, key, value
     FROM core_memory
     WHERE is_mutable = false
     ORDER BY category, key
-    """
+    """)
     result = await db.execute(query)
     rows = result.fetchall()
 
@@ -118,7 +119,7 @@ async def export_chatml_format(
         logger.info(f"✅ System prompt obtenido ({len(system_prompt)} chars)")
 
     # Obtener interacciones listas para entrenamiento
-    query = """
+    query = text("""
     SELECT
         i.id,
         i.input_text,
@@ -133,11 +134,11 @@ async def export_chatml_format(
     JOIN sessions s ON i.session_id = s.id
     WHERE i.is_training_ready = true
       AND i.quality_score >= :min_quality
-      AND i.timestamp >= NOW() - INTERVAL ':days days'
+      AND i.timestamp >= NOW() - (:days * INTERVAL '1 day')
       AND s.opt_out_training = false
       AND i.training_export_id IS NULL
     ORDER BY i.timestamp ASC
-    """
+    """)
 
     result = await db.execute(
         query, {"min_quality": min_quality, "days": days_back}

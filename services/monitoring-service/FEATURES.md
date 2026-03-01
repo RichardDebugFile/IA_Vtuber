@@ -230,6 +230,53 @@ curl -O http://127.0.0.1:8900/api/outputs/tts/$FILES
 
 5. **Auto-save por defecto**: Todos los audios generados se guardan automáticamente a menos que se especifique `save=false`.
 
+## ✅ Panel de Memoria (`/memory`) — Fase 3
+
+El panel `/memory` del monitoring-service incluye las siguientes funcionalidades
+añadidas en la Fase 3 del proyecto:
+
+### 🎭 Evolución de Personalidad
+
+Panel visual con las 5 métricas de personalidad de Casiopy calculadas a partir
+de interacciones reales ponderadas por quality score:
+
+| Métrica | Color | Qué mide |
+|---------|-------|----------|
+| Verbosidad | Azul | Longitud media de respuestas |
+| Humor | Amarillo | Frecuencia de emociones humorísticas |
+| Simpatía | Verde | Frecuencia de emociones cálidas/empáticas |
+| Sarcasmo | Rojo | Frecuencia de emociones secas/sarcásticas |
+| Prof. técnica | Morado | Uso de código, vocabulario técnico |
+
+**Botón "⚙️ Calcular ahora"**: dispara `POST /personality/compute?days=7` en el
+memory-service. Requiere aprobación manual — el cálculo no se ejecuta automáticamente
+para permitir revisión antes del siguiente ciclo de entrenamiento.
+
+El panel se refresca automáticamente cada 5 minutos.
+
+### 🗑 Eliminar interacciones
+
+Cada fila de la tabla de interacciones incluye un botón 🗑 que:
+1. Pide confirmación al usuario
+2. Llama a `DELETE /interactions/{id}` en el memory-service
+3. Elimina la interacción **y todo su feedback** (borrado permanente)
+4. Actualiza la tabla sin recargar la página
+
+Casos de uso recomendados:
+- Eliminar respuestas erróneas que no deberían entrar al dataset de entrenamiento
+- Limpiar datos de prueba o de test
+- Remover interacciones con información sensible
+
+### 📖 Guía rápida integrada
+
+Panel colapsable `📖 Guía rápida — Cómo usar este panel` que explica:
+- **Búsqueda semántica** — automática, sin acción requerida
+- **Panel de personalidad** — pasos para calcular, interpretar y aprobar métricas
+- **Eliminar interacciones** — cuándo y cómo usarlo de forma segura
+- **Quality scores** — tabla de referencia de cómo afectan al dataset de entrenamiento
+
+---
+
 ## 🔜 Próximas Mejoras Sugeridas
 
 - [ ] Botones Start/Stop en la UI del dashboard
@@ -240,3 +287,4 @@ curl -O http://127.0.0.1:8900/api/outputs/tts/$FILES
 - [ ] Limpieza automática de archivos antiguos (retention policy)
 - [ ] Restart automático de servicios caídos
 - [ ] Notificaciones cuando un servicio se cae
+- [ ] Comparativa de métricas de personalidad semana a semana (gráfica)

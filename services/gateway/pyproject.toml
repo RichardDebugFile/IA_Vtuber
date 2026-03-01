@@ -1,12 +1,14 @@
 [project]
 name = "gateway"
-version = "0.1.0"
+version = "2.0.0"
 requires-python = ">=3.10"
 dependencies = [
   "fastapi>=0.111",
   "uvicorn>=0.30",
   "pydantic>=2.8",
-  "python-dotenv>=1.0"
+  "python-dotenv>=1.0",
+  "httpx>=0.25",
+  "python-multipart>=0.0.9"
 ]
 
 [project.scripts]

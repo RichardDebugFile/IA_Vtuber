@@ -64,6 +64,35 @@ async def _memory_get(path: str) -> Optional[Dict]:
         return None
 
 
+async def _get_semantic_memories(query: str, limit: int = 3) -> List[Dict[str, Any]]:
+    """Top-N interacciones semánticamente similares. Retorna [] si falla o no hay datos."""
+    try:
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            r = await client.get(
+                f"{MEMORY_HTTP}/search",
+                params={"q": query, "threshold": 0.75, "limit": limit, "days": 90},
+            )
+            r.raise_for_status()
+            return r.json().get("results", [])
+    except Exception:
+        return []
+
+
+def _format_semantic_memories(memories: List[Dict[str, Any]]) -> str:
+    """Formatea recuerdos semánticos como bloque de contexto para el system prompt."""
+    if not memories:
+        return ""
+    lines = ["[RECUERDOS RELACIONADOS CON ESTE TEMA]"]
+    for m in memories:
+        pct = int(m.get("similarity", 0) * 100)
+        lines.append(
+            f"- ({pct}% similar) Usuario: \"{m['input_text'][:120]}\" "
+            f"→ Casiopy: \"{m['output_text'][:200]}\""
+        )
+    lines.append("[FIN DE RECUERDOS]")
+    return "\n".join(lines)
+
+
 async def _get_system_prompt() -> str:
     """Devuelve el system prompt de Core Memory (cacheado 5 min)."""
     global _system_prompt_cache, _system_prompt_ts
@@ -211,9 +240,13 @@ async def chat_endpoint(body: ChatIn):
 
     sess = _active_sessions[user_id]
 
-    # 3. Construir mensajes: [system] + historial + [nuevo mensaje]
+    # 3. Construir mensajes: [system + recuerdos semánticos] + historial + [nuevo mensaje]
+    memories = await _get_semantic_memories(body.text, limit=3)
+    memory_block = _format_semantic_memories(memories)
+    enriched_system = system_prompt + ("\n\n" + memory_block if memory_block else "")
+
     messages: List[Dict[str, str]] = [
-        {"role": "system", "content": system_prompt}
+        {"role": "system", "content": enriched_system}
     ]
     messages.extend(sess["history"])
     messages.append({"role": "user", "content": body.text})

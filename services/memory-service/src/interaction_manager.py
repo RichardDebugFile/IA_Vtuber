@@ -304,7 +304,7 @@ class InteractionManager:
         return True
 
     async def get_training_ready_interactions(
-        self, min_quality: float = 0.6, limit: int = 10000
+        self, min_quality: float = 0.6, limit: int = 10000, days: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         """
         Obtener interacciones listas para entrenamiento
@@ -312,11 +312,13 @@ class InteractionManager:
         Args:
             min_quality: Puntuación mínima de calidad
             limit: Límite de interacciones
+            days: Si se especifica, filtra solo los últimos N días
 
         Returns:
             Lista de interacciones listas para exportar
         """
-        query = text("""
+        date_filter = "AND i.timestamp >= NOW() - (:days * INTERVAL '1 day')" if days else ""
+        query = text(f"""
         SELECT
             i.id, i.session_id, i.timestamp,
             i.input_text, i.input_emotion,
@@ -329,13 +331,15 @@ class InteractionManager:
           AND i.quality_score >= :min_quality
           AND s.opt_out_training = false
           AND i.training_export_id IS NULL
+          {date_filter}
         ORDER BY i.timestamp DESC
         LIMIT :limit
         """)
 
-        result = await self.db.execute(
-            query, {"min_quality": min_quality, "limit": limit}
-        )
+        params: dict = {"min_quality": min_quality, "limit": limit}
+        if days:
+            params["days"] = days
+        result = await self.db.execute(query, params)
         rows = result.fetchall()
 
         return [

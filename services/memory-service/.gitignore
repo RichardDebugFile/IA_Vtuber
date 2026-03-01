@@ -53,3 +53,12 @@ Thumbs.db
 
 # Docker volumes
 docker-volumes/
+
+# Deploy venv (entorno virtual de producción/despliegue)
+deploy-venv/
+
+# llama.cpp binaries (DLLs compiladas, no portables)
+llama.cpp/
+
+# Pipeline runtime state (cambia en cada ejecución)
+pipeline_state.json

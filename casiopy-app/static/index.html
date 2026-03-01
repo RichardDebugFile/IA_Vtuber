@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casiopy — VTuber Chat</title>
+  <style>
+    :root {
+      --bg:          #0f0f0f;
+      --surface:     #1a1a1a;
+      --surface2:    #242424;
+      --border:      #2e2e2e;
+      --text:        #e0e0e0;
+      --text-dim:    #888;
+      --accent:      #e91e63;
+      --accent-dark: #c2185b;
+      --green:       #4caf50;
+      --yellow:      #ff9800;
+      --red:         #f44336;
+      --blue:        #2196f3;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .hidden { display: none !important; }
+
+    /* ── LOADING VIEW ────────────────────────────────────────── */
+    #loadingView {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      padding: 24px;
+    }
+
+    .brand {
+      text-align: center;
+    }
+    .brand h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+    }
+    .brand p {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .services-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      width: 100%;
+      max-width: 480px;
+    }
+    .services-card h2 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+
+    #servicesList {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .svc-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+    }
+    .svc-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: #444;
+      transition: background 0.3s;
+    }
+    .svc-dot[data-status="online"]   { background: var(--green); }
+    .svc-dot[data-status="starting"] { background: var(--yellow); animation: pulse 1s infinite; }
+    .svc-dot[data-status="error"]    { background: var(--red); }
+    .svc-dot[data-status="offline"]  { background: #444; }
+    .svc-dot[data-status="warning"]  { background: var(--yellow); }
+
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .svc-label { flex: 1; color: var(--text); }
+    .svc-status-text {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      min-width: 70px;
+      text-align: right;
+    }
+    .svc-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .svc-badge.required { background: #e91e6322; color: var(--accent); }
+    .svc-badge.optional { background: #2196f322; color: var(--blue); }
+
+    .progress-wrap {
+      width: 100%;
+      max-width: 480px;
+    }
+    .progress-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+    #loadingStatus {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      max-width: 480px;
+    }
+    .btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn:not(:disabled):active { transform: scale(0.98); }
+    .btn-primary   { background: var(--accent); color: #fff; }
+    .btn-primary:not(:disabled):hover { background: var(--accent-dark); }
+    .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:not(:disabled):hover { border-color: var(--accent); }
+
+    /* ── CHAT VIEW ───────────────────────────────────────────── */
+    #chatView {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    /* Header */
+    #chatHeader {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .chat-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--accent);
+    }
+    #emotionBadge {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      background: var(--surface2);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .spacer { flex: 1; }
+    #wsStatus {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #444;
+      title: "WebSocket";
+    }
+    #wsStatus.connected    { background: var(--green); }
+    #wsStatus.disconnected { background: var(--red); }
+
+    /* Mini service dots */
+    #svcMini {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+    .mini-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #444;
+    }
+    .mini-dot[data-status="online"]   { background: var(--green); }
+    .mini-dot[data-status="starting"] { background: var(--yellow); }
+    .mini-dot[data-status="error"],
+    .mini-dot[data-status="offline"]  { background: var(--red); }
+
+    /* Messages */
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 0;
+    }
+    #messages::-webkit-scrollbar { width: 4px; }
+    #messages::-webkit-scrollbar-track { background: transparent; }
+    #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .msg {
+      display: flex;
+      flex-direction: column;
+      max-width: 75%;
+    }
+    .msg.user { align-self: flex-end; align-items: flex-end; }
+    .msg.bot  { align-self: flex-start; align-items: flex-start; }
+
+    .msg-bubble {
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+    .msg.user .msg-bubble {
+      background: var(--accent);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .msg.bot .msg-bubble {
+      background: var(--surface2);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+    .msg-meta {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-top: 3px;
+      padding: 0 4px;
+    }
+    .msg-emotion {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 12px 16px;
+    }
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      animation: typing 1.2s infinite;
+    }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typing {
+      0%,60%,100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* Input bar */
+    #inputBar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    #ttsModeSelect {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    #ttsModeSelect:focus { outline: none; border-color: var(--accent); }
+
+    #messageInput {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      resize: none;
+      min-height: 38px;
+      max-height: 120px;
+      line-height: 1.4;
+    }
+    #messageInput:focus { outline: none; border-color: var(--accent); }
+    #messageInput::placeholder { color: var(--text-dim); }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      border: none;
+      background: var(--surface2);
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .icon-btn:hover:not(:disabled) { background: var(--border); }
+    .icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .icon-btn.recording { background: var(--red); color: #fff; animation: pulse 1s infinite; }
+    .icon-btn.send { background: var(--accent); color: #fff; }
+    .icon-btn.send:hover:not(:disabled) { background: var(--accent-dark); }
+
+    /* VRAM badge */
+    #vramBadge {
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: var(--surface2);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      white-space: nowrap;
+      user-select: none;
+    }
+    #vramBadge[data-level="ok"]       { color: var(--green);  background: #4caf5022; }
+    #vramBadge[data-level="warn"]     { color: var(--yellow); background: #ff980022; }
+    #vramBadge[data-level="critical"] { color: var(--red);    background: #f4433622; animation: pulse 1s infinite; }
+
+    /* Toast / notifications */
+    #toast {
+      position: fixed;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      z-index: 100;
+      white-space: nowrap;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    #toast.error   { border-color: var(--red);    color: var(--red); }
+    #toast.success { border-color: var(--green);  color: var(--green); }
+    #toast.warning { border-color: var(--yellow); color: var(--yellow); }
+  </style>
+</head>
+<body>
+
+  <!-- ── LOADING VIEW ─────────────────────────────────────────────── -->
+  <div id="loadingView">
+    <div class="brand">
+      <h1>Casiopy</h1>
+      <p>VTuber Beta — iniciando servicios</p>
+    </div>
+
+    <div class="services-card">
+      <h2>Servicios</h2>
+      <ul id="servicesList">
+        <li class="svc-item" id="svc-gateway">
+          <span class="svc-dot" data-status="offline"></span>
+          <span class="svc-label">Gateway</span>
+          <span class="svc-status-text">offline</span>
+          <span class="svc-badge required">requerido</span>
+        </li>
+        <li class="svc-item" id="svc-memory-api">
+          <span class="svc-dot" data-status="offline"></span>
+          <span class="svc-label">Memoria API</span>
+          <span class="svc-status-text">offline</span>
+          <span class="svc-badge optional">opcional</span>
+        </li>
+        <li class="svc-item" id="svc-conversation">
+          <span class="svc-dot" data-status="offline"></span>
+          <span class="svc-label">Conversación</span>
+          <span class="svc-status-text">offline</span>
+          <span class="svc-badge required">requerido</span>
+        </li>
+        <li class="svc-item" id="svc-tts-blips">
+          <span class="svc-dot" data-status="offline"></span>
+          <span class="svc-label">TTS Blips</span>
+          <span class="svc-status-text">offline</span>
+          <span class="svc-badge optional">opcional</span>
+        </li>
+        <li class="svc-item" id="svc-tts-router">
+          <span class="svc-dot" data-status="offline"></span>
+          <span class="svc-label">TTS Router</span>
+          <span class="svc-status-text">offline</span>
+          <span class="svc-badge optional">opcional</span>
+        </li>
+        <li class="svc-item" id="svc-tts-casiopy">
+          <span class="svc-dot" data-status="offline"></span>
+          <span class="svc-label">TTS Casiopy (voz)</span>
+          <span class="svc-status-text">offline</span>
+          <span class="svc-badge optional">opcional</span>
+        </li>
+        <li class="svc-item" id="svc-stt">
+          <span class="svc-dot" data-status="offline"></span>
+          <span class="svc-label">STT — Voz a texto</span>
+          <span class="svc-status-text">offline</span>
+          <span class="svc-badge optional">opcional</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div id="loadingStatus">Verificando estado de servicios…</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="startBtn" onclick="startServices()">Iniciar servicios</button>
+      <button class="btn btn-primary"   id="goToChatBtn" disabled onclick="showChatView()">Ir al chat →</button>
+    </div>
+  </div>
+
+  <!-- ── CHAT VIEW ────────────────────────────────────────────────── -->
+  <div id="chatView" class="hidden">
+    <div id="chatHeader">
+      <span class="chat-title">Casiopy</span>
+      <span id="emotionBadge">—</span>
+      <div class="spacer"></div>
+      <div id="svcMini" title="Estado de servicios">
+        <div class="mini-dot" data-svc="gateway"      data-status="offline" title="Gateway"></div>
+        <div class="mini-dot" data-svc="conversation" data-status="offline" title="Conversación"></div>
+        <div class="mini-dot" data-svc="memory-api"   data-status="offline" title="Memoria"></div>
+        <div class="mini-dot" data-svc="tts-casiopy"  data-status="offline" title="TTS Casiopy"></div>
+        <div class="mini-dot" data-svc="stt"          data-status="offline" title="STT"></div>
+      </div>
+      <span id="vramBadge" title="Haz clic para refrescar" onclick="pollVram()">VRAM –</span>
+      <div id="wsStatus" title="WebSocket"></div>
+    </div>
+
+    <div id="messages"></div>
+
+    <div id="inputBar">
+      <select id="ttsModeSelect" title="Modo TTS">
+        <option value="casiopy">🎙 Casiopy</option>
+        <option value="blips">🔊 Blips</option>
+      </select>
+      <textarea id="messageInput" placeholder="Escribe un mensaje…" rows="1"
+        onkeydown="handleInputKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="icon-btn" id="sttBtn" onclick="toggleRecording()" title="Hablar (STT)">🎤</button>
+      <button class="icon-btn send" id="sendBtn" onclick="sendMessage()" title="Enviar">➤</button>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

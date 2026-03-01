@@ -20,13 +20,15 @@ const USER_ID = 'viewer_' + Math.random().toString(36).slice(2, 7);
 // El gateway es especial: se inicia llamando directamente a monitoring-service
 // (no puede usar el gateway para iniciarse a sí mismo).
 const SVCS = [
-  { id: 'gateway',    label: 'Gateway',        critical: true,  bootstrap: true  },
-  { id: 'memory-api', label: 'Memoria API',    critical: false, bootstrap: false },
-  { id: 'conversation',label: 'Conversación',  critical: true,  bootstrap: false },
-  { id: 'tts-blips',  label: 'TTS Blips',     critical: false, bootstrap: false },
-  { id: 'tts-router', label: 'TTS Router',    critical: false, bootstrap: false },
-  { id: 'tts-casiopy',label: 'TTS Casiopy',   critical: false, bootstrap: false },
-  { id: 'stt',        label: 'STT (Voz)',      critical: false, bootstrap: false },
+  { id: 'gateway',         label: 'Gateway',          critical: true,  bootstrap: true  },
+  { id: 'memory-postgres', label: 'Memoria DB',       critical: false, bootstrap: false },
+  { id: 'memory-api',      label: 'Memoria API',      critical: false, bootstrap: false },
+  { id: 'conversation',    label: 'Conversación',     critical: true,  bootstrap: false },
+  { id: 'tts-blips',       label: 'TTS Blips',        critical: false, bootstrap: false },
+  { id: 'tts-router',      label: 'TTS Router',       critical: false, bootstrap: false },
+  { id: 'tts-casiopy',     label: 'TTS Casiopy',      critical: false, bootstrap: false },
+  { id: 'face',            label: 'Avatar 2D',        critical: false, bootstrap: false },
+  { id: 'stt',             label: 'STT (Voz)',        critical: false, bootstrap: false },
 ];
 
 // ── Inicialización ─────────────────────────────────────────────────────────
@@ -37,6 +39,8 @@ async function init() {
   } catch (_) { /* usar defaults */ }
 
   await refreshStatuses();
+  startLogsPolling();
+
   if (isCoreReady()) {
     showChatView();
   } else {
@@ -51,27 +55,33 @@ function isCoreReady() {
 // ── Carga y estados de servicios ───────────────────────────────────────────
 async function refreshStatuses() {
   try {
-    const r = await fetch(`${cfg.gateway_url}/services/status`);
+    const r = await fetch(`/mon/api/services/status`);
     if (!r.ok) return;
     const statuses = await r.json();
     SVCS.forEach(s => {
-      const st = statuses[s.id]?.status ?? 'offline';
-      updateSvcUI(s.id, st);
+      const svc  = statuses[s.id] ?? {};
+      const st   = svc.status ?? 'offline';
+      const rtms = svc.response_time_ms ?? null;
+      updateSvcUI(s.id, st, rtms);
     });
     updateProgress();
   } catch (_) {
-    setLoadingStatus('No se puede conectar al gateway.');
+    setLoadingStatus('No se puede conectar al monitoring-service.');
   }
 }
 
-function updateSvcUI(id, status) {
+function updateSvcUI(id, status, responseTimeMs = null) {
   // Loading view
   const row = document.getElementById(`svc-${id}`);
   if (row) {
-    const dot  = row.querySelector('.svc-dot');
-    const text = row.querySelector('.svc-status-text');
-    dot.dataset.status   = status;
-    text.textContent     = status;
+    const dot     = row.querySelector('.svc-dot');
+    const text    = row.querySelector('.svc-status-text');
+    const rt      = row.querySelector('.svc-response-time');
+    const stopBtn = row.querySelector('.svc-stop-btn');
+    dot.dataset.status = status;
+    text.textContent   = status;
+    if (rt)      rt.textContent = responseTimeMs != null ? `${responseTimeMs.toFixed(0)} ms` : '';
+    if (stopBtn) stopBtn.classList.toggle('visible', status === 'online');
   }
   // Chat header mini dots
   const mini = document.querySelector(`[data-svc="${id}"]`);
@@ -107,28 +117,29 @@ async function startServices() {
     updateSvcUI(svc.id, 'starting');
     setLoadingStatus(`Iniciando ${svc.label}…`);
 
-    // El gateway se inicia llamando a monitoring-service directamente
-    // (no puede enrutar a través de sí mismo si aún no está corriendo)
-    const startUrl = svc.bootstrap
-      ? `${cfg.monitoring_url}/api/services/${svc.id}/start`
-      : `${cfg.gateway_url}/services/${svc.id}/start`;
+    // Siempre usamos monitoring-service para arrancar servicios:
+    // gateway podría no estar corriendo aún y no puede enrutarse a sí mismo.
+    const startUrl = `/mon/api/services/${svc.id}/start`;
 
     try {
       const r = await fetch(startUrl, { method: 'POST' });
-      if (r.ok) {
+      const data = await r.json().catch(() => ({}));
+      if (r.ok && data.status === 'online') {
         updateSvcUI(svc.id, 'online');
       } else {
-        const detail = (await r.json().catch(() => ({}))).detail ?? r.statusText;
-        updateSvcUI(svc.id, svc.critical ? 'error' : 'warning');
+        const detail = data.detail ?? data.status ?? r.statusText;
+        updateSvcUI(svc.id, svc.critical ? 'error' : 'offline');
         if (svc.critical) {
           setLoadingStatus(`Error: no se pudo iniciar ${svc.label}. ${detail}`);
           btn.disabled = false;
           updateProgress();
           return;
+        } else {
+          toast(`${svc.label}: ${detail}`, 'warning');
         }
       }
     } catch (e) {
-      updateSvcUI(svc.id, svc.critical ? 'error' : 'warning');
+      updateSvcUI(svc.id, svc.critical ? 'error' : 'offline');
       if (svc.critical) {
         setLoadingStatus(`Error de red al iniciar ${svc.label}.`);
         btn.disabled = false;
@@ -151,6 +162,9 @@ async function startServices() {
 function showChatView() {
   document.getElementById('loadingView').classList.add('hidden');
   document.getElementById('chatView').classList.remove('hidden');
+  // Reposicionar panel de logs: oculto por defecto en chat (toggle con botón 📋)
+  const lp = document.getElementById('logPanel');
+  if (lp) { lp.classList.add('chat-mode', 'hidden'); }
   connectWebSocket();
   // Sync mini dots
   SVCS.forEach(s => {
@@ -397,13 +411,171 @@ function toast(msg, type = '') {
   toastTimer = setTimeout(() => { el.className = ''; }, 3500);
 }
 
+// ── Services drawer (chat view) ────────────────────────────────────────────
+const SERVICE_PORTS = {
+  gateway: 8800, 'memory-postgres': 8821, 'memory-api': 8820,
+  conversation: 8801, 'tts-blips': 8805, 'tts-router': 8810,
+  'tts-casiopy': 8815, face: 8804, stt: 8803,
+};
+
+let _lastStatuses  = {};   // {id: {status, response_time_ms}}
+let _drawerOpen    = false;
+let _drawerTimer   = null;
+
+function toggleSvcDrawer() {
+  _drawerOpen = !_drawerOpen;
+  const drawer  = document.getElementById('svcDrawer');
+  const overlay = document.getElementById('svcDrawerOverlay');
+  if (!drawer) return;
+  drawer.classList.remove('hidden');
+  drawer.classList.toggle('open', _drawerOpen);
+  overlay?.classList.toggle('show', _drawerOpen);
+  const btn = document.getElementById('svcDrawerBtn');
+  if (btn) btn.style.opacity = _drawerOpen ? '1' : '0.75';
+  if (_drawerOpen) {
+    _fetchAndRenderDrawer();
+    _drawerTimer = setInterval(_fetchAndRenderDrawer, 4000);
+  } else {
+    clearInterval(_drawerTimer);
+  }
+}
+
+async function _fetchAndRenderDrawer() {
+  try {
+    const r = await fetch('/mon/api/services/status');
+    if (!r.ok) return;
+    _lastStatuses = await r.json();
+    _renderDrawer();
+    // Sync mini-dots and loading view rows too
+    SVCS.forEach(s => {
+      const svc = _lastStatuses[s.id] ?? {};
+      updateSvcUI(s.id, svc.status ?? 'offline', svc.response_time_ms ?? null);
+    });
+    updateProgress();
+  } catch (_) {}
+}
+
+function _renderDrawer() {
+  const list = document.getElementById('svcDrawerList');
+  if (!list) return;
+  list.innerHTML = SVCS.map(s => {
+    const svc  = _lastStatuses[s.id] ?? {};
+    const st   = svc.status ?? 'offline';
+    const rt   = svc.response_time_ms != null ? `${Math.round(svc.response_time_ms)}ms` : '';
+    const port = SERVICE_PORTS[s.id] ? `:${SERVICE_PORTS[s.id]}` : '';
+    const isOnline = st === 'online';
+    const startBtn = !isOnline
+      ? `<button class="sd-btn start" onclick="drawerStartSvc('${s.id}')" title="Iniciar">▶</button>` : '';
+    const stopBtn  = isOnline
+      ? `<button class="sd-btn stop"  onclick="drawerStopSvc('${s.id}')"  title="Detener">⏹</button>` : '';
+    return `<div class="sd-row" id="sd-${s.id}">
+      <span class="sd-dot" data-status="${st}"></span>
+      <span class="sd-label">${s.label}</span>
+      <span class="sd-port">${port}</span>
+      <span class="sd-rt">${rt}</span>
+      ${startBtn}${stopBtn}
+    </div>`;
+  }).join('');
+}
+
+async function drawerStartSvc(id) {
+  _patchDrawerRow(id, 'starting');
+  try {
+    const r = await fetch(`/mon/api/services/${id}/start`, { method: 'POST' });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      const msg = d.detail ?? `Error ${r.status} al iniciar ${id}`;
+      toast(msg, 'error');
+      _patchDrawerRow(id, 'error');
+      updateProgress();
+      return;
+    }
+    _patchDrawerRow(id, d.status ?? 'offline', d.response_time_ms);
+    updateSvcUI(id, d.status ?? 'offline');
+  } catch (_) { _patchDrawerRow(id, 'error'); }
+  updateProgress();
+}
+
+async function drawerStopSvc(id) {
+  _patchDrawerRow(id, 'starting');
+  try {
+    const r = await fetch(`/mon/api/services/${id}/stop`, { method: 'POST' });
+    const d = await r.json().catch(() => ({}));
+    _patchDrawerRow(id, d.status ?? (r.ok ? 'offline' : 'error'));
+    updateSvcUI(id, d.status ?? 'offline');
+  } catch (_) { _patchDrawerRow(id, 'offline'); }
+  updateProgress();
+}
+
+function _patchDrawerRow(id, status, rtms) {
+  const row = document.getElementById(`sd-${id}`);
+  if (!row) return;
+  const dot  = row.querySelector('.sd-dot');
+  const rt   = row.querySelector('.sd-rt');
+  const svc  = SVCS.find(s => s.id === id);
+  if (dot)  dot.dataset.status = status;
+  if (rt && rtms != null) rt.textContent = `${Math.round(rtms)}ms`;
+  // Rebuild buttons
+  const isOnline = status === 'online';
+  const startBtn = !isOnline ? `<button class="sd-btn start" onclick="drawerStartSvc('${id}')" title="Iniciar">▶</button>` : '';
+  const stopBtn  =  isOnline ? `<button class="sd-btn stop"  onclick="drawerStopSvc('${id}')"  title="Detener">⏹</button>` : '';
+  const old = row.querySelectorAll('.sd-btn');
+  old.forEach(b => b.remove());
+  row.insertAdjacentHTML('beforeend', startBtn + stopBtn);
+}
+
+// ── Parada de servicios ────────────────────────────────────────────────────
+async function stopSvc(id) {
+  updateSvcUI(id, 'starting'); // visual feedback "deteniéndose"
+  try {
+    const r = await fetch(`/mon/api/services/${id}/stop`, { method: 'POST' });
+    const data = await r.json().catch(() => ({}));
+    updateSvcUI(id, data.status ?? (r.ok ? 'offline' : 'error'));
+  } catch (_) {
+    updateSvcUI(id, 'offline');
+  }
+  updateProgress();
+}
+
+async function stopAllServices() {
+  const btn = document.getElementById('stopAllBtn');
+  if (btn) btn.disabled = true;
+  setLoadingStatus('Deteniendo servicios…');
+  // Parar en orden inverso: dependientes primero, gateway al final
+  const toStop = [...SVCS].reverse();
+  for (const svc of toStop) {
+    const st = document.querySelector(`#svc-${svc.id} .svc-dot`)?.dataset.status;
+    if (st !== 'online') continue;
+    setLoadingStatus(`Deteniendo ${svc.label}…`);
+    await stopSvc(svc.id);
+  }
+  setLoadingStatus('Servicios detenidos.');
+  if (btn) btn.disabled = false;
+  updateProgress();
+}
+
+function showLoadingView() {
+  document.getElementById('chatView').classList.add('hidden');
+  document.getElementById('loadingView').classList.remove('hidden');
+  const lp = document.getElementById('logPanel');
+  if (lp) { lp.classList.remove('chat-mode', 'hidden'); }
+  if (ws) { ws.close(); ws = null; }
+  refreshStatuses();
+}
+
+async function shutdownFromChat() {
+  if (!confirm('¿Detener todos los servicios y volver al panel de inicio?')) return;
+  showLoadingView();
+  await stopAllServices();
+}
+
 // ── VRAM Guard ─────────────────────────────────────────────────────────────
 let _vramPrevPaused = [];
 let _vramPrevLevel  = '';
 
 async function pollVram() {
   try {
-    const r = await fetch(`${cfg.monitoring_url}/api/vram/status`);
+    const r = await fetch(`/mon/api/vram/status`);
     if (!r.ok) return;
     const data = await r.json();
     _applyVramState(data);
@@ -459,6 +631,87 @@ function _applyVramState(data) {
 
   _vramPrevPaused = paused;
   _vramPrevLevel  = level;
+}
+
+// ── Logs / Auditoría ───────────────────────────────────────────────────────
+let _logsExpanded = false;
+
+function toggleLogsExpand() {
+  _logsExpanded = !_logsExpanded;
+  document.getElementById('logEntries')?.classList.toggle('expanded', _logsExpanded);
+  const tog = document.getElementById('lpToggle');
+  if (tog) tog.textContent = _logsExpanded ? '▾' : '▸';
+}
+
+function toggleLogsPanel() {
+  const panel = document.getElementById('logPanel');
+  if (!panel) return;
+  if (panel.classList.contains('hidden')) {
+    panel.classList.remove('hidden');
+    if (!_logsExpanded) toggleLogsExpand();
+  } else {
+    panel.classList.add('hidden');
+  }
+}
+
+async function fetchAndRenderLogs() {
+  try {
+    const r = await fetch(`/mon/api/logs/recent?limit=50`);
+    if (!r.ok) return;
+    const data = await r.json();
+    renderLogs(data.logs ?? []);
+  } catch (_) { /* monitoring offline */ }
+}
+
+function renderLogs(logs) {
+  // Filter out high-frequency API health checks — show only meaningful events
+  const filtered = logs.filter(l => {
+    if (l.event_type === 'API_REQUEST') {
+      const action = (l.action ?? '').toLowerCase();
+      return !action.includes('/health') && !action.includes('/api/services/status');
+    }
+    return true;
+  });
+
+  let okCnt = 0, errCnt = 0;
+  const rows = filtered.slice(-40).map(l => {
+    const ts     = (l.timestamp ?? '').slice(11, 22);
+    const et     = l.event_type ?? '';
+    const bdgCls = et === 'SERVICE_CONTROL' ? 'SC' : et.startsWith('TTS') ? 'TTS' : 'OTH';
+    const bdgLbl = bdgCls === 'SC' ? 'SVC' : bdgCls;
+    const action = l.action ?? '';
+    const dur    = l.duration_ms != null ? `${Math.round(l.duration_ms)}ms` : '';
+    const suc    = l.success;
+    if (suc === true)  okCnt++;
+    if (suc === false) errCnt++;
+    const ico    = suc == null ? '' : suc
+      ? '<span class="log-ico ok">✓</span>'
+      : '<span class="log-ico err">✗</span>';
+    const rowCls = suc === false ? 'log-row fail' : 'log-row';
+    return `<div class="${rowCls}">
+      <span class="log-ts">${ts}</span>
+      <span class="log-bdg ${bdgCls}">${bdgLbl}</span>
+      <span class="log-act" title="${action}">${action}</span>
+      <span class="log-dur">${dur}</span>
+      ${ico}
+    </div>`;
+  }).join('');
+
+  const el = document.getElementById('logEntries');
+  if (el) { el.innerHTML = rows; el.scrollTop = el.scrollHeight; }
+
+  const stats = document.getElementById('lpStats');
+  if (stats) {
+    stats.innerHTML =
+      `<span class="lp-ok">✓${okCnt}</span> ` +
+      `<span class="lp-err">✗${errCnt}</span> ` +
+      `<span class="lp-dim">${filtered.length}ev</span>`;
+  }
+}
+
+function startLogsPolling() {
+  fetchAndRenderLogs();
+  setInterval(fetchAndRenderLogs, 5000);
 }
 
 // ── Arranque ───────────────────────────────────────────────────────────────

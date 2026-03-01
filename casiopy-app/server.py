@@ -2,9 +2,10 @@
 import os
 from pathlib import Path
 
+import httpx
 import uvicorn
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 STATIC_DIR      = Path(__file__).parent / "static"
@@ -31,6 +32,34 @@ def config():
     }
 
 
+# ── Proxy transparente → monitoring-service (evita CORS en el browser) ───────
+_PROXY_SKIP_HEADERS = {"host", "content-length", "transfer-encoding", "connection"}
+
+@app.api_route("/mon/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+async def monitoring_proxy(path: str, request: Request):
+    """Reenvía /mon/** → monitoring-service, mismo origen → sin CORS."""
+    url = f"{MONITORING_URL}/{path}"
+    params = dict(request.query_params)
+    body   = await request.body()
+    headers = {k: v for k, v in request.headers.items()
+               if k.lower() not in _PROXY_SKIP_HEADERS}
+
+    async with httpx.AsyncClient(timeout=20.0) as client:
+        r = await client.request(
+            method=request.method,
+            url=url,
+            params=params,
+            content=body or None,
+            headers=headers,
+        )
+
+    # Quitar headers hop-by-hop que no deben reenviarse
+    fwd_headers = {k: v for k, v in r.headers.items()
+                   if k.lower() not in _PROXY_SKIP_HEADERS}
+    return Response(content=r.content, status_code=r.status_code, headers=fwd_headers)
+
+
+# ── SPA fallback (debe ir al final) ─────────────────────────────────────────
 @app.get("/", include_in_schema=False)
 @app.get("/{path:path}", include_in_schema=False)
 def spa(path: str = ""):

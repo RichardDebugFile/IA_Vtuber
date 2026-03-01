@@ -91,6 +91,7 @@ class InteractionManager:
         output_confidence: Optional[float] = None,
         input_embedding: Optional[List[float]] = None,
         output_embedding: Optional[List[float]] = None,
+        quality_score: Optional[float] = None,
     ) -> str:
         """
         Almacenar una interacción (input/output)
@@ -125,6 +126,8 @@ class InteractionManager:
         if output_embedding:
             output_emb_str = "[" + ",".join(map(str, output_embedding)) + "]"
 
+        is_training_ready = (quality_score is not None and quality_score >= 0.6)
+
         query = text("""
         INSERT INTO interactions (
             id, session_id, user_id, timestamp,
@@ -132,14 +135,16 @@ class InteractionManager:
             output_text, output_emotion, output_confidence,
             conversation_turn, previous_topic,
             latency_ms, model_version,
-            input_embedding, output_embedding
+            input_embedding, output_embedding,
+            quality_score, is_training_ready
         ) VALUES (
             :interaction_id, :session_id, :user_id, NOW(),
             :input_text, :input_method, :input_emotion,
             :output_text, :output_emotion, :output_confidence,
             :conversation_turn, :previous_topic,
             :latency_ms, :model_version,
-            :input_embedding, :output_embedding
+            :input_embedding, :output_embedding,
+            :quality_score, :is_training_ready
         )
         RETURNING id
         """)
@@ -163,6 +168,8 @@ class InteractionManager:
                     "model_version": model_version,
                     "input_embedding": input_emb_str,
                     "output_embedding": output_emb_str,
+                    "quality_score": quality_score,
+                    "is_training_ready": is_training_ready,
                 },
             )
 

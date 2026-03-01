@@ -90,6 +90,7 @@ class InteractionCreate(BaseModel):
     latency_ms: Optional[int] = None
     model_version: Optional[str] = None
     output_confidence: Optional[float] = None
+    quality_score: Optional[float] = Field(None, ge=0.0, le=1.0)
 
 
 class FeedbackCreate(BaseModel):
@@ -351,6 +352,7 @@ async def store_interaction(
         latency_ms=interaction.latency_ms,
         model_version=interaction.model_version,
         output_confidence=interaction.output_confidence,
+        quality_score=interaction.quality_score,
     )
     # Generar embeddings en background sin bloquear la respuesta
     asyncio.create_task(

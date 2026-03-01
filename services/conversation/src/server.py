@@ -111,6 +111,33 @@ async def _get_system_prompt() -> str:
     return _system_prompt_cache or _DEFAULT_SYSTEM_PROMPT
 
 
+def _compute_quality_score(
+    output_text: str,
+    output_emotion: str,
+    latency_ms: int,
+    memories_used: int,
+) -> float:
+    """
+    Heurística de calidad para clasificar la interacción.
+    Base 0.65 (por encima del umbral de entrenamiento 0.60).
+    Penaliza respuestas vacías o con latencia extrema.
+    Premia respuestas con emoción detectada, largas o con contexto semántico.
+    """
+    score = 0.65
+    out_len = len(output_text.strip())
+    if out_len < 15:
+        score -= 0.15           # respuesta casi vacía
+    elif out_len > 120:
+        score += 0.05           # respuesta elaborada
+    if latency_ms > 12_000:
+        score -= 0.05           # muy lenta (modelo saturado)
+    if output_emotion and output_emotion not in ("neutral", "unknown", ""):
+        score += 0.05           # emoción detectada = respuesta caracterizada
+    if memories_used > 0:
+        score += 0.05           # usó contexto semántico
+    return round(min(1.0, max(0.0, score)), 2)
+
+
 async def _store_interaction(
     session_id: str,
     user_id: str,
@@ -120,8 +147,10 @@ async def _store_interaction(
     output_emotion: str,
     turn: int,
     latency_ms: int,
+    memories_used: int = 0,
 ) -> None:
     """Almacena la interacción en memory-service (fire-and-forget)."""
+    quality = _compute_quality_score(output_text, output_emotion, latency_ms, memories_used)
     await _memory_post("/interactions", {
         "session_id":    session_id,
         "user_id":       user_id,
@@ -133,6 +162,7 @@ async def _store_interaction(
         "conversation_turn": turn,
         "latency_ms":    latency_ms,
         "model_version": OLLAMA_MODEL,
+        "quality_score": quality,
     })
 
 
@@ -177,6 +207,7 @@ class ChatOut(BaseModel):
     reply: str
     emotion: str
     model: str
+    memories_used: int = 0
 
 class SessionResetIn(BaseModel):
     user: str = "local"
@@ -242,6 +273,7 @@ async def chat_endpoint(body: ChatIn):
 
     # 3. Construir mensajes: [system + recuerdos semánticos] + historial + [nuevo mensaje]
     memories = await _get_semantic_memories(body.text, limit=3)
+    memories_used = len(memories)
     memory_block = _format_semantic_memories(memories)
     enriched_system = system_prompt + ("\n\n" + memory_block if memory_block else "")
 
@@ -286,6 +318,7 @@ async def chat_endpoint(body: ChatIn):
         output_emotion= output_emotion,
         turn          = sess["turn"],
         latency_ms    = latency_ms,
+        memories_used = memories_used,
     ))
 
     # 8. Publicar al gateway (TTS, Face, etc.)
@@ -297,7 +330,7 @@ async def chat_endpoint(body: ChatIn):
     except Exception:
         pass
 
-    return ChatOut(reply=reply, emotion=output_emotion, model=OLLAMA_MODEL)
+    return ChatOut(reply=reply, emotion=output_emotion, model=OLLAMA_MODEL, memories_used=memories_used)
 
 
 @app.post("/session/reset")

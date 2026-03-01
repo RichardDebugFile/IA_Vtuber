@@ -15,6 +15,7 @@ from typing import Dict, Optional, List
 
 import httpx
 from fastapi import FastAPI, HTTPException, Response, Request, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -23,6 +24,14 @@ from . import audit_logger
 from .monitoring import monitoring, DockerMonitor, ServiceState
 
 app = FastAPI(title="Monitoring Service Dashboard", version="2.0.0")
+
+# Servicio local (127.0.0.1:8900) — se permite cualquier origen local
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # WebSocket connection manager
 class ConnectionManager:
@@ -194,7 +203,7 @@ SERVICES = {
         "name": "Gateway",
         "port": 8800,
         "health_url": "http://127.0.0.1:8800/health",
-        "start_cmd": f'start /B cmd /c "cd services/gateway && "{VENV_PYTHON}" -m uvicorn src.main:app --host 127.0.0.1 --port 8800"',
+        "start_cmd": f'start "" /D "{PROJECT_ROOT}\\services\\gateway" /B "{VENV_PYTHON}" -m uvicorn src.main:app --host 127.0.0.1 --port 8800',
         "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8800 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
         "cwd": str(PROJECT_ROOT),
         "color": "#4CAF50",
@@ -204,7 +213,7 @@ SERVICES = {
         "name": "Conversation AI",
         "port": 8801,
         "health_url": "http://127.0.0.1:8801/health",
-        "start_cmd": f'start /B cmd /c "cd services/conversation && "{VENV_PYTHON}" -m src.server"',
+        "start_cmd": f'start "" /D "{PROJECT_ROOT}\\services\\conversation" /B "{VENV_PYTHON}" -m src.server',
         "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8801 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
         "cwd": str(PROJECT_ROOT),
         "color": "#2196F3",
@@ -225,7 +234,7 @@ SERVICES = {
         "name": "STT (Speech-to-Text)",
         "port": 8803,
         "health_url": "http://127.0.0.1:8803/health",
-        "start_cmd": f'start /B cmd /c "cd services/stt && "{VENV_PYTHON}" -m uvicorn src.server:app --host 127.0.0.1 --port 8803"',
+        "start_cmd": f'start "" /D "{PROJECT_ROOT}\\services\\stt" /B "{VENV_PYTHON}" -m uvicorn src.server:app --host 127.0.0.1 --port 8803',
         "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8803 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
         "cwd": str(PROJECT_ROOT),
         "color": "#00BCD4",
@@ -236,7 +245,7 @@ SERVICES = {
         "name": "Face Service 2D (VTuber Avatar)",
         "port": 8804,
         "health_url": "http://127.0.0.1:8804/health",
-        "start_cmd": f'start "VTuber Face" cmd /c "cd /D services\\face-service-2D-simple && "{VENV_PYTHON}" run_gui.py"',
+        "start_cmd": f'start "VTuber Face" /D "{PROJECT_ROOT}\\services\\face-service-2D-simple" "{VENV_PYTHON}" run_gui.py',
         "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8804 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
         "cwd": str(PROJECT_ROOT),
         "color": "#FF5722",
@@ -248,7 +257,7 @@ SERVICES = {
         "name": "TTS Blips (Dialogue)",
         "port": 8805,
         "health_url": "http://127.0.0.1:8805/health",
-        "start_cmd": f'start /B cmd /c "cd /D services\\tts-blips && "{VENV_PYTHON}" -m src.server"',
+        "start_cmd": f'start "" /D "{PROJECT_ROOT}\\services\\tts-blips" /B "{VENV_PYTHON}" -m src.server',
         "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8805 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
         "cwd": str(PROJECT_ROOT),
         "color": "#E91E63",
@@ -259,7 +268,7 @@ SERVICES = {
         "name": "TTS Service",
         "port": 8806,
         "health_url": "http://127.0.0.1:8806/health",
-        "start_cmd": f'start /B cmd /c "cd services/tts && "{VENV_PYTHON}" -m uvicorn src.server:app --host 127.0.0.1 --port 8806"',
+        "start_cmd": f'start "" /D "{PROJECT_ROOT}\\services\\tts" /B "{VENV_PYTHON}" -m uvicorn src.server:app --host 127.0.0.1 --port 8806',
         "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8806 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
         "cwd": str(PROJECT_ROOT),
         "color": "#FF9800",
@@ -272,10 +281,7 @@ SERVICES = {
         "name": "TTS Router (enrutador central)",
         "port": 8810,
         "health_url": "http://127.0.0.1:8810/health",
-        "start_cmd": (
-            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\tts-router" && '
-            f'"{VENV_PYTHON}" server.py"'
-        ),
+        "start_cmd": f'start "" /D "{PROJECT_ROOT}\\services\\tts-router" /B "{VENV_PYTHON}" server.py',
         "stop_cmd": (
             'powershell -Command "Get-NetTCPConnection -LocalPort 8810 -ErrorAction SilentlyContinue'
             ' | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"'
@@ -289,10 +295,7 @@ SERVICES = {
         "name": "TTS Casiopy FT (voz principal · DEFAULT)",
         "port": 8815,
         "health_url": "http://127.0.0.1:8815/health",
-        "start_cmd": (
-            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\tts-casiopy" && '
-            f'"{PROJECT_ROOT}\\services\\tts-openvoice\\venv\\Scripts\\python.exe" server.py"'
-        ),
+        "start_cmd": f'start "" /D "{PROJECT_ROOT}\\services\\tts-casiopy" /B "{PROJECT_ROOT}\\services\\tts-openvoice\\venv\\Scripts\\python.exe" server.py',
         "stop_cmd": (
             'powershell -Command "Get-NetTCPConnection -LocalPort 8815 -ErrorAction SilentlyContinue'
             ' | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"'
@@ -306,10 +309,7 @@ SERVICES = {
         "name": "TTS OpenVoice V2 (streaming rápido)",
         "port": 8811,
         "health_url": "http://127.0.0.1:8811/health",
-        "start_cmd": (
-            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\tts-openvoice" && '
-            f'"{PROJECT_ROOT}\\services\\tts-openvoice\\venv\\Scripts\\python.exe" server.py"'
-        ),
+        "start_cmd": f'start "" /D "{PROJECT_ROOT}\\services\\tts-openvoice" /B "{PROJECT_ROOT}\\services\\tts-openvoice\\venv\\Scripts\\python.exe" server.py',
         "stop_cmd": (
             'powershell -Command "Get-NetTCPConnection -LocalPort 8811 -ErrorAction SilentlyContinue'
             ' | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"'
@@ -323,10 +323,7 @@ SERVICES = {
         "name": "TTS CosyVoice3 (streaming calidad)",
         "port": 8812,
         "health_url": "http://127.0.0.1:8812/health",
-        "start_cmd": (
-            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\tts-cosyvoice" && '
-            f'"{PROJECT_ROOT}\\services\\tts-cosyvoice\\venv\\Scripts\\python.exe" server.py"'
-        ),
+        "start_cmd": f'start "" /D "{PROJECT_ROOT}\\services\\tts-cosyvoice" /B "{PROJECT_ROOT}\\services\\tts-cosyvoice\\venv\\Scripts\\python.exe" server.py',
         "stop_cmd": (
             'powershell -Command "Get-NetTCPConnection -LocalPort 8812 -ErrorAction SilentlyContinue'
             ' | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"'
@@ -340,10 +337,7 @@ SERVICES = {
         "name": "TTS Qwen3-TTS (creación contenido)",
         "port": 8813,
         "health_url": "http://127.0.0.1:8813/health",
-        "start_cmd": (
-            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\tts-qwen3" && '
-            f'"{PROJECT_ROOT}\\services\\tts-qwen3\\venv\\Scripts\\python.exe" server.py"'
-        ),
+        "start_cmd": f'start "" /D "{PROJECT_ROOT}\\services\\tts-qwen3" /B "{PROJECT_ROOT}\\services\\tts-qwen3\\venv\\Scripts\\python.exe" server.py',
         "stop_cmd": (
             'powershell -Command "Get-NetTCPConnection -LocalPort 8813 -ErrorAction SilentlyContinue'
             ' | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"'
@@ -357,10 +351,7 @@ SERVICES = {
         "name": "TTS Fish Speech Local (creación contenido)",
         "port": 8814,
         "health_url": "http://127.0.0.1:8814/health",
-        "start_cmd": (
-            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\tts-fish" && '
-            f'"{PROJECT_ROOT}\\services\\tts-fish\\venv\\Scripts\\python.exe" server.py"'
-        ),
+        "start_cmd": f'start "" /D "{PROJECT_ROOT}\\services\\tts-fish" /B "{PROJECT_ROOT}\\services\\tts-fish\\venv\\Scripts\\python.exe" server.py',
         "stop_cmd": (
             'powershell -Command "Get-NetTCPConnection -LocalPort 8814 -ErrorAction SilentlyContinue'
             ' | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"'
@@ -375,11 +366,9 @@ SERVICES = {
     "memory-postgres": {
         "name": "Memory DB (PostgreSQL + pgvector)",
         "port": 8821,
-        "health_url": "http://127.0.0.1:8821",  # Puerto TCP postgres — siempre offline en HTTP; verificar via memory-api
-        "start_cmd": (
-            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\memory-service" && '
-            f'docker compose up -d memory-postgres"'
-        ),
+        "check_type": "tcp",            # PostgreSQL no habla HTTP — verificar TCP directo
+        "health_url": None,             # no usado (check_type=tcp)
+        "start_cmd": f'start "" /D "{PROJECT_ROOT}\\services\\memory-service" /B cmd /c "docker compose up -d memory-postgres"',
         "stop_cmd": (
             f'cd /D "{PROJECT_ROOT}\\services\\memory-service" && docker compose stop memory-postgres'
         ),
@@ -387,16 +376,16 @@ SERVICES = {
         "color": "#336791",
         "manageable": True,
         "managed_by": "docker",
-        "description": "PostgreSQL 16 + pgvector en Docker. Inicia primero este servicio. Estado real: ver memory-api /health."
+        "description": "PostgreSQL 16 + pgvector en Docker. Usa 'docker compose stop' (nunca down/rm). Estado verificado por TCP."
     },
     "memory-api": {
         "name": "Memory Service API",
         "port": 8820,
         "health_url": "http://127.0.0.1:8820/health",
         "start_cmd": (
-            f'start /B cmd /c "cd /D "{PROJECT_ROOT}\\services\\memory-service\\src" && '
+            f'start "" /D "{PROJECT_ROOT}\\services\\memory-service\\src" /B '
             f'"{PROJECT_ROOT}\\services\\memory-service\\venv\\Scripts\\python.exe" '
-            f'-m uvicorn main:app --host 127.0.0.1 --port 8820"'
+            f'-m uvicorn main:app --host 127.0.0.1 --port 8820'
         ),
         "stop_cmd": (
             'powershell -Command "Get-NetTCPConnection -LocalPort 8820 -ErrorAction SilentlyContinue'
@@ -434,7 +423,7 @@ SERVICES = {
         "name": "Casiopy App (Chat UI)",
         "port": 8830,
         "health_url": "http://127.0.0.1:8830/health",
-        "start_cmd": f'start /B cmd /c "cd /D casiopy-app && "{VENV_PYTHON}" -m uvicorn server:app --host 127.0.0.1 --port 8830"',
+        "start_cmd": f'start "" /D "{PROJECT_ROOT}\\casiopy-app" /B "{VENV_PYTHON}" -m uvicorn server:app --host 127.0.0.1 --port 8830',
         "stop_cmd": 'powershell -Command "Get-NetTCPConnection -LocalPort 8830 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }"',
         "cwd": str(PROJECT_ROOT),
         "color": "#e91e63",
@@ -460,10 +449,54 @@ class ServiceStatus(BaseModel):
     service_type: Optional[str] = None  # "GUI" | "HTTP" | None
 
 
+async def _tcp_check(host: str, port: int, timeout: float = 3.0):
+    """Verifica si un puerto TCP está abierto (útil para PostgreSQL y similares).
+    Retorna (success: bool, elapsed_ms: float)."""
+    loop = asyncio.get_running_loop()
+    t0 = loop.time()
+    try:
+        _, writer = await asyncio.wait_for(
+            asyncio.open_connection(host, port), timeout=timeout
+        )
+        elapsed = (loop.time() - t0) * 1000
+        writer.close()
+        try:
+            await writer.wait_closed()
+        except Exception:
+            pass
+        return True, elapsed
+    except Exception:
+        return False, (loop.time() - t0) * 1000
+
+
 async def check_service_health(service_id: str, config: dict) -> ServiceStatus:
     """Check health of a single service and update monitoring metrics."""
     # Register service if not already registered
     monitoring.register_service(service_id, config["name"])
+
+    # ── TCP-only check (para PostgreSQL y otros servicios no-HTTP) ─────────────
+    if config.get("check_type") == "tcp":
+        ok, elapsed = await _tcp_check("127.0.0.1", config["port"])
+        status = "online" if ok else "offline"
+        error  = None if ok else "Puerto cerrado"
+        if ok:
+            monitoring.update_service(service_id, ServiceState.ONLINE, elapsed)
+        else:
+            monitoring.update_service(service_id, ServiceState.OFFLINE, error=error)
+        return ServiceStatus(
+            name=config["name"],
+            port=config["port"],
+            status=status,
+            error=error,
+            response_time_ms=round(elapsed, 2) if ok else None,
+            color=config["color"],
+            manageable=config.get("manageable", False),
+            requires=config.get("requires"),
+            managed_by=config.get("managed_by"),
+            ui_path=config.get("ui_path"),
+            external=config.get("external", False),
+            service_type=config.get("service_type"),
+        )
 
     try:
         start_time = asyncio.get_event_loop().time()

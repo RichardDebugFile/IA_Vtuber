@@ -32,7 +32,11 @@ else
 fi
 
 # ── 2. Casiopy App (8830) ───────────────────────────────────────────────
-echo "[2/2] Iniciando Casiopy App en http://127.0.0.1:8830 ..."
-echo "      Abre el navegador en esa URL y pulsa 'Iniciar servicios'."
+APP_URL="http://127.0.0.1:8830"
+echo "[2/2] Iniciando Casiopy App en $APP_URL ..."
 echo ""
+
+# Abrir el navegador automáticamente tras 4 s (en background)
+(sleep 4 && (xdg-open "$APP_URL" 2>/dev/null || open "$APP_URL" 2>/dev/null)) &
+
 PYTHONUNBUFFERED=1 $VENV_PY -m uvicorn server:app --host 127.0.0.1 --port 8830

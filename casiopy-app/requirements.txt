@@ -1,3 +1,4 @@
 fastapi>=0.104
 uvicorn>=0.24
+httpx>=0.25
 python-dotenv>=1.0

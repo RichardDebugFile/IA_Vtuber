@@ -110,10 +110,24 @@
     }
 
     .svc-label { flex: 1; color: var(--text); }
+    .svc-port {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      font-family: monospace;
+      min-width: 44px;
+      text-align: right;
+      opacity: 0.7;
+    }
+    .svc-response-time {
+      font-size: 0.7rem;
+      color: var(--green);
+      min-width: 46px;
+      text-align: right;
+    }
     .svc-status-text {
       font-size: 0.75rem;
       color: var(--text-dim);
-      min-width: 70px;
+      min-width: 60px;
       text-align: right;
     }
     .svc-badge {
@@ -173,6 +187,17 @@
     .btn-primary:not(:disabled):hover { background: var(--accent-dark); }
     .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
     .btn-secondary:not(:disabled):hover { border-color: var(--accent); }
+    .btn-danger { background: var(--surface2); color: var(--red); border: 1px solid #f4433640; }
+    .btn-danger:not(:disabled):hover { border-color: var(--red); background: #f4433612; }
+    /* Botón ⏹ por servicio */
+    .svc-stop-btn {
+      background: none; border: 1px solid transparent; color: var(--text-dim);
+      cursor: pointer; font-size: 0.7rem; padding: 1px 5px; border-radius: 4px;
+      opacity: 0; pointer-events: none; transition: opacity 0.15s, border-color 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .svc-stop-btn.visible { opacity: 0.45; pointer-events: auto; }
+    .svc-stop-btn.visible:hover { opacity: 1; border-color: var(--red); color: var(--red); }
 
     /* ── CHAT VIEW ───────────────────────────────────────────── */
     #chatView {
@@ -404,6 +429,130 @@
     #toast.error   { border-color: var(--red);    color: var(--red); }
     #toast.success { border-color: var(--green);  color: var(--green); }
     #toast.warning { border-color: var(--yellow); color: var(--yellow); }
+
+    /* ── Services drawer (chat view) ─────────────────────────────── */
+    #svcDrawer {
+      position: fixed;
+      top: 0; right: 0;
+      width: 300px; height: 100dvh;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      z-index: 40;
+      display: flex; flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.22s ease;
+      box-shadow: -4px 0 24px rgba(0,0,0,0.5);
+    }
+    #svcDrawer.open { transform: translateX(0); }
+    #svcDrawer.hidden { display: none; }
+    .svc-drawer-hdr {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .svc-drawer-hdr span { flex: 1; font-size: 0.75rem; font-weight: 700;
+                           text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); }
+    .svc-drawer-hdr button { background: none; border: none; color: var(--text-dim);
+                              cursor: pointer; font-size: 1.1rem; line-height: 1; padding: 2px; }
+    .svc-drawer-hdr button:hover { color: var(--text); }
+    #svcDrawerList { flex: 1; overflow-y: auto; padding: 6px 0; }
+    .sd-row {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .sd-row:last-child { border-bottom: none; }
+    .sd-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+      background: #444; transition: background 0.3s;
+    }
+    .sd-dot[data-status="online"]   { background: var(--green); }
+    .sd-dot[data-status="starting"] { background: var(--yellow); animation: pulse 1s infinite; }
+    .sd-dot[data-status="error"]    { background: var(--red); }
+    .sd-dot[data-status="offline"]  { background: #444; }
+    .sd-label { flex: 1; font-size: 0.82rem; color: var(--text); }
+    .sd-port  { font-size: 0.65rem; color: var(--text-dim); font-family: monospace; opacity: 0.6; }
+    .sd-rt    { font-size: 0.65rem; color: var(--green); min-width: 38px; text-align: right; }
+    .sd-btn   {
+      background: none; border: 1px solid transparent; cursor: pointer;
+      font-size: 0.7rem; padding: 2px 5px; border-radius: 4px;
+      color: var(--text-dim); transition: all 0.15s; flex-shrink: 0;
+    }
+    .sd-btn.start:hover { border-color: var(--green); color: var(--green); }
+    .sd-btn.stop:hover  { border-color: var(--red);   color: var(--red);   }
+    /* Overlay semitransparente detrás del drawer */
+    #svcDrawerOverlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 39;
+    }
+    #svcDrawerOverlay.show { display: block; }
+
+    /* ── Log / Audit Panel ─────────────────────────────────────────── */
+    #logPanel {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(480px, 100%);
+      z-index: 30;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px 10px 0 0;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.71rem;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+    }
+    #logPanel.chat-mode {
+      left: auto; right: 0;
+      transform: none;
+      width: 360px;
+      border-radius: 10px 10px 0 0;
+    }
+    .log-panel-hdr {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 12px;
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid transparent;
+    }
+    .log-panel-hdr:hover { background: var(--surface2); border-radius: 10px 10px 0 0; }
+    .log-panel-hdr .lp-title {
+      font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-dim); flex: 1;
+    }
+    .log-panel-hdr .lp-ok  { color: var(--green); font-size: 0.68rem; }
+    .log-panel-hdr .lp-err { color: var(--red);   font-size: 0.68rem; }
+    .log-panel-hdr .lp-dim { color: var(--text-dim); font-size: 0.66rem; }
+    .log-panel-hdr .lp-toggle { color: var(--text-dim); font-size: 0.75rem; }
+    #logEntries {
+      max-height: 145px;
+      overflow-y: auto;
+      display: none;
+      border-top: 1px solid var(--border);
+    }
+    #logEntries.expanded { display: block; }
+    .log-row {
+      display: flex; align-items: center; gap: 5px;
+      padding: 2px 10px; line-height: 1.7;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .log-row.fail { background: rgba(244,67,54,0.07); }
+    .log-ts   { font-size: 0.64rem; color: var(--text-dim); opacity: 0.55; min-width: 76px; }
+    .log-bdg  { font-size: 0.6rem; font-weight: 700; padding: 1px 4px; border-radius: 3px;
+                text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap; }
+    .log-bdg.SC  { background: #0288d122; color: #29b6f6; }
+    .log-bdg.TTS { background: #e91e6322; color: #f48fb1; }
+    .log-bdg.OTH { background: #37474f44; color: #78909c; }
+    .log-act  { flex: 1; color: var(--text); white-space: nowrap;
+                overflow: hidden; text-overflow: ellipsis; }
+    .log-row.fail .log-act { color: var(--red); }
+    .log-dur  { font-size: 0.64rem; color: var(--text-dim); white-space: nowrap; }
+    .log-ico  { font-size: 0.7rem; }
+    .log-ico.ok  { color: var(--green); }
+    .log-ico.err { color: var(--red); }
+    /* Padding-bottom in loading view so panel doesn't hide buttons */
+    #loadingView { padding-bottom: 50px; }
   </style>
 </head>
 <body>
@@ -421,44 +570,83 @@
         <li class="svc-item" id="svc-gateway">
           <span class="svc-dot" data-status="offline"></span>
           <span class="svc-label">Gateway</span>
+          <span class="svc-port">:8800</span>
+          <span class="svc-response-time"></span>
           <span class="svc-status-text">offline</span>
           <span class="svc-badge required">requerido</span>
+          <button class="svc-stop-btn" onclick="stopSvc('gateway')" title="Detener">⏹</button>
+        </li>
+        <li class="svc-item" id="svc-memory-postgres">
+          <span class="svc-dot" data-status="offline"></span>
+          <span class="svc-label">Memoria DB (PostgreSQL)</span>
+          <span class="svc-port">:8821</span>
+          <span class="svc-response-time"></span>
+          <span class="svc-status-text">offline</span>
+          <span class="svc-badge optional">opcional</span>
+          <button class="svc-stop-btn" onclick="stopSvc('memory-postgres')" title="Detener">⏹</button>
         </li>
         <li class="svc-item" id="svc-memory-api">
           <span class="svc-dot" data-status="offline"></span>
           <span class="svc-label">Memoria API</span>
+          <span class="svc-port">:8820</span>
+          <span class="svc-response-time"></span>
           <span class="svc-status-text">offline</span>
           <span class="svc-badge optional">opcional</span>
+          <button class="svc-stop-btn" onclick="stopSvc('memory-api')" title="Detener">⏹</button>
         </li>
         <li class="svc-item" id="svc-conversation">
           <span class="svc-dot" data-status="offline"></span>
           <span class="svc-label">Conversación</span>
+          <span class="svc-port">:8801</span>
+          <span class="svc-response-time"></span>
           <span class="svc-status-text">offline</span>
           <span class="svc-badge required">requerido</span>
+          <button class="svc-stop-btn" onclick="stopSvc('conversation')" title="Detener">⏹</button>
         </li>
         <li class="svc-item" id="svc-tts-blips">
           <span class="svc-dot" data-status="offline"></span>
           <span class="svc-label">TTS Blips</span>
+          <span class="svc-port">:8805</span>
+          <span class="svc-response-time"></span>
           <span class="svc-status-text">offline</span>
           <span class="svc-badge optional">opcional</span>
+          <button class="svc-stop-btn" onclick="stopSvc('tts-blips')" title="Detener">⏹</button>
         </li>
         <li class="svc-item" id="svc-tts-router">
           <span class="svc-dot" data-status="offline"></span>
           <span class="svc-label">TTS Router</span>
+          <span class="svc-port">:8810</span>
+          <span class="svc-response-time"></span>
           <span class="svc-status-text">offline</span>
           <span class="svc-badge optional">opcional</span>
+          <button class="svc-stop-btn" onclick="stopSvc('tts-router')" title="Detener">⏹</button>
         </li>
         <li class="svc-item" id="svc-tts-casiopy">
           <span class="svc-dot" data-status="offline"></span>
           <span class="svc-label">TTS Casiopy (voz)</span>
+          <span class="svc-port">:8815</span>
+          <span class="svc-response-time"></span>
           <span class="svc-status-text">offline</span>
           <span class="svc-badge optional">opcional</span>
+          <button class="svc-stop-btn" onclick="stopSvc('tts-casiopy')" title="Detener">⏹</button>
+        </li>
+        <li class="svc-item" id="svc-face">
+          <span class="svc-dot" data-status="offline"></span>
+          <span class="svc-label">Avatar 2D (VTuber)</span>
+          <span class="svc-port">:8804</span>
+          <span class="svc-response-time"></span>
+          <span class="svc-status-text">offline</span>
+          <span class="svc-badge optional">opcional</span>
+          <button class="svc-stop-btn" onclick="stopSvc('face')" title="Detener">⏹</button>
         </li>
         <li class="svc-item" id="svc-stt">
           <span class="svc-dot" data-status="offline"></span>
           <span class="svc-label">STT — Voz a texto</span>
+          <span class="svc-port">:8803</span>
+          <span class="svc-response-time"></span>
           <span class="svc-status-text">offline</span>
           <span class="svc-badge optional">opcional</span>
+          <button class="svc-stop-btn" onclick="stopSvc('stt')" title="Detener">⏹</button>
         </li>
       </ul>
     </div>
@@ -471,7 +659,8 @@
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-secondary" id="startBtn" onclick="startServices()">Iniciar servicios</button>
+      <button class="btn btn-secondary" id="startBtn"   onclick="startServices()">Iniciar servicios</button>
+      <button class="btn btn-danger"    id="stopAllBtn" onclick="stopAllServices()">Detener todo</button>
       <button class="btn btn-primary"   id="goToChatBtn" disabled onclick="showChatView()">Ir al chat →</button>
     </div>
   </div>
@@ -490,6 +679,9 @@
         <div class="mini-dot" data-svc="stt"          data-status="offline" title="STT"></div>
       </div>
       <span id="vramBadge" title="Haz clic para refrescar" onclick="pollVram()">VRAM –</span>
+      <button class="icon-btn" id="svcDrawerBtn" onclick="toggleSvcDrawer()" title="Gestionar servicios" style="font-size:0.8rem;padding:3px 7px;opacity:0.75;">⚙</button>
+      <button class="icon-btn" id="logsBtn"      onclick="toggleLogsPanel()" title="Ver auditoría" style="font-size:0.72rem;padding:3px 7px;opacity:0.7;">📋</button>
+      <button class="icon-btn" id="shutdownBtn"  onclick="shutdownFromChat()" title="Apagar servicios y volver" style="font-size:0.8rem;padding:3px 7px;opacity:0.6;color:var(--red);">⏹</button>
       <div id="wsStatus" title="WebSocket"></div>
     </div>
 
@@ -505,6 +697,26 @@
       <button class="icon-btn" id="sttBtn" onclick="toggleRecording()" title="Hablar (STT)">🎤</button>
       <button class="icon-btn send" id="sendBtn" onclick="sendMessage()" title="Enviar">➤</button>
     </div>
+  </div>
+
+  <!-- ── SERVICES DRAWER (chat view) ────────────────────────── -->
+  <div id="svcDrawerOverlay" onclick="toggleSvcDrawer()"></div>
+  <div id="svcDrawer" class="hidden">
+    <div class="svc-drawer-hdr">
+      <span>Servicios</span>
+      <button onclick="toggleSvcDrawer()" title="Cerrar">✕</button>
+    </div>
+    <div id="svcDrawerList"></div>
+  </div>
+
+  <!-- ── LOG / AUDIT PANEL (fixed bottom, shared between views) ── -->
+  <div id="logPanel">
+    <div class="log-panel-hdr" onclick="toggleLogsExpand()">
+      <span class="lp-title">Auditoría</span>
+      <span id="lpStats"><span class="lp-dim">0 eventos</span></span>
+      <span class="lp-toggle" id="lpToggle">▸</span>
+    </div>
+    <div id="logEntries"></div>
   </div>
 
   <div id="toast"></div>
